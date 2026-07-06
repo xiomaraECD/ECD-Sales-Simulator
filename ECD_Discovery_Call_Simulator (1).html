@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECD Discovery Call Simulator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --indigo:#3B2FC9;
+    --indigo-deep:#1A1454;
+    --indigo-panel:#241C6B;
+    --pink:#EC1279;
+    --pink-soft:#FCE4F0;
+    --gold:#F0B429;
+    --cold:#4A67F0;
+    --ink:#1C1836;
+    --muted:#8B87AE;
+    --mist:#EDEBFA;
+    --paper:#FAFAFC;
+    --good:#1FAA6D;
+    --risky:#DE9B1F;
+    --poor:#E23B5C;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Inter',sans-serif;
+    background:radial-gradient(circle at 15% -10%, #2A1F86 0%, var(--indigo-deep) 42%, #100C38 100%);
+    color:var(--mist);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1040px;margin:0 auto;padding:48px 24px 90px;}
+  h1,h2,h3{font-family:'Fraunces',serif;margin:0;}
+  .eyebrow{
+    font-size:12px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;
+    color:var(--pink);margin-bottom:14px;display:flex;align-items:center;gap:10px;
+  }
+  .eyebrow::before{content:"";width:22px;height:2px;background:var(--pink);display:inline-block;}
+
+  /* ===== NAME GATE ===== */
+  #namegate{max-width:520px;margin:80px auto;text-align:center;display:none;}
+  #namegate h1{font-size:32px;font-weight:700;color:#fff;line-height:1.2;}
+  #namegate p{color:#C9C6E8;font-size:15px;margin-top:14px;line-height:1.6;}
+  #namegate input{
+    width:100%;margin-top:28px;padding:16px 18px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.18);
+    background:rgba(255,255,255,0.06);color:#fff;font-family:'Inter';font-size:15px;outline:none;
+  }
+  #namegate input::placeholder{color:#8B87AE;}
+  #namegate input:focus{border-color:var(--pink);}
+  #namegate .gate-btn{
+    margin-top:18px;width:100%;background:var(--pink);color:#fff;border:none;border-radius:30px;
+    padding:15px 28px;font-family:'Inter';font-weight:700;font-size:15px;cursor:pointer;
+  }
+  #namegate .gate-btn:hover{background:#C90E68;}
+  #namegate .gate-note{margin-top:16px;font-size:12px;color:#7A76A3;}
+
+  /* ===== LANDING ===== */
+  #landing{display:none;}
+  #landing .hero{max-width:760px;margin-bottom:44px;}
+  #landing h1{font-size:42px;font-weight:700;line-height:1.14;color:#fff;}
+  #landing h1 em{font-style:italic;color:var(--pink);}
+  #landing .sub{font-size:16px;color:#C9C6E8;margin-top:16px;line-height:1.6;max-width:640px;}
+  .welcome-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px;}
+  .welcome-name{font-size:13.5px;color:#9B96D6;}
+  .welcome-name b{color:#fff;}
+  .switch-user{background:none;border:1px solid rgba(255,255,255,0.18);color:#C9C6E8;font-family:'Inter';font-size:12px;font-weight:600;padding:7px 14px;border-radius:20px;cursor:pointer;}
+  .switch-user:hover{border-color:var(--pink);color:#fff;}
+
+  .cardgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;}
+  @media (max-width:760px){.cardgrid{grid-template-columns:1fr;}}
+  .scenario-card{
+    background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    border:1px solid rgba(255,255,255,0.10);
+    border-radius:16px;padding:24px 24px 22px;cursor:pointer;
+    transition:transform .18s ease, border-color .18s ease, background .18s ease;
+    position:relative;overflow:hidden;
+  }
+  .scenario-card:hover{transform:translateY(-3px);border-color:rgba(236,18,121,0.55);background:linear-gradient(180deg, rgba(236,18,121,0.10), rgba(255,255,255,0.02));}
+  .scenario-tag{
+    display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;
+    padding:4px 10px;border-radius:20px;margin-bottom:12px;
+  }
+  .tag-technical{background:rgba(74,103,240,0.18);color:#9DB1FF;}
+  .tag-price{background:rgba(240,180,41,0.18);color:#F5CB68;}
+  .tag-compliance{background:rgba(226,59,92,0.18);color:#FF9CB0;}
+  .tag-audit{background:rgba(31,170,109,0.18);color:#7EE2B8;}
+  .tag-partner{background:rgba(236,18,121,0.18);color:#FF8FC0;}
+  .tag-data{background:rgba(160,120,255,0.20);color:#C8AFFF;}
+  .tag-migration{background:rgba(74,103,240,0.18);color:#9DB1FF;}
+  .tag-flows{background:rgba(31,170,109,0.18);color:#7EE2B8;}
+  .tag-multibrand{background:rgba(240,180,41,0.18);color:#F5CB68;}
+  .tag-upsell{background:rgba(236,18,121,0.18);color:#FF8FC0;}
+  .scenario-card h3{font-size:19px;color:#fff;margin-bottom:6px;}
+  .scenario-card .client{font-size:12.5px;color:var(--muted);margin-bottom:12px;}
+  .scenario-card p.situation{font-size:13.5px;color:#D6D3F0;line-height:1.55;margin:0 0 16px;}
+  .scenario-card .meta-row{display:flex;justify-content:space-between;align-items:center;}
+  .scenario-card .startline{font-size:13px;font-weight:700;color:var(--pink);display:flex;align-items:center;gap:6px;}
+  .scenario-card .startline .arrow{transition:transform .18s ease;}
+  .scenario-card:hover .startline .arrow{transform:translateX(4px);}
+
+  .footnote{margin-top:44px;font-size:12.5px;color:#7A76A3;line-height:1.7;border-top:1px solid rgba(255,255,255,0.08);padding-top:22px;}
+  .results-link{margin-top:14px;background:none;border:none;color:#9B96D6;font-family:'Inter';font-size:12.5px;font-weight:600;cursor:pointer;text-decoration:underline;padding:0;}
+  .results-link:hover{color:#fff;}
+
+  /* ===== CALL SCREEN ===== */
+  #callscreen{display:none;}
+  .callbar{
+    display:flex;align-items:center;justify-content:space-between;
+    background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+    border-radius:14px;padding:16px 22px;margin-bottom:28px;flex-wrap:wrap;gap:14px;
+  }
+  .callbar .who{display:flex;align-items:center;gap:12px;}
+  .avatar{
+    width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-family:'Fraunces',serif;font-weight:600;font-size:16px;color:#fff;
+    background:linear-gradient(135deg, var(--indigo), var(--pink));flex-shrink:0;
+  }
+  .who .name{font-size:15px;font-weight:700;color:#fff;}
+  .who .role{font-size:12px;color:var(--muted);}
+  .back-btn{
+    background:none;border:1px solid rgba(255,255,255,0.18);color:#C9C6E8;
+    font-family:'Inter';font-size:12.5px;font-weight:600;padding:8px 14px;border-radius:20px;cursor:pointer;
+  }
+  .back-btn:hover{border-color:var(--pink);color:#fff;}
+
+  .meter-wrap{width:220px;}
+  .meter-label{display:flex;justify-content:space-between;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;font-weight:700;}
+  .meter-track{height:8px;border-radius:6px;background:rgba(255,255,255,0.10);overflow:hidden;position:relative;}
+  .meter-fill{height:100%;border-radius:6px;background:linear-gradient(90deg, var(--cold), var(--gold), var(--pink));transition:width .5s cubic-bezier(.4,0,.2,1);}
+  .meter-state{margin-top:6px;font-size:12px;font-weight:700;text-align:right;}
+
+  .stage{
+    background:var(--paper);color:var(--ink);border-radius:18px;padding:36px 38px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.35);
+  }
+  .bubble{
+    background:#F1EEFB;border-radius:16px 16px 16px 4px;padding:18px 22px;max-width:640px;
+    font-size:16px;line-height:1.55;color:var(--ink);margin-bottom:8px;position:relative;
+  }
+  .bubble.context{background:transparent;border:1px dashed #D7D3ED;color:var(--muted);font-size:13px;font-style:italic;padding:12px 16px;margin-bottom:18px;}
+  .bubble-meta{font-size:11.5px;color:var(--muted);margin:0 0 20px 4px;font-weight:600;letter-spacing:.3px;}
+
+  .options{display:flex;flex-direction:column;gap:12px;margin-top:26px;}
+  .option{
+    text-align:left;border:1.5px solid #E4E2F0;background:#fff;border-radius:12px;padding:16px 20px;
+    font-family:'Inter';font-size:14px;color:var(--ink);cursor:pointer;line-height:1.5;
+    transition:border-color .15s ease, background .15s ease, transform .1s ease;
+  }
+  .option:hover{border-color:var(--indigo);background:#F7F6FE;transform:translateX(2px);}
+  .option:disabled{cursor:default;}
+  .option .say-label{font-size:10.5px;font-weight:800;letter-spacing:1px;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:6px;}
+
+  .option.chosen-good{border-color:var(--good);background:#EAF8F1;}
+  .option.chosen-risky{border-color:var(--risky);background:#FDF5E4;}
+  .option.chosen-poor{border-color:var(--poor);background:#FCEAEE;}
+  .option.faded{opacity:.4;}
+
+  .feedback{
+    margin-top:22px;border-radius:14px;padding:20px 24px;font-size:14px;line-height:1.6;
+    border-left:4px solid var(--indigo);background:#F1EEFB;
+  }
+  .feedback.good{border-left-color:var(--good);background:#EAF8F1;}
+  .feedback.risky{border-left-color:var(--risky);background:#FDF5E4;}
+  .feedback.poor{border-left-color:var(--poor);background:#FCEAEE;}
+  .feedback .verdict{font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;display:block;}
+  .feedback.good .verdict{color:var(--good);}
+  .feedback.risky .verdict{color:var(--risky);}
+  .feedback.poor .verdict{color:var(--poor);}
+
+  .continue-btn{
+    margin-top:24px;background:var(--indigo);color:#fff;border:none;border-radius:30px;
+    padding:13px 28px;font-family:'Inter';font-weight:700;font-size:14px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:8px;transition:background .15s ease;
+  }
+  .continue-btn:hover{background:#2E24A0;}
+
+  /* ===== END SCREEN ===== */
+  #endscreen{display:none;}
+  .end-hero{text-align:center;padding:20px 0 8px;}
+  .end-badge{
+    display:inline-block;padding:8px 20px;border-radius:30px;font-size:12.5px;font-weight:800;
+    letter-spacing:1px;text-transform:uppercase;margin-bottom:20px;
+  }
+  .badge-elite{background:rgba(31,170,109,0.18);color:#7EE2B8;}
+  .badge-solid{background:rgba(240,180,41,0.18);color:#F5CB68;}
+  .badge-practice{background:rgba(226,59,92,0.18);color:#FF9CB0;}
+  .end-hero h2{font-size:34px;color:#fff;margin-bottom:14px;}
+  .end-hero p{color:#C9C6E8;font-size:15px;max-width:540px;margin:0 auto;line-height:1.6;}
+  .recap{margin-top:40px;display:flex;flex-direction:column;gap:14px;}
+  .recap-item{
+    background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);border-radius:12px;
+    padding:16px 20px;font-size:13.5px;line-height:1.55;
+  }
+  .recap-item .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:10px;}
+  .dot-good{background:var(--good);} .dot-risky{background:var(--risky);} .dot-poor{background:var(--poor);}
+  .recap-item .step-title{font-weight:700;color:#fff;}
+  .recap-item .step-choice{color:#C9C6E8;margin-top:4px;}
+  .end-actions{display:flex;gap:14px;justify-content:center;margin-top:38px;flex-wrap:wrap;}
+  .btn-primary{background:var(--pink);color:#fff;border:none;border-radius:30px;padding:14px 28px;font-weight:700;font-size:14px;cursor:pointer;font-family:'Inter';}
+  .btn-primary:hover{background:#C90E68;}
+  .btn-secondary{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,0.3);border-radius:30px;padding:14px 28px;font-weight:700;font-size:14px;cursor:pointer;font-family:'Inter';}
+  .btn-secondary:hover{border-color:#fff;}
+  .save-note{margin-top:22px;text-align:center;font-size:12px;color:#7A76A3;}
+
+  .progress-dots{display:flex;gap:6px;margin-bottom:4px;}
+  .progress-dots span{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.18);}
+  .progress-dots span.done{background:var(--pink);}
+  .progress-dots span.current{background:#fff;}
+
+  /* ===== RESULTS PANEL ===== */
+  #resultspanel{display:none;}
+  .results-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px;margin-bottom:24px;}
+  .results-table{width:100%;border-collapse:collapse;margin-top:18px;}
+  .results-table th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.12);}
+  .results-table td{padding:12px 14px;font-size:13.5px;color:#E4E2F5;border-bottom:1px solid rgba(255,255,255,0.06);}
+  .score-pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:700;}
+  .results-empty{color:#8B87AE;font-size:14px;padding:30px 0;text-align:center;}
+  .results-loading{color:#8B87AE;font-size:14px;padding:30px 0;text-align:center;}
+  .storage-warning{background:rgba(240,180,41,0.12);border:1px solid rgba(240,180,41,0.3);border-radius:10px;padding:14px 18px;font-size:12.5px;color:#F5CB68;margin-bottom:18px;line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- NAME GATE -->
+  <div id="namegate">
+    <div class="eyebrow" style="justify-content:center;">ECD Sales Training</div>
+    <h1>Before you run a real call, run this one.</h1>
+    <p>Ten scenarios pulled from real ECD discovery calls, audits, and internal Klaviyo-partner touch-bases. Enter your name so your results can be tracked as part of onboarding.</p>
+    <input type="text" id="traineeNameInput" placeholder="Your full name" autocomplete="off">
+    <button class="gate-btn" onclick="submitName()">Start training &rarr;</button>
+    <div class="gate-note">Your name and scenario scores are saved so ECD leadership can review onboarding progress.</div>
+  </div>
+
+  <!-- LANDING -->
+  <div id="landing">
+    <div class="welcome-row">
+      <div class="welcome-name">Training as <b id="welcomeName">&mdash;</b></div>
+      <button class="switch-user" onclick="switchUser()">Not you? Switch</button>
+    </div>
+    <div class="hero">
+      <h1>Run the call before you <em>run the call</em>.</h1>
+      <p class="sub">Ten scenarios, pulled from real ECD discovery calls, audit reviews, and internal Klaviyo-partner touch-bases. At each decision point, choose what you'd actually say &mdash; then see how it plays out against ECD's proven playbook answer. Some options are designed to sound reasonable and still be wrong &mdash; read carefully.</p>
+    </div>
+
+    <div class="cardgrid" id="cardgrid"></div>
+
+    <div class="footnote">Built for anyone joining ECD's Sales Team. Every scenario is drawn from real transcripts and real account situations (client names lightly kept for realism). Run all ten before your first live call &mdash; then come back any time you need a refresher on objection handling.</div>
+    <button class="results-link" onclick="openResults()">View team training results &rarr;</button>
+  </div>
+
+  <!-- CALL SCREEN -->
+  <div id="callscreen">
+    <div class="callbar">
+      <div class="who">
+        <div class="avatar" id="avatarInitials">?</div>
+        <div>
+          <div class="name" id="clientName">Client</div>
+          <div class="role" id="clientRole">Discovery call</div>
+        </div>
+      </div>
+      <div class="meter-wrap">
+        <div class="meter-label"><span>Cold</span><span>Warm</span><span>Closing</span></div>
+        <div class="meter-track"><div class="meter-fill" id="meterFill" style="width:35%"></div></div>
+        <div class="meter-state" id="meterState">Building rapport</div>
+      </div>
+      <button class="back-btn" onclick="goLanding()">&larr; All scenarios</button>
+    </div>
+
+    <div class="stage">
+      <div class="progress-dots" id="progressDots"></div>
+      <div class="bubble-meta" id="sceneMeta">Step 1 of 4</div>
+      <div id="dialogueArea"></div>
+      <div class="options" id="optionsArea"></div>
+      <div id="feedbackArea"></div>
+      <div id="continueArea"></div>
+    </div>
+  </div>
+
+  <!-- END SCREEN -->
+  <div id="endscreen">
+    <div class="end-hero">
+      <div class="end-badge" id="endBadge">Result</div>
+      <h2 id="endTitle">Scenario complete</h2>
+      <p id="endSubtitle">Here's how your choices played out.</p>
+    </div>
+    <div class="recap" id="recapArea"></div>
+    <div class="save-note" id="saveNote"></div>
+    <div class="end-actions">
+      <button class="btn-secondary" onclick="replayScenario()">Replay this scenario</button>
+      <button class="btn-primary" onclick="goLanding()">Choose another scenario</button>
+    </div>
+  </div>
+
+  <!-- RESULTS PANEL -->
+  <div id="resultspanel">
+    <div class="results-head">
+      <div>
+        <div class="eyebrow">Team Training Results</div>
+        <h1 style="font-size:28px;color:#fff;">Who's run what</h1>
+      </div>
+      <button class="back-btn" onclick="goLanding()">&larr; Back to scenarios</button>
+    </div>
+    <div id="resultsBody"><div class="results-loading">Loading results&hellip;</div></div>
+  </div>
+
+</div>
+
+<script>
+/* ============ SCENARIO DATA ============
+   Ten scenarios grounded in real ECD discovery calls, audit reviews, and
+   internal Klaviyo-partner touch-bases. Each step offers four choices:
+   one strong ("good"), two plausible-but-wrong ("risky"), one clearly off ("poor").
+*/
+const SCENARIOS = [
+  {
+    id: "technical",
+    tag: "technical", tagLabel: "Technical Objection",
+    client: "Michael", clientRole: "WoofMeow \u2014 Discovery Call", initials: "M",
+    title: "\u201cWe sell dog food, not APIs\u201d",
+    situation: "A two-location pet franchise wants to move to Klaviyo, but their POS system has no native integration \u2014 and the owner has zero technical bandwidth.",
+    steps: [
+      {
+        context: "The client just shared their back-office POS screen and admitted the tech is over their heads.",
+        dialogue: "\u201cWe sell dog food. We do not understand how to make APIs connect.\u201d",
+        options: [
+          { label: "\u201cNo worries \u2014 I'll flag this to my dev team: how do we integrate your POS with Klaviyo. As soon as that's sorted, we'll have everything we need. We only do integrations ourselves when the site is Shopify; if not, we quote the dev work separately.\u201d",
+            verdict:"good", meter:12,
+            feedback:"You own the technical gap without overpromising, and give a clear, calm next step \u2014 the client never has to feel dumb for not knowing APIs." },
+          { label: "\u201cThat's completely fine \u2014 let's put a pin in the tech question and focus on what Klaviyo could do for you once it's connected.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Sounds reassuring, but skipping past the blocker with no plan to actually resolve it leaves the client with the same unanswered fear they started with." },
+          { label: "\u201cYou'll need to get a developer on your end sorted before we can even start talking pricing.\u201d",
+            verdict:"poor", meter:-15,
+            feedback:"This pushes the burden entirely onto a client who just told you they have zero technical capacity. It reads as a wall, not a partner." },
+          { label: "\u201cOh that's easy, just use Zapier and it'll connect in five minutes.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"Confident-sounding, but inaccurate \u2014 POS-to-Klaviyo integrations without native support genuinely need dev work. Overpromising here creates a problem you'll own later." }
+        ]
+      },
+      {
+        context: "A few minutes later, the client is warming up but wants proof you understand their world.",
+        dialogue: "\u201cIf you have some pet-related businesses you've worked with, could we see examples?\u201d",
+        options: [
+          { label: "\u201cYes \u2014 I'll send case studies from brands in our home & garden space, plus I'll get you an answer on the POS integration from my dev team.\u201d",
+            verdict:"good", meter:10,
+            feedback:"Answer the question directly, and fold in a status update on the earlier open item so nothing feels dropped." },
+          { label: "\u201cWe don't have anyone in your exact niche, but trust me, we're great at this.\u201d",
+            verdict:"risky", meter:-6,
+            feedback:"Honest, but 'trust me' with no evidence is weak after admitting a gap. Better to bridge to adjacent, comparable case studies." },
+          { label: "\u201cWe've actually worked with several pet brands just like yours \u2014 I'll pull those exact names for you.\u201d",
+            verdict:"risky", meter:-10,
+            feedback:"If you're not certain that's true, promising a specific niche match you can't actually deliver creates a credibility problem the moment you follow up." },
+          { label: "Skip the question and move straight to talking about closing the deal.",
+            verdict:"poor", meter:-12,
+            feedback:"Ignoring a direct, reasonable question makes you look like you're not listening \u2014 exactly when the client is deciding whether to trust you." }
+        ]
+      },
+      {
+        context: "Near the end of the call, the client mentions they're weighing another POS vendor before deciding anything.",
+        dialogue: "\u201cWe have a call with another POS system on Friday \u2014 I want to do that before committing to anything.\u201d",
+        options: [
+          { label: "\u201cCompletely fair. Let's lock in a specific follow-up \u2014 how does July 3rd at 11am Eastern work, once you've had that call?\u201d",
+            verdict:"good", meter:12,
+            feedback:"Respecting their process while still pinning a concrete date keeps momentum \u2014 never end on a vague 'let me know.'" },
+          { label: "\u201cSure, take your time \u2014 whenever that call wraps up, just reach back out to me.\u201d",
+            verdict:"risky", meter:-11,
+            feedback:"Feels polite, but hands all the initiative to the client. Without a date on your calendar, this is exactly how warm deals go quiet." },
+          { label: "\u201cHonestly I'd encourage you to decide today \u2014 this pricing might not be around much longer.\u201d",
+            verdict:"poor", meter:-16,
+            feedback:"Manufactured urgency right after a client stated a reasonable, unrelated reason to wait reads as pressure tactics, not partnership." },
+          { label: "\u201cOkay, just let me know whenever you're ready.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"This is the exact mistake the playbook warns against: ending on 'I'll wait to hear from you' instead of locking a next step." }
+        ]
+      },
+      {
+        context: "Two weeks pass with no word. You're deciding how to follow up.",
+        dialogue: "Internal note to self: it's been quiet since the call \u2014 what's the right next move?",
+        options: [
+          { label: "Send a light, no-pressure bump: \u201cJust wanted to nudge this in case it got buried! No rush \u2014 happy to reconnect whenever works.\u201d",
+            verdict:"good", meter:10,
+            feedback:"Matches the real follow-up cadence: assume good faith, keep it warm, and don't demand an answer." },
+          { label: "Call the client directly without notice to ask for a decision.",
+            verdict:"risky", meter:-8,
+            feedback:"An unannounced call can feel intrusive after two weeks of silence \u2014 a written nudge respects their time better at this stage." },
+          { label: "Send a longer email re-explaining the entire pitch from scratch, in case they forgot the details.",
+            verdict:"risky", meter:-6,
+            feedback:"Re-pitching from zero signals you don't trust they remember or care \u2014 a short, warm nudge referencing the specific next step works better." },
+          { label: "Wait for them to reach out \u2014 they said they'd let you know.",
+            verdict:"poor", meter:-13,
+            feedback:"Passive waiting loses more deals than almost any objection does. Warm persistence is part of the job." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "price",
+    tag: "price", tagLabel: "Price Objection",
+    client: "Anthony", clientRole: "Bedford Village Flower Shoppe \u2014 Discovery Call", initials: "A",
+    title: "\u201cThe setup makes sense. The retainer doesn't.\u201d",
+    situation: "A family flower shop is sold on rebuilding their Klaviyo account, but pushes back hard on paying for ongoing management on top of the one-time build.",
+    steps: [
+      {
+        context: "The client has just seen the $6,000 Full Implementation price and the $5,500/mo Growth retainer side by side.",
+        dialogue: "\u201cThe $6,000 one-time payment makes sense to me. The $5,500 monthly doesn't. If I set this up for $6K and it just brought in revenue, could I send the boilerplate campaigns myself?\u201d",
+        options: [
+          { label: "\u201cWe also have a Tier 1 \u2014 it's $3,000. The implementation isn't tied to ongoing management. You can have us build it, then decide later if you want us managing it.\u201d",
+            verdict:"good", meter:14,
+            feedback:"Separate the implementation decision from the retainer decision. Let the client say yes to the smaller, obvious win first." },
+          { label: "\u201cHonestly, most clients regret trying to run it themselves \u2014 you really do need us managing it.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"This dismisses a completely reasonable question and can come off as fear-based selling instead of showing flexibility." },
+          { label: "\u201cSure, we could probably knock the retainer down to $4,000 if that helps.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Discounting immediately, without first offering the smaller tier that already exists, trains the client to expect negotiation instead of showing your real options." },
+          { label: "\u201cThat's totally your call \u2014 once it's built, it's yours to run however you want.\u201d",
+            verdict:"poor", meter:-13,
+            feedback:"This walks away from the entire ongoing-management business line without even mentioning the lighter tier that could have kept the door open." }
+        ]
+      },
+      {
+        context: "The client seems relieved but wants to understand what he'd be losing by starting with just the build.",
+        dialogue: "\u201cIf I do the mini or full build myself and skip management for now, what am I actually giving up?\u201d",
+        options: [
+          { label: "\u201cThe first thing we always do is build a good foundation, because without it, ongoing management can't perform \u2014 you're not giving up anything by starting there. You'd just be handling the weekly sends and segment upkeep yourself.\u201d",
+            verdict:"good", meter:12,
+            feedback:"Honest and specific: names exactly what changes (who does the weekly work) without overselling doom-and-gloom." },
+          { label: "\u201cWithout management, your results will probably drop off within a month or two.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"An unsupported scare claim right after he asked a fair, specific question \u2014 answer with facts about the work, not a vague threat." },
+          { label: "\u201cNothing really, it runs itself once it's built.\u201d",
+            verdict:"risky", meter:-10,
+            feedback:"This overstates how passive a good Klaviyo account can be, and sets an expectation that will backfire the first time performance dips." },
+          { label: "\u201cYou'd be giving up a lot, which is why almost nobody does this.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"Vague and slightly guilt-trippy \u2014 gives him no real information to make a decision with." }
+        ]
+      },
+      {
+        context: "Later, comparing agencies, the client asks a pointed differentiation question.",
+        dialogue: "\u201cWhat's the difference between you guys and, like, a gold-level Klaviyo partner?\u201d",
+        options: [
+          { label: "\u201cWe're the highest tier \u2014 Master Elite. Klaviyo has about 22,000 partners; only 20 are Master Elite. That's a requirement to keep the tier, not a marketing line.\u201d",
+            verdict:"good", meter:13,
+            feedback:"Differentiation lands hardest as a verifiable fact (20 of 22,000), not an adjective like 'we're the best.'" },
+          { label: "\u201cHonestly there's not a huge difference, it mostly comes down to who you vibe with.\u201d",
+            verdict:"poor", meter:-15,
+            feedback:"This throws away a genuine, factual advantage and makes ECD sound interchangeable with any competitor." },
+          { label: "\u201cWe just have way more experience and a better team overall.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Directionally true but vague \u2014 without the specific partner-tier fact, this sounds like something every agency says about itself." },
+          { label: "\u201cGold partners can't sell Marketing Analytics, so you'd be stuck without it with them.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"Don't invent or guess at a competitor's specific limitations you're not certain of \u2014 an inaccurate claim here can be checked and will cost trust." }
+        ]
+      },
+      {
+        context: "Wrapping up, the client is ready to move but non-committal on timing.",
+        dialogue: "\u201cThis all sounds good. Let me think it over and get back to you.\u201d",
+        options: [
+          { label: "\u201cOf course \u2014 I'll send the Tier 1 proposal and the implementation details today. Would Thursday work for a quick follow-up call to answer anything that comes up?\u201d",
+            verdict:"good", meter:12,
+            feedback:"Sends materials same-day and proposes a specific next touchpoint \u2014 never leaves the next move solely up to the client." },
+          { label: "\u201cNo problem, take all the time you need.\u201d",
+            verdict:"poor", meter:-13,
+            feedback:"No concrete deliverable and no follow-up plan \u2014 exactly the gap the follow-up cadence exists to close." },
+          { label: "\u201cI'll check in with you every couple of days until you've decided.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Too frequent for a real cadence \u2014 the actual pattern is a same-day recap, then spaced-out nudges over weeks, not constant check-ins." },
+          { label: "\u201cSounds good \u2014 I'll follow up in a month or so once you've had time to think.\u201d",
+            verdict:"risky", meter:-6,
+            feedback:"Too long a gap after a warm call \u2014 momentum is highest right after the conversation; the real cadence starts with a same-day recap." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "compliance",
+    tag: "compliance", tagLabel: "Compliance Boundary",
+    client: "Jack", clientRole: "City Grounds \u2014 Discovery Call", initials: "J",
+    title: "\u201cOur lawyers won't sign off on that\u201d",
+    situation: "A coffee brand's team loves the migration plan but their legal counsel has flagged real risk around SMS compliance in Texas \u2014 and separately, they don't want to pay for full hands-on execution.",
+    steps: [
+      {
+        context: "The client has just explained their attorneys are worried about class-action risk on SMS, beyond what your exclusion segments solve.",
+        dialogue: "\u201cBased on discussions with our own attorneys, we're not comfortable with that level of exclusion technology. I think we should exclude SMS from this quote entirely.\u201d",
+        options: [
+          { label: "\u201cThat's perfect, totally understand it.\u201d \u2014 and drop SMS from the quote without further argument.",
+            verdict:"good", meter:12,
+            feedback:"When a client cites their own legal counsel, you don't relitigate it \u2014 you adjust the deal and preserve the trust." },
+          { label: "\u201cAre you sure? Our exclusion segments work great for all our other Texas clients.\u201d",
+            verdict:"poor", meter:-16,
+            feedback:"This pushes back on a client's stated legal boundary. Once counsel has weighed in, arguing the point reads as reckless." },
+          { label: "\u201cUnderstood \u2014 could I ask what specifically your attorneys flagged, so I can see if there's a version of SMS that would satisfy them?\u201d",
+            verdict:"risky", meter:-5,
+            feedback:"Curiosity is fine in spirit, but pressing for details right after they've closed the door can feel like you're looking for a way back in rather than accepting the boundary." },
+          { label: "\u201cWithout SMS, honestly, we can't really guarantee strong results.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"This feels like a guilt trip dressed as honesty right after the client set a legal boundary \u2014 it risks souring the whole conversation." }
+        ]
+      },
+      {
+        context: "Later in the same call, the client explains they want strategy, not full execution.",
+        dialogue: "\u201cThe retainer feels expensive for how much automation we're planning to build ourselves. I'd rather work with a consultant who really helps us maximize Klaviyo \u2014 not just get emails completed.\u201d",
+        options: [
+          { label: "\u201cThat makes sense \u2014 we actually have a Strategy Partnership: us handling strategy and quarterly audits, with a smaller block of hands-on hours, instead of full execution.\u201d",
+            verdict:"good", meter:14,
+            feedback:"Recognize when a client is asking for a different shape of engagement, not just a lower price \u2014 this is the real pivot that saved the deal." },
+          { label: "\u201cI hear you, but our retainer really is the best option for most of our clients.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"This dismisses what the client just told you they actually want. It's not a pricing objection \u2014 it's a request for a different service model." },
+          { label: "\u201cWe could just lower the number of campaigns included to bring the price down.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Misreads the ask. The client isn't asking for less volume at a lower price \u2014 they want strategic guidance while keeping execution in-house." },
+          { label: "\u201cWhat if we did a shorter 3-month trial of the full retainer to prove the value first?\u201d",
+            verdict:"risky", meter:-6,
+            feedback:"Still assumes they want full execution, just on a trial basis \u2014 it doesn't address that they specifically want strategy over hands-on work." }
+        ]
+      },
+      {
+        context: "The client seems genuinely interested in the new direction.",
+        dialogue: "\u201cThat sounds more aligned with what we need. Can we set up one more call to go through it?\u201d",
+        options: [
+          { label: "\u201cYes \u2014 let's grab time Friday at 11am Pacific to walk through the Strategy Partnership in detail.\u201d",
+            verdict:"good", meter:10,
+            feedback:"Immediately locks a specific date and time rather than leaving scheduling open-ended." },
+          { label: "\u201cSure, whenever works for you.\u201d",
+            verdict:"poor", meter:-9,
+            feedback:"Leaving the follow-up entirely open-ended is how warm momentum evaporates. Always propose a specific time." },
+          { label: "\u201cLet's just handle the rest over email instead.\u201d",
+            verdict:"risky", meter:-6,
+            feedback:"A live call is a much higher-bandwidth way to close a nuanced, custom deal like a Strategy Partnership \u2014 don't trade it away." },
+          { label: "\u201cLet me draft up the full proposal first and send it over before we talk again.\u201d",
+            verdict:"risky", meter:-5,
+            feedback:"Reasonable instinct, but delaying the conversation until a full document is ready slows momentum right when the client is engaged \u2014 book the call first, send materials alongside it." }
+        ]
+      },
+      {
+        context: "On the follow-up call, the client's legal team resurfaces a smaller, related concern about data retention.",
+        dialogue: "\u201cOne more thing \u2014 our legal team also wants to know how long you retain customer data if we ever leave Klaviyo.\u201d",
+        options: [
+          { label: "\u201cGreat question \u2014 I don't want to guess and get that wrong for your legal team. Let me get you a precise answer in writing by tomorrow.\u201d",
+            verdict:"good", meter:11,
+            feedback:"On a legal/compliance question, precision matters more than speed \u2014 committing to a written, verified answer protects both sides." },
+          { label: "\u201cI believe it's something like 30 days, but don't quote me on that.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"Guessing on a legal compliance question you're not sure about is risky \u2014 an inaccurate answer here could create real liability." },
+          { label: "\u201cThat's really more of a Klaviyo platform question than an ECD one \u2014 you'd have to ask them directly.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Partially true, but deflecting entirely without offering to help find the answer makes you look unhelpful right when trust is being built." },
+          { label: "\u201cDon't worry, data retention is never really an issue in practice.\u201d",
+            verdict:"risky", meter:-10,
+            feedback:"Dismissing a legal team's specific question as a non-issue, without evidence, is exactly the kind of overconfidence that erodes trust with compliance-conscious clients." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "audit",
+    tag: "audit", tagLabel: "Audit \u2192 Upsell",
+    client: "Zach", clientRole: "VKTRY \u2014 Klaviyo Audit Review", initials: "Z",
+    title: "From findings to a signed next step",
+    situation: "You've just walked an athletic-insole brand through their Klaviyo audit: low click rates, underperforming post-purchase flows, and a win-back sequence that opens well but never converts.",
+    steps: [
+      {
+        context: "You've just explained that campaigns are underperforming benchmark because segmentation is too broad.",
+        dialogue: "\u201cDo you think tightening our segmentation would actually lead to more revenue?\u201d",
+        options: [
+          { label: "\u201cYes, 100%. When you send to people who are genuinely engaged with what you're talking about, they convert. Right now flows are outperforming campaigns \u2014 in a healthy account, it should be the other way around.\u201d",
+            verdict:"good", meter:12,
+            feedback:"Confident, specific, and ties the recommendation back to a concrete diagnostic you already showed them." },
+          { label: "\u201cMaybe \u2014 it's hard to say for sure.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"This undercuts your own audit right after presenting it as authoritative. If you're not confident in your findings, why would the client be?" },
+          { label: "\u201cDefinitely, but that would mean a full site rebuild to make happen.\u201d",
+            verdict:"risky", meter:-6,
+            feedback:"Overstates the scope and can scare off a client who was just asking a simple, positive question. Segmentation fixes don't require rebuilding the site." },
+          { label: "\u201cIt could help, but honestly your bigger problem is your product pricing, not segmentation.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Introduces a totally different, unproven claim outside your area of expertise \u2014 it distracts from the concrete Klaviyo finding you actually have data for." }
+        ]
+      },
+      {
+        context: "The client is a little overwhelmed by the number of findings you've covered.",
+        dialogue: "\u201cThis is a lot of information \u2014 what would you do first if you could only fix two things?\u201d",
+        options: [
+          { label: "\u201cI'd rebuild the post-purchase flows for upsell and cross-sell, and consolidate the abandonment flows \u2014 those are your two highest-leverage fixes.\u201d",
+            verdict:"good", meter:14,
+            feedback:"Always be ready to compress a long audit into the top 2 moves. It's what turns a report into a decision." },
+          { label: "\u201cHonestly everything I mentioned is important, hard to pick just two.\u201d",
+            verdict:"poor", meter:-15,
+            feedback:"This is the single most common way audits fail to convert \u2014 an overwhelmed client with no prioritization will often do nothing at all." },
+          { label: "\u201cHonestly, just sign up for the full retainer and we'll handle all of it.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Jumping straight to the biggest possible sell without answering the actual question can feel pushy right after a genuine, specific ask." },
+          { label: "\u201cProbably the win-back flow and the welcome series \u2014 those tend to matter most for most brands.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"Generic advice not grounded in this account's actual findings undermines the credibility of the audit you just walked them through." }
+        ]
+      },
+      {
+        context: "Wrapping up the call, the client wants to loop in his team before deciding anything.",
+        dialogue: "\u201cI want to talk about this internally before we decide on next steps.\u201d",
+        options: [
+          { label: "\u201cOf course \u2014 I'll send the audit deck and the Fireflies recording today, and I'd love to hear whether a Mini Implementation or Ongoing Management feels like the better fit.\u201d",
+            verdict:"good", meter:12,
+            feedback:"Send materials same-day, and frame the open question as a choice between two named services, not a vague 'let me know.'" },
+          { label: "\u201cOkay, sounds good \u2014 let me know.\u201d",
+            verdict:"poor", meter:-12,
+            feedback:"No concrete deliverable and no framing of the decision. This is exactly the gap the follow-up cadence exists to close." },
+          { label: "\u201cNo worries, I'll check in with you every day this week just to see where things stand.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Far too frequent for the real cadence \u2014 daily check-ins read as pressure, not partnership." },
+          { label: "\u201cSure \u2014 I'll wait until you loop back with a decision on which package you'd like.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Passive and open-ended \u2014 still better to send materials immediately and propose a specific window for a follow-up rather than waiting indefinitely." }
+        ]
+      },
+      {
+        context: "A week later, the client's team has a new question that wasn't covered in the audit.",
+        dialogue: "\u201cOne of our team members asked if Klaviyo's Marketing Analytics could also help with our paid ad targeting \u2014 is that something you cover?\u201d",
+        options: [
+          { label: "\u201cGreat question \u2014 Marketing Analytics is mainly for on-platform segmentation and predictive flows, but it can absolutely inform your ad audiences. I can walk through exactly how that connection works on our next call.\u201d",
+            verdict:"good", meter:11,
+            feedback:"Answers accurately, doesn't overclaim scope, and turns a tangent into a reason for another productive touchpoint." },
+          { label: "\u201cYes, it handles all of your paid media targeting automatically.\u201d",
+            verdict:"poor", meter:-13,
+            feedback:"Overstates what the product does \u2014 inaccurate claims about product capability will surface and damage trust once the client explores it themselves." },
+          { label: "\u201cNot really our department \u2014 you'd want to talk to a paid media specialist for that.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Too dismissive of a reasonable, adjacent question \u2014 better to give a real, bounded answer and offer to loop in the right resource." },
+          { label: "\u201cIt can, but it's a pretty advanced setup that most brands your size don't really need.\u201d",
+            verdict:"risky", meter:-6,
+            feedback:"Talking a client out of curiosity about a suite product works against the goal of expanding suite adoption \u2014 better to answer directly and let them decide." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "rep-partnership",
+    tag: "partner", tagLabel: "Klaviyo Rep Partnership",
+    client: "Dana", clientRole: "Klaviyo Account Executive \u2014 Internal Touch-Base", initials: "D",
+    title: "\u201cHow do I position you guys?\u201d",
+    situation: "A Klaviyo AE you've just started working with wants to know exactly how to introduce ECD to their own customers \u2014 and is quietly testing whether you'll try to take over their relationship.",
+    steps: [
+      {
+        context: "Early in your first real working call, the rep asks how to talk about ECD to prospects.",
+        dialogue: "\u201cHow do you differentiate? How can I best position you guys in front of customers, big and small?\u201d",
+        options: [
+          { label: "\u201cWe look at a brand as a whole ecosystem \u2014 lifecycle marketing agency, not just an implementation shop. Position us as the team that takes full ownership of the Klaviyo account so you can focus on your side of the relationship.\u201d",
+            verdict:"good", meter:12,
+            feedback:"Gives the rep a clear, reusable narrative that positions ECD as complementary to their job, not competing with it." },
+          { label: "\u201cHonestly, just tell them we're the best option out there and let us take it from there.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"Vague and unhelpful \u2014 the rep asked for a specific narrative they can repeat to customers, not a generic compliment about ECD." },
+          { label: "\u201cJust send us the lead directly and we'll handle everything from that point on \u2014 no need to worry about positioning.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"Skips answering the actual question and implicitly sidelines the rep from the conversation \u2014 the opposite of the collaborative tone this relationship needs." },
+          { label: "\u201cTell them we're basically like Klaviyo's in-house team, so it's almost the same as staying with Klaviyo directly.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Blurs the line between ECD and Klaviyo in a way that could confuse or even mislead the client \u2014 better to be precise about what ECD actually is." }
+        ]
+      },
+      {
+        context: "The rep mentions they primarily work with customers already live in Klaviyo, wondering how ECD fits there.",
+        dialogue: "\u201cSince my customers are already in Klaviyo, what would you actually do for them?\u201d",
+        options: [
+          { label: "\u201cMostly Marketing Analytics and Customer Hub right now \u2014 upselling the suite and making the account grow. If something falls outside that, like Helpdesk, let us know and we'll see what we can do.\u201d",
+            verdict:"good", meter:12,
+            feedback:"Honest about current scope and capacity, while staying open to helping beyond it \u2014 exactly the flexible, non-territorial tone that builds trust." },
+          { label: "\u201cWe do absolutely everything, no matter what it is \u2014 just send it our way.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Overpromising scope you may not actually be staffed for sets up a future letdown \u2014 better to be precise about current strengths." },
+          { label: "\u201cWe'd probably just recommend they stick with whatever they're already doing.\u201d",
+            verdict:"poor", meter:-13,
+            feedback:"Gives the rep no reason to ever bring you a live-in-Klaviyo customer \u2014 misses the entire point of the partnership." },
+          { label: "\u201cThat depends \u2014 can you send over their account access first so we can take a look?\u201d",
+            verdict:"risky", meter:-6,
+            feedback:"Reasonable eventually, but jumping straight to requesting account access before explaining what ECD offers skips a step the rep needs first." }
+        ]
+      },
+      {
+        context: "The rep wants to know how to explain ECD's pricing and ROI story when a customer objects.",
+        dialogue: "\u201cWhat's the reason customers usually pick another agency over you?\u201d",
+        options: [
+          { label: "\u201cIt's rarely happened, and when it's close, it's usually price \u2014 but what we charge more than pays for itself. We aim for at least 2\u20133x ROI, and clients regularly see more.\u201d",
+            verdict:"good", meter:11,
+            feedback:"Honest, specific, and reframes a potential weakness (price) around a concrete, trackable outcome the rep can repeat confidently." },
+          { label: "\u201cWe never lose deals, so that's not really something you need to worry about.\u201d",
+            verdict:"poor", meter:-13,
+            feedback:"Overconfident and unhelpful \u2014 gives the rep nothing real to say if a customer does raise a concern, and sounds implausible." },
+          { label: "\u201cProbably our contracts are a bit more restrictive than some competitors.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Volunteering a vague negative without pairing it with the actual strength (ROI) leaves the rep with an unbalanced, discouraging talking point." },
+          { label: "\u201cHard to say \u2014 every agency has strengths and weaknesses, it's really just personal preference.\u201d",
+            verdict:"risky", meter:-6,
+            feedback:"Too noncommittal \u2014 the rep is asking for something concrete to say to a hesitant customer, not a shrug." }
+        ]
+      },
+      {
+        context: "The rep proposes a recurring way of working together going forward.",
+        dialogue: "\u201cWant to meet every couple of weeks to go over leads and opportunities together?\u201d",
+        options: [
+          { label: "\u201cLove it \u2014 let's say you look at three leads, I look at three, and we compare notes on the call. Early mornings work great for me.\u201d",
+            verdict:"good", meter:13,
+            feedback:"Matches the real, effective cadence: a recurring meeting with a concrete way of splitting and comparing lead work, not just a vague standing call." },
+          { label: "\u201cSure, whenever \u2014 just ping me if something comes up.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Ad hoc instead of a real cadence \u2014 without a recurring structure, this kind of relationship tends to fade after the first few weeks." },
+          { label: "\u201cI'd rather you just send me leads directly whenever you have them, no need for regular meetings.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Turns down a chance to build a real strategic relationship, reducing ECD to a passive recipient of referrals instead of an active partner." },
+          { label: "\u201cHonestly, I'm pretty busy \u2014 let's just check in once a quarter.\u201d",
+            verdict:"poor", meter:-12,
+            feedback:"Far too infrequent to build the kind of trust and lead flow this relationship is capable of \u2014 signals the partnership isn't a priority." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "segmentation",
+    tag: "data", tagLabel: "Attribution & Segmentation",
+    client: "Lauren", clientRole: "Outdoor Gear Brand \u2014 Audit Review", initials: "L",
+    title: "\u201cWait, our numbers are actually inflated?\u201d",
+    situation: "A mid-size outdoor brand's Klaviyo account looks healthy on the surface, but your audit reveals attribution settings are overstating revenue by nearly a third, and broad campaign sends are burning out their list.",
+    steps: [
+      {
+        context: "You've just shown the client that their reported Klaviyo revenue is inflated due to Apple Mail Privacy Protection opens and bot clicks.",
+        dialogue: "\u201cWait \u2014 are you telling us our numbers have been wrong this whole time?\u201d",
+        options: [
+          { label: "\u201cNot wrong exactly \u2014 inflated by attribution settings that count opens and clicks that don't reflect real engagement. Once we adjust the settings, you'll see your true baseline, which is what lets us actually improve it.\u201d",
+            verdict:"good", meter:12,
+            feedback:"Reframes an uncomfortable finding as a correction that enables progress, without being defensive or dismissive of the client's concern." },
+          { label: "\u201cYes, unfortunately whoever set this up before did it wrong.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Throwing a previous vendor or in-house team under the bus can feel unprofessional and doesn't help the client move forward \u2014 focus on the fix, not blame." },
+          { label: "\u201cIt's a pretty common issue, don't worry about it too much.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Minimizing a legitimate concern the client just raised can come across as dismissive right when they need a clear, confident explanation." },
+          { label: "\u201cTechnically yes, but it's not really that big of a deal in the grand scheme of things.\u201d",
+            verdict:"poor", meter:-13,
+            feedback:"Confirms the client's fear while simultaneously downplaying it \u2014 an inconsistent, unconvincing response that undermines trust in your findings." }
+        ]
+      },
+      {
+        context: "The client wants to understand why their campaigns feel like they're underperforming despite a large list.",
+        dialogue: "\u201cWe have 90,000 subscribers. Why do our campaigns feel like they're barely moving the needle?\u201d",
+        options: [
+          { label: "\u201cBroad sends to your whole list are actually working against you \u2014 when everyone gets the same message regardless of interest, engagement drops and it hurts your sender reputation. Tighter segments, even smaller ones, convert far better.\u201d",
+            verdict:"good", meter:13,
+            feedback:"Directly answers the size-versus-performance paradox with the real mechanism, and sets up the segmentation recommendation naturally." },
+          { label: "\u201cYour list is probably just not that engaged \u2014 that happens with bigger lists sometimes.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Vague and slightly fatalistic \u2014 doesn't give the client an actionable reason or a path forward." },
+          { label: "\u201cYou probably just need to send a lot more often to make up for it.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"This is close to the opposite of the right advice \u2014 more broad, unsegmented sends would likely worsen fatigue and deliverability, not fix it." },
+          { label: "\u201cIt's probably your subject lines \u2014 we should run some A/B tests on those first.\u201d",
+            verdict:"risky", meter:-6,
+            feedback:"Subject line testing isn't wrong to consider eventually, but it sidesteps the much larger, data-backed segmentation issue you just uncovered." }
+        ]
+      },
+      {
+        context: "The client's team is nervous about losing reach if they narrow their segments.",
+        dialogue: "\u201cIf we start segmenting more, won't we just be reaching fewer people and making less money?\u201d",
+        options: [
+          { label: "\u201cCounterintuitively, no \u2014 targeted sends to genuinely interested segments convert at a much higher rate per recipient. You'll likely see more revenue from fewer, better-matched sends than from blasting everyone.\u201d",
+            verdict:"good", meter:12,
+            feedback:"Addresses the fear directly with the actual mechanism (revenue per recipient), which is the number that matters." },
+          { label: "\u201cYou might lose a little revenue at first, but it's worth it long-term for deliverability.\u201d",
+            verdict:"risky", meter:-6,
+            feedback:"Partially true but leads with a concession that isn't necessarily accurate \u2014 well-executed segmentation typically improves revenue, not just deliverability, fairly quickly." },
+          { label: "\u201cThat's a fair concern, honestly it's hard to say how it'll play out.\u201d",
+            verdict:"poor", meter:-12,
+            feedback:"Undermines your own recommendation right after making it \u2014 shakes confidence in the audit's central finding." },
+          { label: "\u201cYes, reach will go down, but that's just the trade-off you have to accept.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"Confirms their fear without correcting the underlying misunderstanding \u2014 the real story is that revenue per recipient improves, not that they must simply accept a loss." }
+        ]
+      },
+      {
+        context: "The client asks how quickly they'd see the impact if they moved forward with a Mini Implementation to fix this.",
+        dialogue: "\u201cIf we started this next week, how soon would we actually see a difference?\u201d",
+        options: [
+          { label: "\u201cAttribution fixes show up in your reporting almost immediately. Segmentation and flow changes typically show meaningful movement within the first full send cycle or two \u2014 so within a few weeks you should see real signal.\u201d",
+            verdict:"good", meter:11,
+            feedback:"Specific and honest about different timelines for different fixes \u2014 sets accurate expectations instead of one vague number." },
+          { label: "\u201cYou'd probably see results within 24 hours of us starting.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"Wildly overpromises the timeline for meaningful segmentation and flow improvements \u2014 sets up disappointment almost immediately." },
+          { label: "\u201cHard to say exactly, could be weeks, could be a couple months.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Too vague given that you actually know the specific mechanics well enough to give a more precise, confidence-building answer." },
+          { label: "\u201cResults can take a while to show, so I'd say don't expect much for at least a full quarter.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Understates how quickly attribution corrections and flow changes typically show up, and could make the client hesitant to move forward at all." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "sms-silo",
+    tag: "migration", tagLabel: "Platform Migration",
+    client: "Reagan", clientRole: "Eyewear Brand \u2014 Audit Review", initials: "R",
+    title: "\u201cOur SMS platform is a black box\u201d",
+    situation: "An eyewear brand runs SMS through a separate platform from Klaviyo, which means revenue and engagement data live in two disconnected systems \u2014 and nobody can say for sure what's actually working.",
+    steps: [
+      {
+        context: "You've just shown that Klaviyo is only credited with 17% of total store revenue \u2014 unusually low.",
+        dialogue: "\u201cThat attribution number seems really low. Is Klaviyo just not working well for us?\u201d",
+        options: [
+          { label: "\u201cActually the opposite \u2014 that number is low largely because your SMS revenue lives entirely in a separate platform, so Klaviyo can't see or credit it. Once everything's in one place, you'll get a true, unified picture.\u201d",
+            verdict:"good", meter:13,
+            feedback:"Correctly diagnoses the real cause (data silo, not platform underperformance) and reframes it as a fixable visibility problem." },
+          { label: "\u201cKlaviyo email in general just tends to underperform compared to SMS, so that's normal.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"Inaccurate and undersells the platform you're trying to help them get more value from \u2014 the real issue is data fragmentation, not weak email performance." },
+          { label: "\u201cIt could be a few things \u2014 hard to pin down exactly why without digging more.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"You already have the specific, correct answer from your audit \u2014 hedging here undersells your own diagnostic work." },
+          { label: "\u201cYour email flows probably just need a refresh \u2014 that's usually why attribution looks low.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Jumps to a generic explanation instead of the specific, data-backed cause you actually found \u2014 flow quality isn't the driver here." }
+        ]
+      },
+      {
+        context: "The client's team is wary of migrating SMS because they've heard horror stories about number porting and lost subscribers.",
+        dialogue: "\u201cWe're worried about losing our SMS list or our phone number in a migration. Is that a real risk?\u201d",
+        options: [
+          { label: "\u201cThat's a fair concern, and it's worth planning carefully \u2014 phone number porting has specific steps we'd walk through together, and we wouldn't touch your live list until a tested migration path is confirmed.\u201d",
+            verdict:"good", meter:12,
+            feedback:"Validates the concern honestly and offers a concrete, careful process rather than a blanket reassurance." },
+          { label: "\u201cDon't worry, that never happens \u2014 it's a totally seamless process every time.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"Overpromises with no acknowledgment of real risk \u2014 if anything goes even slightly wrong, this promise will be remembered and held against you." },
+          { label: "\u201cIt's a small risk, but honestly worth it for the attribution benefits.\u201d",
+            verdict:"risky", meter:-6,
+            feedback:"Reasonable in spirit, but brushing past the specific mechanics they asked about without a real plan can still leave them uneasy." },
+          { label: "\u201cWe could just start a brand-new SMS list in Klaviyo instead of migrating the old one, to avoid the risk entirely.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Avoids the technical risk but creates a bigger business cost \u2014 abandoning an existing engaged list is usually worse than a carefully managed migration." }
+        ]
+      },
+      {
+        context: "The client asks how the migration would affect their day-to-day operations during the transition.",
+        dialogue: "\u201cWould our team need to manage two systems during the switch, or would there be downtime?\u201d",
+        options: [
+          { label: "\u201cWe'd run a short overlap period where both systems are live so nothing drops, then cut over once everything's verified \u2014 no meaningful downtime, just a brief period of double-checking.\u201d",
+            verdict:"good", meter:11,
+            feedback:"Gives a realistic, specific picture of the transition that addresses the operational concern directly." },
+          { label: "\u201cThere might be a few days where things are a little chaotic, but it usually works out.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Vague and slightly alarming \u2014 'usually works out' doesn't inspire confidence for a client already nervous about the process." },
+          { label: "\u201cNo, it's an instant switch \u2014 one day you're on the old platform, the next day everything's in Klaviyo.\u201d",
+            verdict:"poor", meter:-13,
+            feedback:"Inaccurate and risky to promise \u2014 responsible migrations use an overlap and verification period, not an instant flip." },
+          { label: "\u201cYour team would need to manage both systems for a month or two while we sort it all out.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Overstates the operational burden and timeline \u2014 makes the migration sound far more disruptive than a well-planned one actually is." }
+        ]
+      },
+      {
+        context: "Convinced, the client wants to know what to do next.",
+        dialogue: "\u201cOkay, we're on board \u2014 what's the very next step?\u201d",
+        options: [
+          { label: "\u201cI'll send over a Mini Implementation proposal scoped specifically for the SMS migration, along with a project timeline, by end of day today.\u201d",
+            verdict:"good", meter:12,
+            feedback:"Concrete deliverable with a same-day commitment \u2014 keeps momentum right when the client has said yes." },
+          { label: "\u201cGreat \u2014 I'll circle back to you sometime next week with more details.\u201d",
+            verdict:"poor", meter:-12,
+            feedback:"A week's delay after a client says yes is how enthusiasm cools \u2014 strike while momentum is high." },
+          { label: "\u201cLet's schedule a call in a couple weeks to start mapping out the details.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Too slow given the client just gave a clear green light \u2014 send something concrete now, then schedule the deeper dive." },
+          { label: "\u201cI'll have our team start the migration right away, no need for a formal proposal.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"Skipping a scoped, written proposal \u2014 even for an eager client \u2014 risks misalignment on scope, price, and timeline later." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "missing-flows",
+    tag: "flows", tagLabel: "Missing Lifecycle Flows",
+    client: "Kim", clientRole: "Insurance Retailer \u2014 Audit Review", initials: "K",
+    title: "\u201cWe're making money, so what's the problem?\u201d",
+    situation: "A retailer's abandoned checkout flow alone generates $150,000 in revenue with strong deliverability \u2014 but there's no welcome series, no win-back flow, and campaigns make up just 11% of revenue.",
+    steps: [
+      {
+        context: "The client is proud of their abandoned checkout numbers and feels good about their account overall.",
+        dialogue: "\u201cThose abandoned checkout numbers are great. Honestly, this all sounds like we're doing fine.\u201d",
+        options: [
+          { label: "\u201cYou're doing great with what you have \u2014 that's real, strong performance. The opportunity is what's missing entirely: there's no welcome series and no win-back flow, and those tend to be significant, easy revenue you're leaving on the table.\u201d",
+            verdict:"good", meter:13,
+            feedback:"Validates genuine strength before naming the gap \u2014 avoids sounding like you're dismissing what's already working." },
+          { label: "\u201cActually your account has some real problems we need to talk about.\u201d",
+            verdict:"poor", meter:-13,
+            feedback:"Contradicts the client's positive read without first acknowledging what's genuinely working \u2014 comes across as needlessly negative." },
+          { label: "\u201cIt's fine for now, but you'll probably want to revisit it at some point down the line.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"Too soft \u2014 downplays a real, quantifiable revenue gap into a vague someday concern instead of a concrete opportunity." },
+          { label: "\u201cSure, it's working, but every account has room to improve somewhere.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Generic and non-specific \u2014 doesn't name the actual, compelling gap (missing welcome and win-back flows) that the audit revealed." }
+        ]
+      },
+      {
+        context: "The client wants to understand why campaigns are only 11% of revenue when flows are clearly working well.",
+        dialogue: "\u201cIs it a problem that campaigns are only 11% of our revenue?\u201d",
+        options: [
+          { label: "\u201cYes \u2014 in a healthy account, campaigns should actually be a bigger share since they're where you drive intentional promotions and announcements. Only sending six campaigns last month is likely the main reason that number is so low.\u201d",
+            verdict:"good", meter:12,
+            feedback:"Names the specific, fixable cause (send frequency) rather than treating it as a mysterious or unfixable problem." },
+          { label: "\u201cNot really, flows are what matter most anyway.\u201d",
+            verdict:"poor", meter:-13,
+            feedback:"This contradicts the audit's own finding that a healthy account needs both, and lets a real opportunity go unaddressed." },
+          { label: "\u201cIt depends on your industry, some brands are just flow-heavy.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Deflects with a generalization instead of pointing to the specific, addressable cause you found: too few campaigns sent." },
+          { label: "\u201cThat's actually pretty normal across most of the accounts we see.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"Normalizes a fixable gap instead of naming it as an opportunity \u2014 undercuts the case for doing anything about it." }
+        ]
+      },
+      {
+        context: "The client asks what happens with signups if they don't have list growth pop-ups active yet.",
+        dialogue: "\u201cWe don't really have pop-ups set up \u2014 does that actually matter much?\u201d",
+        options: [
+          { label: "\u201cIt matters a lot \u2014 active signup forms are one of the fastest ways to grow your list, and without them you're relying entirely on organic signups, which limits how much your welcome flow and campaigns can even reach.\u201d",
+            verdict:"good", meter:11,
+            feedback:"Explains the downstream impact clearly \u2014 connects a seemingly small gap to the bigger picture of list growth and flow performance." },
+          { label: "\u201cNot really, most people find pop-ups annoying anyway.\u201d",
+            verdict:"poor", meter:-13,
+            feedback:"Contradicts standard best practice and your own recommendation \u2014 well-designed signup forms are a core list growth lever, not a nuisance to avoid." },
+          { label: "\u201cIt's a nice-to-have, but not really a priority right now.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Undersells something that directly feeds every other flow's effectiveness \u2014 list growth is foundational, not optional." },
+          { label: "\u201cMaybe a little, but I'd focus on the flows first and pop-ups later.\u201d",
+            verdict:"risky", meter:-6,
+            feedback:"Reasonable sequencing instinct, but frames signup growth as separate from flow performance when really it directly feeds it." }
+        ]
+      },
+      {
+        context: "The client is convinced and asks what package would address all of this.",
+        dialogue: "\u201cSo what would you actually recommend given everything we just talked about?\u201d",
+        options: [
+          { label: "\u201cA Mini Implementation \u2014 it covers exactly this: the missing welcome and win-back flows, plus signup form setup, without touching what's already working well like your checkout flow.\u201d",
+            verdict:"good", meter:13,
+            feedback:"Recommends the specific service that matches the specific gaps identified \u2014 clear, scoped, and easy to say yes to." },
+          { label: "\u201cProbably the Full Implementation, just to be safe and cover everything.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Oversells scope \u2014 their checkout flow is already strong, so a full rebuild isn't necessary and makes the ask bigger than it needs to be." },
+          { label: "\u201cHonestly, just our top ongoing management tier would fix everything long-term.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Jumps to the most expensive ongoing option before addressing the specific, immediate gaps with a scoped implementation first." },
+          { label: "\u201cIt's hard to say without more time to think about it.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"After a thorough audit conversation, failing to make a clear recommendation wastes the credibility you just built." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "rebrand-migration",
+    tag: "multibrand", tagLabel: "Multi-Brand Migration",
+    client: "Matty", clientRole: "DTC Apparel Group \u2014 Discovery Call", initials: "M",
+    title: "\u201cWe're rebranding and adding a second label\u201d",
+    situation: "A DTC apparel brand is migrating off Attentive to Klaviyo while simultaneously rebranding and launching a second, related label \u2014 timing and account structure both need to be right.",
+    steps: [
+      {
+        context: "The client is worried about doing a platform migration and a rebrand at the same time.",
+        dialogue: "\u201cShould we wait until after the rebrand is finished to even start this migration?\u201d",
+        options: [
+          { label: "\u201cWe can actually build most of the technical foundation now \u2014 flows, segmentation, deliverability warm-up \u2014 using placeholder branding, then swap in final creative right when the rebrand launches. That way you're not delaying revenue-generating work.\u201d",
+            verdict:"good", meter:13,
+            feedback:"Finds a way to make real progress in parallel rather than forcing an either/or choice \u2014 protects momentum without rushing the rebrand." },
+          { label: "\u201cYes, definitely wait \u2014 doing both at once would be way too risky.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Overly cautious \u2014 unnecessarily delays valuable setup work that doesn't actually depend on final branding assets." },
+          { label: "\u201cNo, let's just push through everything at once and get it all done together.\u201d",
+            verdict:"poor", meter:-13,
+            feedback:"Ignores the real risk of rushing brand-dependent creative work before assets are finalized \u2014 sets up rework and frustration." },
+          { label: "\u201cIt doesn't really matter either way, whenever works for you is fine.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"Fails to offer any actual guidance on a genuinely important sequencing question \u2014 the client came to you for expertise here." }
+        ]
+      },
+      {
+        context: "The client mentions the new second label will target a different, younger audience.",
+        dialogue: "\u201cShould the new label be in the same Klaviyo account as our main brand, or separate?\u201d",
+        options: [
+          { label: "\u201cGiven how different the target audiences are, a separate Klaviyo account usually makes sense \u2014 it keeps segmentation, reporting, and brand voice clean rather than mixing two very different customer bases in one account.\u201d",
+            verdict:"good", meter:12,
+            feedback:"Gives a clear, reasoned recommendation grounded in the specific detail (different audiences) the client just shared." },
+          { label: "\u201cDefinitely keep them together \u2014 it's simpler to manage one account.\u201d",
+            verdict:"poor", meter:-13,
+            feedback:"Prioritizes short-term simplicity over data cleanliness and brand clarity \u2014 mixing very different audiences in one account usually causes problems later." },
+          { label: "\u201cEither way works fine, it's really just a preference thing.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Understates a real strategic consideration \u2014 audience separation is a substantive reason to lean toward separate accounts, not a coin flip." },
+          { label: "\u201cLet's decide that later, once the new label actually launches.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Delays a decision that's easier and cheaper to make correctly upfront \u2014 restructuring accounts after launch is more disruptive." }
+        ]
+      },
+      {
+        context: "The client asks about cost implications of running two separate Klaviyo accounts.",
+        dialogue: "\u201cWon't two accounts just double our Klaviyo costs?\u201d",
+        options: [
+          { label: "\u201cKlaviyo pricing is based on profile counts, so it's more about total contacts across both than the number of accounts \u2014 I can pull an estimate for both structures so you can compare actual numbers before deciding.\u201d",
+            verdict:"good", meter:12,
+            feedback:"Corrects a reasonable but inaccurate assumption with a clear explanation, and offers concrete numbers instead of a guess." },
+          { label: "\u201cYes, unfortunately it will roughly double your Klaviyo bill.\u201d",
+            verdict:"poor", meter:-13,
+            feedback:"Inaccurate \u2014 Klaviyo pricing scales with total profiles, not account count, so this overstates the cost impact and could talk the client out of the right structural decision." },
+          { label: "\u201cProbably somewhat more expensive, but I'm not totally sure of the details.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"This is knowable information \u2014 better to get the actual numbers than to guess on a cost question that affects their decision." },
+          { label: "\u201cDon't worry about cost, focus on what's best for the brand.\u201d",
+            verdict:"risky", meter:-6,
+            feedback:"Dismisses a legitimate budget question instead of answering it \u2014 cost is a valid part of this decision, not something to wave away." }
+        ]
+      },
+      {
+        context: "The client is ready to move forward but wants a single, clear project plan.",
+        dialogue: "\u201cCan you just lay out, in order, what actually happens first?\u201d",
+        options: [
+          { label: "\u201cFirst, we start the Full Implementation on your main brand's account now, using current assets. Second, we scope a separate account for the new label once you confirm the split. Third, we swap in rebrand creative the week it's ready \u2014 no step waits on another unnecessarily.\u201d",
+            verdict:"good", meter:13,
+            feedback:"Gives a clear, sequenced plan that reflects everything discussed \u2014 exactly the kind of concrete roadmap that closes a complex, multi-part deal." },
+          { label: "\u201cLet's just take it one step at a time and figure out the order as we go.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"After a detailed planning conversation, failing to commit to a concrete sequence wastes all the clarity you just built together." },
+          { label: "\u201cWe'll start with the rebrand creative, then handle the Klaviyo work once that's fully done.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"Reverts to the sequential, everything-waits-for-branding approach you had already found a smarter alternative to earlier in the call." },
+          { label: "\u201cI'll put together a plan and send it over sometime this week.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Reasonable, but the client explicitly asked you to lay it out now, in the moment \u2014 delaying an answer you're capable of giving live loses momentum." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "upsell-transparency",
+    tag: "upsell", tagLabel: "Suite Upsell & Transparency",
+    client: "Elyse", clientRole: "Wellness Brand \u2014 Audit Review", initials: "E",
+    title: "\u201cWe just want to know what's actually happening in our account\u201d",
+    situation: "A wellness brand's Klaviyo account has real overlap issues between SMS and email flows, but their biggest ask is transparency \u2014 they've felt out of the loop with account management before.",
+    steps: [
+      {
+        context: "The client opens by explaining their real frustration isn't performance \u2014 it's visibility.",
+        dialogue: "\u201cHonestly, our biggest issue with agencies in the past hasn't been results, it's that we never really know what's happening in our own account.\u201d",
+        options: [
+          { label: "\u201cThat's really important context, thank you for sharing it. Whatever we recommend, we'll build in clear reporting and defined touchpoints so you always know what's being done and why.\u201d",
+            verdict:"good", meter:13,
+            feedback:"Directly addresses the stated concern before moving into any pitch \u2014 shows you listened to what actually matters to them." },
+          { label: "\u201cDon't worry, we're way more transparent than most agencies.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"A vague comparison to unnamed competitors doesn't actually answer their concern \u2014 they need specifics about how you'll operate, not a comparison." },
+          { label: "\u201cOkay, well let's focus on the technical findings first and we can talk about reporting later.\u201d",
+            verdict:"poor", meter:-13,
+            feedback:"Brushes past the client's stated top priority to get to your own agenda \u2014 exactly the dynamic that caused their past frustration." },
+          { label: "\u201cThat makes sense, a lot of clients feel that way about agencies in general.\u201d",
+            verdict:"risky", meter:-6,
+            feedback:"Generic sympathy without a concrete commitment \u2014 doesn't tell them anything about how working with ECD would actually be different." }
+        ]
+      },
+      {
+        context: "You've found that their SMS flows and email flows are firing on overlapping triggers, confusing customers.",
+        dialogue: "\u201cWe had no idea SMS and email were stepping on each other. How did that even happen?\u201d",
+        options: [
+          { label: "\u201cIt's a really common gap when SMS and email get built at different times or by different people \u2014 the fix is straightforward: we merge the overlapping triggers into one coordinated flow so a customer gets one clear message, not two competing ones.\u201d",
+            verdict:"good", meter:12,
+            feedback:"Normalizes the issue without blame, explains the cause simply, and moves straight into the concrete fix." },
+          { label: "\u201cSomeone clearly wasn't paying attention when these were set up.\u201d",
+            verdict:"poor", meter:-13,
+            feedback:"Casts blame rather than focusing on the fix \u2014 unhelpful and can feel unprofessional, especially to a client already sensitive about being kept in the dark." },
+          { label: "\u201cHonestly these things just happen sometimes, hard to say exactly why.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Vague when you actually know the real, explainable cause \u2014 a client who values transparency will notice you're not giving a full answer." },
+          { label: "\u201cIt's a pretty minor issue in the scheme of things, not worth spending too much time on.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"Downplaying a real, customer-facing problem right after the client expressed wanting full visibility undercuts the trust you're trying to build." }
+        ]
+      },
+      {
+        context: "You want to introduce Customer Hub and Marketing Analytics as part of the recommendation.",
+        dialogue: "\u201cWe've heard of Marketing Analytics and Customer Hub \u2014 do we actually need those, or is that just an upsell?\u201d",
+        options: [
+          { label: "\u201cFair question. Given the segmentation issues we just found, Marketing Analytics would directly help \u2014 it's not something I'd recommend if it didn't map to a specific problem you have. Customer Hub is more optional \u2014 useful, but not urgent like the flow fixes.\u201d",
+            verdict:"good", meter:13,
+            feedback:"Honestly distinguishes between a need tied to a real finding and a nice-to-have \u2014 exactly the transparency this client explicitly asked for." },
+          { label: "\u201cYou definitely need both, they're essential for any serious brand.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"Overstates urgency on both products without tying them to specific findings \u2014 exactly the kind of vague upsell pressure this client said they distrust." },
+          { label: "\u201cNo, not really \u2014 those are more for bigger brands than yours.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Dismisses potentially valuable products without engaging with whether they'd actually help \u2014 misses a legitimate opportunity to add value." },
+          { label: "\u201cThey're both nice to have eventually, but nothing urgent right now.\u201d",
+            verdict:"risky", meter:-6,
+            feedback:"Fails to distinguish that Marketing Analytics actually addresses a specific problem you just found \u2014 treats a real need and a nice-to-have as equally optional." }
+        ]
+      },
+      {
+        context: "Ready to move forward, the client wants to set expectations for ongoing communication.",
+        dialogue: "\u201cIf we move forward, how will we actually stay in the loop month to month?\u201d",
+        options: [
+          { label: "\u201cYou'd have a dedicated account strategist as your main point of contact, a monthly strategy call, and a written recap after every major change \u2014 so nothing happens in your account without you knowing why.\u201d",
+            verdict:"good", meter:13,
+            feedback:"Gives a concrete, specific answer to the exact concern that opened the call \u2014 closes the loop on their stated top priority." },
+          { label: "\u201cWe'll reach out whenever something important comes up.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"Exactly the vague, reactive communication style that caused this client's past frustration \u2014 offers no concrete structure." },
+          { label: "\u201cYou can always email us anytime you have a question.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Puts the burden of staying informed entirely on the client \u2014 doesn't offer the proactive structure they're clearly asking for." },
+          { label: "\u201cWe'll send a report at the end of the quarter with everything that happened.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Too infrequent for a client who explicitly said they want to know what's happening in their account \u2014 quarterly is too long a gap." }
+        ]
+      }
+    ]
+  }
+];
+
+/* ============ APP STATE & LOGIC ============ */
+let traineeName = "";
+let currentScenario = null;
+let stepIndex = 0;
+let meterValue = 35;
+let history = [];
+let storageAvailable = null; // null = unknown, true/false once tested
+
+const el = id => document.getElementById(id);
+
+/* ---------- Storage helpers (Claude artifact persistent storage) ---------- */
+async function testStorage(){
+  if (storageAvailable !== null) return storageAvailable;
+  try {
+    if (!window.storage) { storageAvailable = false; return false; }
+    await window.storage.set('healthcheck', String(Date.now()), true);
+    storageAvailable = true;
+  } catch(e){
+    storageAvailable = false;
+  }
+  return storageAvailable;
+}
+
+function sanitizeKey(s){
+  return String(s).replace(/[\s\/\\'"]+/g, '_').slice(0, 60);
+}
+
+async function saveResult(scenario, goodCount, riskyCount, poorCount, total){
+  const ok = await testStorage();
+  const payload = {
+    name: traineeName,
+    scenarioId: scenario.id,
+    scenarioTitle: scenario.title,
+    good: goodCount, risky: riskyCount, poor: poorCount, total: total,
+    timestamp: new Date().toISOString()
+  };
+  if (!ok){
+    try {
+      const local = JSON.parse(localStorage.getItem('ecd_sim_results') || '[]');
+      local.push(payload);
+      localStorage.setItem('ecd_sim_results', JSON.stringify(local));
+    } catch(e){}
+    return false;
+  }
+  try {
+    const key = 'result__' + sanitizeKey(traineeName) + '__' + sanitizeKey(scenario.id) + '__' + Date.now();
+    await window.storage.set(key, JSON.stringify(payload), true);
+    return true;
+  } catch(e){
+    return false;
+  }
+}
+
+async function loadAllResults(){
+  const ok = await testStorage();
+  if (!ok){
+    try {
+      return { remote:false, items: JSON.parse(localStorage.getItem('ecd_sim_results') || '[]') };
+    } catch(e){ return { remote:false, items: [] }; }
+  }
+  try {
+    const listRes = await window.storage.list('result__', true);
+    const keys = (listRes && listRes.keys) || [];
+    const items = [];
+    for (const k of keys){
+      try {
+        const r = await window.storage.get(k, true);
+        if (r && r.value) items.push(JSON.parse(r.value));
+      } catch(e){ /* skip unreadable key */ }
+    }
+    items.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+    return { remote:true, items };
+  } catch(e){
+    return { remote:true, items: [], error:true };
+  }
+}
+
+/* ---------- Name gate ---------- */
+function submitName(){
+  const val = el('traineeNameInput').value.trim();
+  if (!val){ el('traineeNameInput').focus(); return; }
+  traineeName = val;
+  try { localStorage.setItem('ecd_sim_name', val); } catch(e){}
+  el('welcomeName').textContent = traineeName;
+  el('namegate').style.display = 'none';
+  el('landing').style.display = 'block';
+  renderLanding();
+}
+
+function switchUser(){
+  traineeName = "";
+  try { localStorage.removeItem('ecd_sim_name'); } catch(e){}
+  el('traineeNameInput').value = '';
+  el('landing').style.display = 'none';
+  el('namegate').style.display = 'block';
+}
+
+/* ---------- Landing / scenario cards ---------- */
+function renderLanding(){
+  const grid = el('cardgrid');
+  grid.innerHTML = '';
+  SCENARIOS.forEach(sc => {
+    const card = document.createElement('div');
+    card.className = 'scenario-card';
+    card.onclick = () => startScenario(sc.id);
+    card.innerHTML = `
+      <span class="scenario-tag tag-${sc.tag}">${sc.tagLabel}</span>
+      <h3>${sc.title}</h3>
+      <div class="client">${sc.clientRole}</div>
+      <p class="situation">${sc.situation}</p>
+      <div class="meta-row">
+        <div class="startline">Start scenario <span class="arrow">&rarr;</span></div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function goLanding(){
+  el('namegate').style.display = 'none';
+  el('landing').style.display = 'block';
+  el('callscreen').style.display = 'none';
+  el('endscreen').style.display = 'none';
+  el('resultspanel').style.display = 'none';
+}
+
+function startScenario(id){
+  currentScenario = SCENARIOS.find(s => s.id === id);
+  stepIndex = 0;
+  meterValue = 35;
+  history = [];
+  el('landing').style.display = 'none';
+  el('endscreen').style.display = 'none';
+  el('resultspanel').style.display = 'none';
+  el('callscreen').style.display = 'block';
+  el('avatarInitials').textContent = currentScenario.initials;
+  el('clientName').textContent = currentScenario.client;
+  el('clientRole').textContent = currentScenario.clientRole;
+  renderMeter();
+  renderStep();
+}
+
+function replayScenario(){ startScenario(currentScenario.id); }
+
+function renderMeter(){
+  meterValue = Math.max(4, Math.min(96, meterValue));
+  el('meterFill').style.width = meterValue + '%';
+  const state = el('meterState');
+  if (meterValue < 40){ state.textContent = 'Cooling off'; state.style.color = '#9DB1FF'; }
+  else if (meterValue < 70){ state.textContent = 'Building rapport'; state.style.color = '#F5CB68'; }
+  else { state.textContent = 'Closing territory'; state.style.color = '#FF6FAE'; }
+}
+
+function renderDots(){
+  const wrap = el('progressDots');
+  wrap.innerHTML = '';
+  currentScenario.steps.forEach((_, i) => {
+    const d = document.createElement('span');
+    if (i < stepIndex) d.className = 'done';
+    else if (i === stepIndex) d.className = 'current';
+    wrap.appendChild(d);
+  });
+}
+
+function renderStep(){
+  renderDots();
+  const step = currentScenario.steps[stepIndex];
+  el('sceneMeta').textContent = `Step ${stepIndex+1} of ${currentScenario.steps.length}`;
+  const dArea = el('dialogueArea');
+  dArea.innerHTML = `
+    <div class="bubble context">${step.context}</div>
+    <div class="bubble">${step.dialogue}</div>
+  `;
+  const oArea = el('optionsArea');
+  oArea.innerHTML = '';
+  el('feedbackArea').innerHTML = '';
+  el('continueArea').innerHTML = '';
+
+  // Shuffle option order per render so "good" isn't always in the same slot
+  const shuffled = step.options.map((o) => Object.assign({}, o));
+  for (let i = shuffled.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    const tmp = shuffled[i]; shuffled[i] = shuffled[j]; shuffled[j] = tmp;
+  }
+
+  shuffled.forEach((opt) => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.innerHTML = `<span class="say-label">You say</span>${opt.label}`;
+    btn.onclick = () => chooseOption(opt, btn, oArea);
+    oArea.appendChild(btn);
+  });
+}
+
+function chooseOption(opt, chosenBtn, oArea){
+  const buttons = oArea.querySelectorAll('.option');
+  buttons.forEach((b) => {
+    b.disabled = true;
+    if (b === chosenBtn) b.classList.add('chosen-' + opt.verdict);
+    else b.classList.add('faded');
+  });
+
+  meterValue += opt.meter;
+  renderMeter();
+
+  const fb = el('feedbackArea');
+  const verdictLabel = opt.verdict === 'good' ? 'Strong move' : opt.verdict === 'risky' ? 'Risky move' : 'Off track';
+  fb.innerHTML = `
+    <div class="feedback ${opt.verdict}">
+      <span class="verdict">${verdictLabel}</span>
+      ${opt.feedback}
+    </div>
+  `;
+
+  history.push({ title: currentScenario.steps[stepIndex].dialogue, choice: opt.label, verdict: opt.verdict, feedback: opt.feedback });
+
+  const cont = el('continueArea');
+  const isLast = stepIndex === currentScenario.steps.length - 1;
+  const btn = document.createElement('button');
+  btn.className = 'continue-btn';
+  btn.textContent = isLast ? 'See your results \u2192' : 'Continue the call \u2192';
+  btn.onclick = () => {
+    if (isLast) renderEnd();
+    else { stepIndex++; renderStep(); }
+  };
+  cont.appendChild(btn);
+}
+
+async function renderEnd(){
+  el('callscreen').style.display = 'none';
+  el('endscreen').style.display = 'block';
+
+  const goodCount = history.filter(h => h.verdict === 'good').length;
+  const riskyCount = history.filter(h => h.verdict === 'risky').length;
+  const poorCount = history.filter(h => h.verdict === 'poor').length;
+  const total = history.length;
+  const badge = el('endBadge');
+  const title = el('endTitle');
+  const sub = el('endSubtitle');
+
+  if (goodCount === total){
+    badge.className = 'end-badge badge-elite'; badge.textContent = 'Master Elite Closer';
+    title.textContent = 'You ran that exactly like ECD\u2019s playbook recommends.';
+    sub.textContent = 'Every choice matched the proven, deal-saving move from real ECD transcripts. Try another scenario to keep the streak going.';
+  } else if (goodCount >= Math.ceil(total/2)){
+    badge.className = 'end-badge badge-solid'; badge.textContent = 'Solid Closer';
+    title.textContent = 'A deal-worthy call, with room to sharpen.';
+    sub.textContent = 'You kept the deal alive, but a couple of moments cost you momentum. Review the recap below, then replay.';
+  } else {
+    badge.className = 'end-badge badge-practice'; badge.textContent = 'Needs Practice';
+    title.textContent = 'This deal would have gone cold.';
+    sub.textContent = 'A few choices pushed too hard, sounded convincing but missed the mark, or lost the thread entirely. Read the recap, then run it again \u2014 that\u2019s exactly what it\u2019s for.';
+  }
+
+  const recap = el('recapArea');
+  recap.innerHTML = '';
+  history.forEach((h) => {
+    const item = document.createElement('div');
+    item.className = 'recap-item';
+    item.innerHTML = `
+      <div><span class="dot dot-${h.verdict}"></span><span class="step-title">${h.title}</span></div>
+      <div class="step-choice">${h.feedback}</div>
+    `;
+    recap.appendChild(item);
+  });
+
+  const saved = await saveResult(currentScenario, goodCount, riskyCount, poorCount, total);
+  el('saveNote').textContent = saved
+    ? `Result saved for ${traineeName} \u2014 visible in team training results.`
+    : `Result saved locally on this device only (central tracking needs this simulator open as a Claude artifact).`;
+}
+
+/* ---------- Team results panel ---------- */
+async function openResults(){
+  el('landing').style.display = 'none';
+  el('resultspanel').style.display = 'block';
+  const body = el('resultsBody');
+  body.innerHTML = '<div class="results-loading">Loading results&hellip;</div>';
+
+  const res = await loadAllResults();
+  const remote = res.remote, items = res.items, error = res.error;
+
+  let html = '';
+  if (!remote){
+    html += `<div class="storage-warning">Central storage isn't available in this context, so these results are only from this device/browser. To track results for the whole team automatically, open this simulator as a Claude artifact.</div>`;
+  } else if (error){
+    html += `<div class="storage-warning">Couldn't load shared results right now \u2014 try again in a moment.</div>`;
+  }
+
+  if (!items || items.length === 0){
+    html += '<div class="results-empty">No completed scenarios yet. Results will appear here as soon as someone finishes one.</div>';
+  } else {
+    html += `<table class="results-table"><thead><tr>
+      <th>Name</th><th>Scenario</th><th>Score</th><th>Date</th>
+    </tr></thead><tbody>`;
+    items.forEach(r => {
+      const pct = r.total ? Math.round((r.good / r.total) * 100) : 0;
+      const pillColor = pct === 100 ? '#1FAA6D' : pct >= 50 ? '#DE9B1F' : '#E23B5C';
+      const date = new Date(r.timestamp);
+      const dateStr = isNaN(date) ? '\u2014' : date.toLocaleDateString(undefined, { month:'short', day:'numeric', year:'numeric' });
+      html += `<tr>
+        <td>${r.name || '\u2014'}</td>
+        <td>${r.scenarioTitle || r.scenarioId || '\u2014'}</td>
+        <td><span class="score-pill" style="background:${pillColor}22;color:${pillColor};">${r.good}/${r.total} strong (${pct}%)</span></td>
+        <td>${dateStr}</td>
+      </tr>`;
+    });
+    html += '</tbody></table>';
+  }
+  body.innerHTML = html;
+}
+
+/* ---------- Init ---------- */
+(function init(){
+  let savedName = '';
+  try { savedName = localStorage.getItem('ecd_sim_name') || ''; } catch(e){}
+  if (savedName){
+    traineeName = savedName;
+    el('welcomeName').textContent = traineeName;
+    el('namegate').style.display = 'none';
+    el('landing').style.display = 'block';
+    renderLanding();
+  } else {
+    el('namegate').style.display = 'block';
+  }
+  el('traineeNameInput').addEventListener('keydown', function(e){ if (e.key === 'Enter') submitName(); });
+})();
+</script>
+</body>
+</html>
