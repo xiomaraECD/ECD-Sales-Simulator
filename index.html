@@ -105,6 +105,62 @@
   .results-link{margin-top:14px;background:none;border:none;color:#9B96D6;font-family:'Inter';font-size:12.5px;font-weight:600;cursor:pointer;text-decoration:underline;padding:0;}
   .results-link:hover{color:#fff;}
 
+  /* ===== TABS ===== */
+  .tabnav{display:flex;gap:8px;margin-bottom:32px;border-bottom:1px solid rgba(255,255,255,0.10);}
+  .tabbtn{background:none;border:none;color:#8B87AE;font-family:'Inter';font-weight:700;font-size:14px;padding:12px 6px;margin-right:22px;cursor:pointer;border-bottom:2.5px solid transparent;transition:color .15s ease;}
+  .tabbtn:hover{color:#C9C6E8;}
+  .tabbtn.active{color:#fff;border-bottom-color:var(--pink);}
+  .tabpanel{display:none;}
+  .tabpanel.active{display:block;}
+
+  /* ===== QUIZ CARD (special landing card) ===== */
+  .quiz-card{
+    background:linear-gradient(135deg, rgba(236,18,121,0.16), rgba(59,47,201,0.16));
+    border:1px solid rgba(236,18,121,0.35);
+    border-radius:16px;padding:26px 26px 24px;margin-bottom:22px;
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;
+  }
+  .quiz-card .qtext h3{font-size:20px;color:#fff;margin-bottom:6px;}
+  .quiz-card .qtext p{font-size:13.5px;color:#D6D3F0;margin:0;max-width:520px;line-height:1.5;}
+  .quiz-card .qcta{background:var(--pink);color:#fff;border:none;border-radius:30px;padding:13px 24px;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;font-family:'Inter';}
+  .quiz-card .qcta:hover{background:#C90E68;}
+
+  /* ===== QUIZ SCREEN ===== */
+  #quizscreen{display:none;}
+  .quiz-progress{font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.5px;margin-bottom:14px;}
+  .quiz-question{font-size:20px;line-height:1.45;color:var(--ink);margin-bottom:26px;font-weight:600;}
+  .quiz-options{display:flex;flex-direction:column;gap:12px;}
+  .quiz-option{
+    text-align:left;border:1.5px solid #E4E2F0;background:#fff;border-radius:12px;padding:15px 20px;
+    font-family:'Inter';font-size:14px;color:var(--ink);cursor:pointer;line-height:1.5;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .quiz-option:hover{border-color:var(--indigo);background:#F7F6FE;}
+  .quiz-option.selected{border-color:var(--indigo);background:#EDEBFB;}
+  .quiz-nav{display:flex;justify-content:space-between;align-items:center;margin-top:28px;}
+  .quiz-nav .qcount{font-size:12.5px;color:var(--muted);}
+
+  /* ===== QUIZ END SCREEN ===== */
+  #quizendscreen{display:none;}
+
+  /* ===== ADMIN GATE ===== */
+  .admin-gate{max-width:420px;margin:40px auto;text-align:center;}
+  .admin-gate p{color:#C9C6E8;font-size:14px;margin-bottom:18px;}
+  .admin-gate input{
+    width:100%;padding:14px 16px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.18);
+    background:rgba(255,255,255,0.06);color:#fff;font-family:'Inter';font-size:14px;outline:none;margin-bottom:14px;
+  }
+  .admin-gate input:focus{border-color:var(--pink);}
+  .admin-gate button{background:var(--pink);color:#fff;border:none;border-radius:30px;padding:13px 26px;font-weight:700;font-size:14px;cursor:pointer;font-family:'Inter';width:100%;}
+  .admin-gate .gate-error{color:#FF9CB0;font-size:12.5px;margin-top:10px;}
+  .results-filter{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+  .filter-chip{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.16);color:#C9C6E8;font-family:'Inter';font-size:12px;font-weight:600;padding:6px 14px;border-radius:20px;cursor:pointer;}
+  .filter-chip.active{background:var(--pink);border-color:var(--pink);color:#fff;}
+  .type-pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:10.5px;font-weight:700;}
+  .type-sales{background:rgba(74,103,240,0.18);color:#9DB1FF;}
+  .type-module1{background:rgba(240,180,41,0.18);color:#F5CB68;}
+  .type-quiz{background:rgba(236,18,121,0.18);color:#FF8FC0;}
+
   /* ===== CALL SCREEN ===== */
   #callscreen{display:none;}
   .callbar{
@@ -241,16 +297,43 @@
       <div class="welcome-name">Training as <b id="welcomeName">&mdash;</b></div>
       <button class="switch-user" onclick="switchUser()">Not you? Switch</button>
     </div>
-    <div class="hero">
-      <h1>Run the call before you <em>run the call</em>.</h1>
-      <p class="sub">Ten scenarios, pulled from real ECD discovery calls, audit reviews, and internal Klaviyo-partner touch-bases. At each decision point, choose what you'd actually say &mdash; then see how it plays out against ECD's proven playbook answer. Some options are designed to sound reasonable and still be wrong &mdash; read carefully.</p>
+
+    <div class="tabnav">
+      <button class="tabbtn active" id="tabBtnSales" onclick="switchTab('sales')">Sales Simulations</button>
+      <button class="tabbtn" id="tabBtnModule1" onclick="switchTab('module1')">Module 1</button>
     </div>
 
-    <div class="cardgrid" id="cardgrid"></div>
+    <!-- SALES SIMULATIONS TAB -->
+    <div class="tabpanel active" id="tabpanelSales">
+      <div class="hero">
+        <h1>Run the call before you <em>run the call</em>.</h1>
+        <p class="sub">Ten scenarios, pulled from real ECD discovery calls, audit reviews, and internal Klaviyo-partner touch-bases. At each decision point, choose what you'd actually say &mdash; then see how it plays out against ECD's proven playbook answer. Some options are designed to sound reasonable and still be wrong &mdash; read carefully.</p>
+      </div>
+      <div class="cardgrid" id="cardgrid"></div>
+    </div>
+
+    <!-- MODULE 1 TAB -->
+    <div class="tabpanel" id="tabpanelModule1">
+      <div class="hero">
+        <h1>Module 1: <em>Before You're Ever on the Call</em>.</h1>
+        <p class="sub">Homework for Module 1 &mdash; how deals start, the Klaviyo rep relationship, and running a discovery call. Take the quiz first, then work through these four scenarios.</p>
+      </div>
+
+      <div class="quiz-card">
+        <div class="qtext">
+          <h3>Module 1 Quiz</h3>
+          <p>20 tough multiple-choice questions on deal origination, rep relationships, and discovery calls. One attempt shown at a time &mdash; your score is revealed at the end.</p>
+        </div>
+        <button class="qcta" onclick="startQuiz()">Take the quiz &rarr;</button>
+      </div>
+
+      <div class="cardgrid" id="cardgridModule1"></div>
+    </div>
 
     <div class="footnote">Built for anyone joining ECD's Sales Team. Every scenario is drawn from real transcripts and real account situations (client names lightly kept for realism). Run all ten before your first live call &mdash; then come back any time you need a refresher on objection handling.</div>
     <button class="results-link" onclick="openResults()">View team training results &rarr;</button>
   </div>
+
 
   <!-- CALL SCREEN -->
   <div id="callscreen">
@@ -295,6 +378,44 @@
     </div>
   </div>
 
+  <!-- QUIZ SCREEN -->
+  <div id="quizscreen">
+    <div class="callbar">
+      <div class="who">
+        <div class="avatar" id="quizAvatar">Q</div>
+        <div>
+          <div class="name">Module 1 Quiz</div>
+          <div class="role">20 questions &middot; score shown at the end</div>
+        </div>
+      </div>
+      <button class="back-btn" onclick="goLanding()">&larr; All scenarios</button>
+    </div>
+    <div class="stage">
+      <div class="quiz-progress" id="quizProgress">Question 1 of 20</div>
+      <div class="quiz-question" id="quizQuestionText"></div>
+      <div class="quiz-options" id="quizOptionsArea"></div>
+      <div class="quiz-nav">
+        <div class="qcount" id="quizAnsweredCount"></div>
+        <button class="continue-btn" id="quizNextBtn" onclick="quizNext()" disabled>Next &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ END SCREEN -->
+  <div id="quizendscreen">
+    <div class="end-hero">
+      <div class="end-badge" id="quizEndBadge">Result</div>
+      <h2 id="quizEndTitle">Quiz complete</h2>
+      <p id="quizEndSubtitle">Here's how you did.</p>
+    </div>
+    <div class="recap" id="quizRecapArea"></div>
+    <div class="save-note" id="quizSaveNote"></div>
+    <div class="end-actions">
+      <button class="btn-secondary" onclick="startQuiz()">Retake the quiz</button>
+      <button class="btn-primary" onclick="goLanding()">Back to scenarios</button>
+    </div>
+  </div>
+
   <!-- RESULTS PANEL -->
   <div id="resultspanel">
     <div class="results-head">
@@ -304,7 +425,15 @@
       </div>
       <button class="back-btn" onclick="goLanding()">&larr; Back to scenarios</button>
     </div>
-    <div id="resultsBody"><div class="results-loading">Loading results&hellip;</div></div>
+    <div id="adminGateArea">
+      <div class="admin-gate">
+        <p>This view is restricted. Enter the admin passcode to see team results.</p>
+        <input type="password" id="adminPasscodeInput" placeholder="Passcode" autocomplete="off">
+        <button onclick="submitAdminPasscode()">Unlock results</button>
+        <div class="gate-error" id="adminGateError" style="display:none;">Incorrect passcode &mdash; try again.</div>
+      </div>
+    </div>
+    <div id="resultsBody" style="display:none;"><div class="results-loading">Loading results&hellip;</div></div>
   </div>
 
 </div>
@@ -1128,7 +1257,392 @@ const SCENARIOS = [
   }
 ];
 
-/* ============ APP STATE & LOGIC ============ */
+/* Tag all Sales Simulations scenarios with their track */
+SCENARIOS.forEach(s => { s.track = "sales"; });
+
+/* ============ MODULE 1 SCENARIOS ============
+   Four scenarios grounded in the "ECD Sales Course Training — Module 1" call:
+   pre-call rep touch-base, running the discovery call, fit assessment
+   (ongoing management vs. not), and list cleaning coordination.
+*/
+const SCENARIOS_MODULE1 = [
+  {
+    id: "m1-touchbase",
+    track: "module1",
+    tag: "partner", tagLabel: "Pre-Call Touch-Base",
+    client: "Marcus", clientRole: "Klaviyo Sales Rep (NewCo) \u2014 Pre-Call Touch-Base", initials: "M",
+    title: "\u201cLet's sync before we get on with the client\u201d",
+    situation: "A Klaviyo sales rep wants a quick call before looping you into a discovery call with a price-sensitive prospect who's migrating off Mailchimp.",
+    steps: [
+      {
+        context: "Marcus opens the touch-base by giving you background on the client.",
+        dialogue: "\u201cThis client's on Mailchimp, decent-sized list, but they're pretty price sensitive. I haven't sold them anything beyond core Klaviyo yet. What do you need from me before the call?\u201d",
+        options: [
+          { label: "\u201cThat's exactly what I need \u2014 list size, current ESP, and their budget sensitivity. Can you also tell me their annual revenue and Klaviyo MRR if you have it? Those three numbers shape everything I recommend.\u201d",
+            verdict:"good", meter:12,
+            feedback:"Mirrors the training's guidance: always get list size, likely Klaviyo MRR, and revenue context from the rep before the call \u2014 it's the foundation for the right recommendation." },
+          { label: "\u201cDon't worry about details, I'll just figure it out live on the call with the client.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"Skips the entire point of a pre-call touch-base \u2014 going in blind wastes the rep's context and often means asking the client things the rep already knew." },
+          { label: "\u201cI don't need anything else, just send me the calendar invite.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Technically enough to show up, but passes on a chance to get real context (revenue, budget sensitivity specifics) that would make the discovery call sharper." },
+          { label: "\u201cCan you just handle the whole call yourself and loop me in only if they want ECD services?\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Reasonable in some cases, but jumping to this before even discussing the agenda skips the alignment step \u2014 better to ask what the rep wants first." }
+        ]
+      },
+      {
+        context: "Marcus seems unsure how to structure the joint call itself.",
+        dialogue: "\u201cHonestly I don't really have an agenda for this one \u2014 want to just wing it together?\u201d",
+        options: [
+          { label: "\u201cLet's make it simple: you cover Klaviyo pricing and close that first, then if there's room, I'll bring up implementation. Does that order work for you?\u201d",
+            verdict:"good", meter:13,
+            feedback:"When a rep isn't organized, the training says to bring the structure yourself \u2014 Klaviyo pricing first, then ECD only if there's space, and always in the order the rep agrees to." },
+          { label: "\u201cSure, let's just wing it \u2014 should be fine.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"Missing a real opportunity to add value: an unorganized rep is exactly when you should propose structure, not go in equally unprepared." },
+          { label: "\u201cI'll just go first and cover ECD services, then hand it to you for Klaviyo pricing.\u201d",
+            verdict:"poor", meter:-15,
+            feedback:"Pushing ECD services ahead of the rep's own Klaviyo pitch \u2014 on a deal that isn't yours \u2014 is exactly the kind of toe-stepping the training warns against." },
+          { label: "\u201cLet's just see how the client steers the conversation and go from there.\u201d",
+            verdict:"risky", meter:-6,
+            feedback:"Being flexible is good, but offering zero structure when the rep explicitly asked for help planning the call misses the moment to add value." }
+        ]
+      },
+      {
+        context: "Marcus mentions the client might push back on price during the call.",
+        dialogue: "\u201cIf they say it's too expensive, what should I tell them about you guys?\u201d",
+        options: [
+          { label: "\u201cTell them we also have a Mini Implementation that's more affordable \u2014 and if it comes up, feel free to loop me in live so I can walk through the difference myself.\u201d",
+            verdict:"good", meter:11,
+            feedback:"Gives the rep a real, concrete answer they can use immediately, and offers to step in directly rather than leaving them to represent ECD's options alone." },
+          { label: "\u201cJust tell them we're worth it, no need to get into specifics.\u201d",
+            verdict:"poor", meter:-13,
+            feedback:"Leaves the rep with nothing concrete to say \u2014 vague reassurance doesn't help a rep handle a real price objection from their client." },
+          { label: "\u201cTell them to just talk to me directly after the call about pricing.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Defers the whole question instead of equipping the rep with something useful in the moment \u2014 a live price objection needs a live answer." },
+          { label: "\u201cTell them we can throw in a discount if that's what it takes.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Promising a discount through the rep, without looping in the people who actually approve discounts, isn't something to hand off casually." }
+        ]
+      },
+      {
+        context: "Wrapping the touch-base, Marcus asks about who should own communication with the client going forward.",
+        dialogue: "\u201cShould I keep talking to them directly, or do you want to take over?\u201d",
+        options: [
+          { label: "\u201cWhatever's easiest for you \u2014 I'm happy to have you own it and CC me, or I can take the lead after this call. Your call, it's your relationship with them.\u201d",
+            verdict:"good", meter:12,
+            feedback:"Confirms ownership clearly instead of leaving it ambiguous, and explicitly defers to the rep \u2014 exactly the 'this is your deal' principle in action." },
+          { label: "\u201cI'll just take it from here, easier for everyone.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"Assumes ownership of the client relationship without asking \u2014 the training is explicit that the rep owns the client and ECD follows their lead." },
+          { label: "\u201cLet's just both email them and see who they respond to first.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"Creates confusion for the client and risks duplicate or conflicting messages \u2014 ownership should be clear and singular, not a race." },
+          { label: "\u201cI'll stay out of it completely unless you specifically ask me to jump in.\u201d",
+            verdict:"risky", meter:-6,
+            feedback:"Too passive \u2014 leaves genuine ambiguity about what happens next instead of proposing a clear, simple ownership split." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "m1-discoverycall",
+    track: "module1",
+    tag: "audit", tagLabel: "Running the Discovery Call",
+    client: "Renee", clientRole: "Home Goods Brand \u2014 Discovery Call", initials: "R",
+    title: "\u201cSo... what is this call, exactly?\u201d",
+    situation: "A Klaviyo rep looped you into a discovery call with almost no context. The client sounds a little guarded as the call begins.",
+    steps: [
+      {
+        context: "The call has just started and the client isn't sure what to expect.",
+        dialogue: "\u201cSorry, I wasn't totally clear on what this call is about \u2014 what exactly are we doing here?\u201d",
+        options: [
+          { label: "\u201cTotally fair question \u2014 this is basically a discovery call. My goal is just to understand your business and where you want to go, and see where we might be able to help.\u201d",
+            verdict:"good", meter:13,
+            feedback:"Saying \u201cthis is basically a discovery call\u201d out loud in the first minute lowers the client's guard immediately \u2014 exactly the framing the training recommends." },
+          { label: "\u201cLet's just start with your Klaviyo account and I'll explain as we go.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Skips framing the call entirely \u2014 the client is left guessing at the purpose, which tends to make people more guarded, not less." },
+          { label: "\u201cI'm here to show you why you should sign up for our services today.\u201d",
+            verdict:"poor", meter:-15,
+            feedback:"Way too sales-forward for the opening seconds of a call \u2014 this is a discovery conversation, not a pitch, and framing it as a pitch immediately raises defenses." },
+          { label: "\u201cHonestly, I'm not totally sure either, let's just see where it goes.\u201d",
+            verdict:"poor", meter:-13,
+            feedback:"Undermines your own credibility right out of the gate \u2014 you should always be able to frame the purpose of the call clearly, even with limited rep context." }
+        ]
+      },
+      {
+        context: "The client relaxes a bit and starts talking about her business.",
+        dialogue: "\u201cOkay, that helps. We're a home goods brand, growing pretty fast actually.\u201d",
+        options: [
+          { label: "\u201cThat's great to hear \u2014 tell me more. Do you have anyone handling marketing in-house, and what does your team look like right now?\u201d",
+            verdict:"good", meter:12,
+            feedback:"Opens with the team & bandwidth question, letting the client talk while gathering exactly the kind of context the training highlights as essential." },
+          { label: "\u201cGreat, so let's talk about our Full Implementation package then.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"Jumps straight to a pitch before learning anything about the business \u2014 skips the entire discovery phase the call is supposed to be." },
+          { label: "\u201cNice. So what's your annual revenue looking like these days?\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Overall revenue is real information to get, but the training is clear it's a delicate ask \u2014 raise it only once the conversation naturally opens the door, not this early." },
+          { label: "\u201cCool. Are you currently happy with Klaviyo, or thinking about switching platforms?\u201d",
+            verdict:"risky", meter:-5,
+            feedback:"Not a bad question eventually, but skips ahead of the more foundational team/bandwidth and tech stack questions that usually come first." }
+        ]
+      },
+      {
+        context: "The client mentions she's been handling all the email marketing herself, with no flows in place.",
+        dialogue: "\u201cIt's really just been me sending the occasional email whenever I have time \u2014 no real system.\u201d",
+        options: [
+          { label: "\u201cThat makes total sense given how fast you're growing \u2014 and it tells me a lot. No flows means there's real, fast opportunity here. Are you doing any SMS today, or is it just email so far?\u201d",
+            verdict:"good", meter:13,
+            feedback:"Reads the pain signal correctly (no system = flows and a promo calendar will feel like magic) and naturally moves to the SMS appetite question next." },
+          { label: "\u201cYou really should have automated this a long time ago.\u201d",
+            verdict:"poor", meter:-13,
+            feedback:"Comes across as a judgment on the client rather than a helpful diagnosis \u2014 the training's tone is always collaborative, never critical of the client's past choices." },
+          { label: "\u201cThat's fine, plenty of brands do it that way.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Too neutral \u2014 misses the chance to name what this signal actually means (a real, fixable gap) and move the conversation forward." },
+          { label: "\u201cOkay, well you'll definitely need our top ongoing management tier then.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"Jumps straight to the most expensive recommendation before finishing discovery \u2014 you don't have enough information yet to know if that's even the right fit." }
+        ]
+      },
+      {
+        context: "The call is wrapping up and the client seems interested but non-committal.",
+        dialogue: "\u201cThis was really helpful, thank you. I'll think about it and let you know.\u201d",
+        options: [
+          { label: "\u201cOf course \u2014 based on everything you've shared, I think a Full Implementation would be a strong fit. Can we grab 15 minutes Thursday so I can walk you through exactly what that looks like?\u201d",
+            verdict:"good", meter:14,
+            feedback:"Never leave a call without a follow-up already scheduled \u2014 the golden rule from the training. Proposes a specific day and a specific reason to meet." },
+          { label: "\u201cSounds good, just reach out whenever you're ready.\u201d",
+            verdict:"poor", meter:-16,
+            feedback:"This is precisely the mistake the training calls out by name: ending on 'I'll wait to hear from you' instead of locking a concrete next step." },
+          { label: "\u201cNo worries, I'll follow up with you in a month to check in.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"Far too long a gap after a warm, engaged call \u2014 momentum is highest right now, not a month from now." },
+          { label: "\u201cOkay, I'll send you some info and you can look it over.\u201d",
+            verdict:"risky", meter:-10,
+            feedback:"\u201cI'll send some info\u201d with no scheduled next step is exactly the vague ending the training warns is where deals go to die." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "m1-fitcheck",
+    track: "module1",
+    tag: "price", tagLabel: "Fit Check: Retainer or Not",
+    client: "Two Clients", clientRole: "Signal-to-Service Matching", initials: "\u2696",
+    title: "\u201cDo we push the retainer here, or not?\u201d",
+    situation: "Two very different discovery calls in one day. Matching the right recommendation to the right client is the whole game.",
+    steps: [
+      {
+        context: "Client A: a Shopify home fragrance brand doing about $3.5M/year, no internal marketing team, zero flows live.",
+        dialogue: "\u201cWe don't have any marketing person on staff right now \u2014 it's just been the founders doing everything, and honestly nothing automated at all.\u201d",
+        options: [
+          { label: "\u201cThat's exactly the kind of situation where ongoing account management makes sense \u2014 you've got the revenue and the gap, but no one in-house to run it day to day. I'd recommend starting with a Full Implementation, then moving into ongoing management.\u201d",
+            verdict:"good", meter:14,
+            feedback:"Textbook strong fit: Shopify, $2M+/year, no internal team, no flows \u2014 exactly the profile the training says to push toward Full Implementation plus ongoing management." },
+          { label: "\u201cSounds like you're all set then \u2014 you don't really need any help from us.\u201d",
+            verdict:"poor", meter:-16,
+            feedback:"Completely misses a strong-fit signal \u2014 no internal team plus real revenue is exactly when ECD should be recommending ongoing management, not stepping back." },
+          { label: "\u201cI'd recommend the Strategy Partnership so you can keep handling execution yourselves.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"Strategy Partnership is for teams that want to keep executing themselves \u2014 this client has no one to execute at all, so full ongoing management fits better." },
+          { label: "\u201cLet's start small with just a Mini Implementation and see how it goes.\u201d",
+            verdict:"risky", meter:-6,
+            feedback:"Not wrong exactly, but underserves a client this strong-fit \u2014 with no team and solid revenue, Full Implementation plus ongoing management is the better recommendation." }
+        ]
+      },
+      {
+        context: "Client B (later that day): a supplements brand with a full-time, 3-person in-house marketing team who just want expert guidance.",
+        dialogue: "\u201cWe actually have a marketing team already \u2014 we just want someone experienced to help us think through strategy. We don't want to hand off execution.\u201d",
+        options: [
+          { label: "\u201cThat's a perfect fit for our Strategy Partnership \u2014 biweekly strategy sessions and quarterly audits, with your team still owning execution day to day.\u201d",
+            verdict:"good", meter:14,
+            feedback:"Matches the exact signal from the training: an internal team that wants to keep executing is a Strategy Partnership fit, not an ongoing management retainer." },
+          { label: "\u201cYou should really just sign up for our top ongoing management tier \u2014 it includes everything.\u201d",
+            verdict:"poor", meter:-16,
+            feedback:"Directly contradicts what the client just said \u2014 pushing a full execution retainer on a team that explicitly wants to keep executing themselves ignores the signal completely." },
+          { label: "\u201cHonestly, if you have a team already, you probably don't need us at all.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Misses a real, valuable fit \u2014 having an internal team doesn't mean there's no opportunity, it just points to a different service (Strategy Partnership, not ongoing management)." },
+          { label: "\u201cLet's start with a Full Implementation and revisit ongoing management later.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"An implementation could still make sense eventually, but skips directly addressing what they asked for right now: strategic guidance while keeping execution in-house." }
+        ]
+      },
+      {
+        context: "Client A follows up: their budget is tighter than expected, only about $60K/year in total revenue.",
+        dialogue: "Wait \u2014 new information just came in: this is actually a very small, local version of \u201cClient A,\u201d making around $60,000 a year total, not $3.5M as first assumed.",
+        options: [
+          { label: "\u201cGiven the size here, I'd stick to a one-time project like a Mini Implementation rather than pushing ongoing management \u2014 the retainer doesn't make sense at this budget.\u201d",
+            verdict:"good", meter:13,
+            feedback:"Matches the training directly: brands making under roughly $50\u2013100K a year are too small for ongoing management, but one-time implementations are still a good fit." },
+          { label: "\u201cLet's still push the full ongoing management retainer \u2014 they just need to find the budget.\u201d",
+            verdict:"poor", meter:-15,
+            feedback:"Pushing a retainer on a client this small ignores the training's explicit guidance \u2014 small, tight-budget brands get one-time services, not ongoing management pitches." },
+          { label: "\u201cThey're too small for us entirely, let's not offer them anything.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Overcorrects \u2014 the training is clear that even small clients can be a good fit for one-time implementations, just not for the ongoing retainer." },
+          { label: "\u201cLet's offer them the Strategy Partnership since it's cheaper than full ongoing management.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Strategy Partnership still assumes an internal team to execute \u2014 a tiny brand with founders doing everything likely needs the work actually done, not just strategy." }
+        ]
+      },
+      {
+        context: "A Klaviyo rep asks how you decided what to recommend across these different calls.",
+        dialogue: "\u201cHow do you decide who gets the ongoing management pitch and who doesn't?\u201d",
+        options: [
+          { label: "\u201cIt comes down to matching the signal to the motion \u2014 revenue, whether they have an internal team, and how much automation is already in place. Same framework, different answer each time.\u201d",
+            verdict:"good", meter:12,
+            feedback:"Names the actual principle from the training \u2014 not every deal needs the same pitch, and reading the signals correctly is the whole skill." },
+          { label: "\u201cHonestly, I just push ongoing management on everyone and see who bites.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"Exactly the wrong approach \u2014 pushing the same pitch regardless of fit wastes trust with both the rep and the client." },
+          { label: "\u201cIt's mostly random, just depends on the mood of the call.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"Undersells a real, teachable framework as guesswork \u2014 there's a clear, repeatable signal-to-service match the training walks through." },
+          { label: "\u201cI always just ask my manager to decide for me.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Reasonable to loop in support on edge cases, but this is a core skill you should be able to apply yourself on most calls." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "m1-listcleaning",
+    track: "module1",
+    tag: "technical", tagLabel: "List Cleaning Coordination",
+    client: "Priya", clientRole: "Klaviyo Sales Rep \u2014 List Cleaning Request", initials: "P",
+    title: "\u201cCan you clean this list before we quote them?\u201d",
+    situation: "A Klaviyo rep needs a prospect's list cleaned so their active profile count \u2014 and therefore their Klaviyo quote \u2014 comes down before they'll commit.",
+    steps: [
+      {
+        context: "The rep pings you on Slack with a new list cleaning request.",
+        dialogue: "\u201cHey \u2014 got a client who's hesitant on Klaviyo because their active profile count looks huge. Can your team clean their list so we can get them a better price?\u201d",
+        options: [
+          { label: "\u201cHappy to help \u2014 first thing, can you have them fill out our HubSpot intake form so I can get this tracked properly on our end? Then I'll need Klaviyo manager access plus their Shopify collaborator code.\u201d",
+            verdict:"good", meter:12,
+            feedback:"Matches the training exactly: register the lead via the intake form first, then request the specific access needed \u2014 Klaviyo manager access and the Shopify collaborator code." },
+          { label: "\u201cSure, just send me their Klaviyo login and password and I'll take care of it.\u201d",
+            verdict:"poor", meter:-15,
+            feedback:"Asking for a login and password directly is neither the real process nor good security practice \u2014 the correct ask is manager-level access plus the Shopify collaborator code, and always after the intake form." },
+          { label: "\u201cSure, I'll just get started once you send over their email address.\u201d",
+            verdict:"risky", meter:-10,
+            feedback:"An email address alone doesn't give you what you need to actually do the work \u2014 skips both the intake form and the real access requirements." },
+          { label: "\u201cWe can definitely help, but this would need to go through a paid audit first.\u201d",
+            verdict:"risky", meter:-6,
+            feedback:"List cleaning as a favor for a rep's active deal isn't usually gated behind a paid audit \u2014 this is exactly the kind of \u201cwhatever they need, you help\u201d request the training describes." }
+        ]
+      },
+      {
+        context: "The rep clarifies the client already has Klaviyo connected, but has been sending from Shopify's native tool.",
+        dialogue: "\u201cThey do have Klaviyo set up already, just haven't been using it much for sending.\u201d",
+        options: [
+          { label: "\u201cGood \u2014 that makes this easier. We'll do the list cleaning inside Klaviyo itself rather than Shopify, since that's always the better place to do it once an account exists.\u201d",
+            verdict:"good", meter:13,
+            feedback:"Matches the training's stated preference: always do list cleaning inside Klaviyo when the account already exists, rather than in the sending platform." },
+          { label: "\u201cWe'll clean it in Shopify's tool since that's where they've been sending from.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"Goes against the training's explicit guidance to prefer cleaning inside Klaviyo whenever the account is already set up, regardless of where they've been sending." },
+          { label: "\u201cIt doesn't really matter which platform we clean it in.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"The training is specific here \u2014 there is a preferred platform (Klaviyo), so treating it as a coin flip misses established best practice." },
+          { label: "\u201cLet's clean it in both places to be thorough.\u201d",
+            verdict:"risky", meter:-6,
+            feedback:"Unnecessary duplication of work \u2014 once Klaviyo is set up, that's the single source of truth to clean from." }
+        ]
+      },
+      {
+        context: "Before starting, you want to make sure you don't over-suppress and hurt the rep's commission.",
+        dialogue: "You're about to start the cleaning \u2014 what do you check with the rep first?",
+        options: [
+          { label: "\u201cIs there a minimum active profile count you'd like us to try to stay above? I don't want to suppress more aggressively than makes sense for the pricing conversation you're having.\u201d",
+            verdict:"good", meter:13,
+            feedback:"Exactly the question from the training \u2014 rep commission is tied to Klaviyo MRR, so always confirm a minimum active profile count before an aggressive cleaning." },
+          { label: "\u201cNothing \u2014 we'll just suppress as aggressively as possible to be thorough.\u201d",
+            verdict:"poor", meter:-15,
+            feedback:"Over-suppressing without checking with the rep can tank their commission and the deal's pricing \u2014 this is the exact mistake the training warns against." },
+          { label: "\u201cI'll just ask the client directly how low they want their list to go.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Skips the rep, who has the real context on commission and pricing sensitivity \u2014 this conversation belongs with the rep first, not the client." },
+          { label: "\u201cI'll just use our standard suppression rules and not worry about it.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Ignores that this specific deal has a pricing sensitivity the rep flagged \u2014 standard rules aren't a substitute for checking in on this particular case." }
+        ]
+      },
+      {
+        context: "The cleaning turns up a lot of bouncing addresses beyond what the rep's minimum would suggest keeping.",
+        dialogue: "You've found a large number of addresses that will almost certainly bounce, right around the rep's stated floor.",
+        options: [
+          { label: "\u201cI'd flag this to the rep directly: explain that these specific addresses are near-certain bounces, and recommend suppressing them even if it dips slightly below their stated minimum \u2014 then let the rep make the final call.\u201d",
+            verdict:"good", meter:12,
+            feedback:"Mirrors the real Jack Cloud example: be transparent about deliverability risk, make a clear recommendation, but let the rep decide since it's their deal and their commission." },
+          { label: "\u201cI'll just quietly suppress them without mentioning it, since it's clearly the right call.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Being right about the recommendation doesn't mean skipping the rep \u2014 transparency about a mid-cleaning judgment call matters, even when you're confident." },
+          { label: "\u201cI'll leave them in since the rep gave a specific number and I don't want to go below it.\u201d",
+            verdict:"poor", meter:-13,
+            feedback:"Rigidly following a number without flagging a legitimate deliverability concern isn't the same as respecting the rep's lead \u2014 give them the information and let them decide." },
+          { label: "\u201cI'll just remove even more than that to be extra safe on deliverability.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"Overcorrects past the rep's stated floor without even flagging it \u2014 still skips the collaborative check-in the situation calls for." }
+        ]
+      }
+    ]
+  }
+];
+
+/* ============ MODULE 1 QUIZ ============
+   20 questions grounded in the Module 1 deck + the "ECD Sales Course Training — Module 1" call.
+*/
+const QUIZ_MODULE1 = [
+  { q: "According to Module 1, what are the three most common ways a deal starts at ECD?", options: ["Cold email, referral, and trade shows", "Klaviyo rep intro, client reaches out directly, and HubSpot outbound (Brazil)", "Klaviyo rep intro, paid ads, and HubSpot outbound", "Client reaches out, LinkedIn outreach, and Klaviyo rep intro"], correctIndex: 1,
+    explanation: "The three most common origination paths are a Klaviyo rep intro, a client reaching out directly (usually via the website), and the Brazil HubSpot outbound project." },
+  { q: "Where do most Klaviyo rep-originated deals get introduced?", options: ["A direct email to Xiomara", "The Klaviyo\u2013ECD Slack channel", "A HubSpot support ticket", "Klaviyo partner portal messaging"], correctIndex: 1,
+    explanation: "The Klaviyo\u2013ECD Slack channel is where most rep-originated deals are born \u2014 reps drop audits, intros, and questions there constantly." },
+  { q: "What's the recommended first daily habit for managing the Klaviyo rep relationship?", options: ["Reviewing the HubSpot pipeline first thing", "Blocking the first hour to check the Klaviyo\u2013ECD Slack channel and follow up with reps", "Sending a weekly newsletter to reps", "Running one client audit before anything else"], correctIndex: 1,
+    explanation: "Xiomara described blocking the first hour of every day specifically to check the Klaviyo\u2013ECD channel and follow up \u2014 missing a message can mean missing a deal." },
+  { q: "What are the three types of Klaviyo reps discussed in Module 1?", options: ["Customer Growth, Customer Success, and Sales Reps (NewCo)", "Customer Success, Partner Success, and Sales Ops", "Growth, Retention, and Enterprise", "Sales Reps, Onboarding Reps, and Success Managers"], correctIndex: 0,
+    explanation: "The three types are Customer Growth (expansion-focused), Customer Success (retention-focused), and Sales Reps / NewCo (net-new business)." },
+  { q: "Which rep type is most likely to request a K:Expert audit to push additional Klaviyo suite products on an existing client?", options: ["Sales Reps (NewCo)", "Customer Success", "Customer Growth", "Implementation Partners"], correctIndex: 2,
+    explanation: "Customer Growth reps work with clients already in Klaviyo and want to expand the account \u2014 they're the most frequent requesters of K:Expert audits." },
+  { q: "Which rep type may explicitly ask ECD NOT to push additional Klaviyo products right away, prioritizing retention instead?", options: ["Customer Growth", "Customer Success", "Sales Reps (NewCo)", "Enterprise Reps"], correctIndex: 1,
+    explanation: "Customer Success reps are focused on preventing churn \u2014 in the training's example, one explicitly asked ECD to focus on making existing email/SMS work well before pushing Marketing Analytics." },
+  { q: "Which rep type is most likely to loop ECD in for list cleaning and email redesigns ahead of a Klaviyo migration?", options: ["Customer Success", "Sales Reps (NewCo)", "Customer Growth", "None \u2014 these are always self-serve"], correctIndex: 1,
+    explanation: "Sales reps (NewCo) sell Klaviyo to brands migrating from other ESPs or starting fresh \u2014 they're the ones most often requesting list cleanings and email redesigns to help close the Klaviyo deal." },
+  { q: "According to Module 1, what are the three most common non-deal requests reps make of ECD?", options: ["Audit request, discount request, and contract review", "Audit request, list cleaning, and email redesign", "List cleaning, onboarding call, and invoice request", "Email redesign, ad spend audit, and catalog sync"], correctIndex: 1,
+    explanation: "The three most common favor-style requests are an audit request, a list cleaning, and an email redesign for the client's first welcome email." },
+  { q: "Where should a list cleaning ideally be performed, according to the training?", options: ["In the client's current ESP, before migrating", "Inside Klaviyo itself, once the account is integrated", "In a spreadsheet exported from Shopify", "It doesn't matter \u2014 any platform works equally well"], correctIndex: 1,
+    explanation: "Xiomara was explicit: list cleanings should ideally always be done inside Klaviyo once the account is set up, not in the client's prior ESP." },
+  { q: "In the real list cleaning example discussed, what active profile count minimum did the rep ask ECD to try to stay above?", options: ["50,000", "25,000", "10,000", "There is no minimum \u2014 suppress as aggressively as possible"], correctIndex: 1,
+    explanation: "The rep asked ECD not to drop the active profile count below roughly 25,000, since rep commission is tied to the client's Klaviyo MRR." },
+  { q: "What's the very first thing ECD should ask a Klaviyo rep to do once they intend to loop in a client?", options: ["Send over the client's Klaviyo login", "Fill out ECD's HubSpot intake form", "Schedule the discovery call directly", "Provide a signed NDA"], correctIndex: 1,
+    explanation: "Every lead should go through the HubSpot intake form first \u2014 it's what creates the company and contact records before anything else happens." },
+  { q: "Who is responsible for creating the actual deal in the HubSpot pipeline once the intake form is submitted?", options: ["The Klaviyo rep", "Maria", "Xiomara only, with no exceptions", "It's created automatically with no human involvement"], correctIndex: 1,
+    explanation: "Maria creates the deal in the HubSpot pipeline after the intake form comes in \u2014 though the training notes you can create it yourself if she hasn't yet, as long as you tell her." },
+  { q: "In HubSpot, which pipeline does a client belong in if they filled out ECD's own website contact form directly (not through a Klaviyo rep)?", options: ["Klaviyo Referrals pipeline", "Existing Client pipeline", "New Client pipeline", "Brazil Outbound pipeline"], correctIndex: 2,
+    explanation: "Clients who land on the website and fill out the form directly go into the New Client pipeline." },
+  { q: "What are the three active HubSpot outbound sequences used for the Brazil motion?", options: ["Cold outreach, warm outreach, and referral outreach", "Churned Account, Free Account, and Demo Request", "Free Trial, Paid Trial, and Enterprise Trial", "New Lead, Qualified Lead, and Closed Lead"], correctIndex: 1,
+    explanation: "The three Brazil sequences are Churned Account (re-engaging lapsed Klaviyo users), Free Account (nurturing free-tier signups), and Demo Request (following up on inbound demo interest)." },
+  { q: "What's the core principle Xiomara says out loud to every Klaviyo rep before a joint call?", options: ["\u201cWe'll take it from here.\u201d", "\u201cThis is your deal. We're here to help.\u201d", "\u201cLet's split the commission evenly.\u201d", "\u201cWe only work with Shopify clients.\u201d"], correctIndex: 1,
+    explanation: "\u201cThis is your deal. We're here to help\u201d is the core principle \u2014 following the rep's lead and never stepping on their toes." },
+  { q: "What are the four steps in the \u201canatomy of a rep touch-base call\u201d?", options: ["Rep shares context, align on service fit, agree on call sequencing, confirm who owns follow-up", "Rep shares context, ECD pitches services, client signs, invoice sent", "Introduction, objection handling, close, handoff", "Discovery, audit, proposal, contract"], correctIndex: 0,
+    explanation: "The four steps are: the rep shares full context, you align on the service that actually fits, agree on sequencing for the joint call, and confirm who owns what happens next." },
+  { q: "What should you say in roughly the first 60 seconds of a discovery call to lower the client's guard?", options: ["\u201cThis is basically a discovery call.\u201d", "\u201cWe're the best Klaviyo agency in the world.\u201d", "\u201cLet's talk pricing right away.\u201d", "\u201cI need your Shopify admin access before we begin.\u201d"], correctIndex: 0,
+    explanation: "Framing the call out loud \u2014 \u201cthis is basically a discovery call\u201d \u2014 in the first 60 seconds lowers everyone's guard and sets expectations." },
+  { q: "What's ECD's benchmark range for healthy Klaviyo-attributed revenue, and what's the floor?", options: ["10\u201320%, floor is 10%", "25\u201345%, floor is 25%", "50\u201370%, floor is 50%", "There's no fixed benchmark \u2014 it varies entirely per client"], correctIndex: 1,
+    explanation: "ECD's healthy range is 25\u201345% Klaviyo-attributed revenue, with 25% as the floor \u2014 never the goal." },
+  { q: "What's the golden rule for ending every discovery call or audit?", options: ["Always send a proposal within the hour", "Never leave without a follow-up already scheduled", "Always get a verbal yes before ending the call", "Always offer a discount to close on the spot"], correctIndex: 1,
+    explanation: "Never leave a discovery call or audit without a follow-up already scheduled \u2014 \u201cI'll send some info\u201d is where deals go to die." },
+  { q: "Per the signal-to-service matching guidance, which client profile is the strongest fit for ongoing account management (a retainer)?", options: ["A Shopify e-commerce brand making $2M+/year with no internal marketing team and no flows", "A small local brand making under $50K/year on a tight budget", "A brand with a strong internal marketing team that only wants strategic guidance", "A brand on Mailchimp making $30K/year in total revenue"], correctIndex: 0,
+    explanation: "The strongest ongoing-management fit is a Shopify e-commerce brand making $2M+/year with no internal team and no flows \u2014 real revenue plus a real execution gap." }
+];
+
+
 let traineeName = "";
 let currentScenario = null;
 let stepIndex = 0;
@@ -1158,6 +1672,8 @@ function sanitizeKey(s){
 async function saveResult(scenario, goodCount, riskyCount, poorCount, total){
   const ok = await testStorage();
   const payload = {
+    type: "sim",
+    track: scenario.track || "sales",
     name: traineeName,
     scenarioId: scenario.id,
     scenarioTitle: scenario.title,
@@ -1181,6 +1697,34 @@ async function saveResult(scenario, goodCount, riskyCount, poorCount, total){
   }
 }
 
+async function saveQuizResult(correctCount, total, answers){
+  const ok = await testStorage();
+  const payload = {
+    type: "quiz",
+    track: "module1",
+    name: traineeName,
+    scenarioId: "m1-quiz",
+    scenarioTitle: "Module 1 Quiz",
+    good: correctCount, risky: 0, poor: (total - correctCount), total: total,
+    timestamp: new Date().toISOString()
+  };
+  if (!ok){
+    try {
+      const local = JSON.parse(localStorage.getItem('ecd_sim_results') || '[]');
+      local.push(payload);
+      localStorage.setItem('ecd_sim_results', JSON.stringify(local));
+    } catch(e){}
+    return false;
+  }
+  try {
+    const key = 'quizresult__' + sanitizeKey(traineeName) + '__' + Date.now();
+    await window.storage.set(key, JSON.stringify(payload), true);
+    return true;
+  } catch(e){
+    return false;
+  }
+}
+
 async function loadAllResults(){
   const ok = await testStorage();
   if (!ok){
@@ -1189,8 +1733,11 @@ async function loadAllResults(){
     } catch(e){ return { remote:false, items: [] }; }
   }
   try {
-    const listRes = await window.storage.list('result__', true);
-    const keys = (listRes && listRes.keys) || [];
+    const [simList, quizList] = await Promise.all([
+      window.storage.list('result__', true),
+      window.storage.list('quizresult__', true)
+    ]);
+    const keys = [...((simList && simList.keys) || []), ...((quizList && quizList.keys) || [])];
     const items = [];
     for (const k of keys){
       try {
@@ -1226,10 +1773,9 @@ function switchUser(){
 }
 
 /* ---------- Landing / scenario cards ---------- */
-function renderLanding(){
-  const grid = el('cardgrid');
-  grid.innerHTML = '';
-  SCENARIOS.forEach(sc => {
+function renderCardGrid(gridEl, scenarioArray){
+  gridEl.innerHTML = '';
+  scenarioArray.forEach(sc => {
     const card = document.createElement('div');
     card.className = 'scenario-card';
     card.onclick = () => startScenario(sc.id);
@@ -1242,8 +1788,22 @@ function renderLanding(){
         <div class="startline">Start scenario <span class="arrow">&rarr;</span></div>
       </div>
     `;
-    grid.appendChild(card);
+    gridEl.appendChild(card);
   });
+}
+
+function renderLanding(){
+  renderCardGrid(el('cardgrid'), SCENARIOS);
+  renderCardGrid(el('cardgridModule1'), SCENARIOS_MODULE1);
+}
+
+let activeTab = 'sales';
+function switchTab(tab){
+  activeTab = tab;
+  el('tabBtnSales').classList.toggle('active', tab === 'sales');
+  el('tabBtnModule1').classList.toggle('active', tab === 'module1');
+  el('tabpanelSales').classList.toggle('active', tab === 'sales');
+  el('tabpanelModule1').classList.toggle('active', tab === 'module1');
 }
 
 function goLanding(){
@@ -1252,16 +1812,20 @@ function goLanding(){
   el('callscreen').style.display = 'none';
   el('endscreen').style.display = 'none';
   el('resultspanel').style.display = 'none';
+  el('quizscreen').style.display = 'none';
+  el('quizendscreen').style.display = 'none';
 }
 
 function startScenario(id){
-  currentScenario = SCENARIOS.find(s => s.id === id);
+  currentScenario = SCENARIOS.find(s => s.id === id) || SCENARIOS_MODULE1.find(s => s.id === id);
   stepIndex = 0;
   meterValue = 35;
   history = [];
   el('landing').style.display = 'none';
   el('endscreen').style.display = 'none';
   el('resultspanel').style.display = 'none';
+  el('quizscreen').style.display = 'none';
+  el('quizendscreen').style.display = 'none';
   el('callscreen').style.display = 'block';
   el('avatarInitials').textContent = currentScenario.initials;
   el('clientName').textContent = currentScenario.client;
@@ -1401,14 +1965,64 @@ async function renderEnd(){
 }
 
 /* ---------- Team results panel ---------- */
+const ADMIN_PASSCODE = "ECD-Elite2026";
+let adminUnlocked = false;
+let cachedResultsItems = [];
+let resultsFilter = 'all';
+
+function submitAdminPasscode(){
+  const val = el('adminPasscodeInput').value;
+  if (val === ADMIN_PASSCODE){
+    adminUnlocked = true;
+    el('adminGateArea').style.display = 'none';
+    el('resultsBody').style.display = 'block';
+    el('adminGateError').style.display = 'none';
+    loadAndRenderResults();
+  } else {
+    el('adminGateError').style.display = 'block';
+  }
+}
+
 async function openResults(){
   el('landing').style.display = 'none';
   el('resultspanel').style.display = 'block';
+  el('adminPasscodeInput').value = '';
+  el('adminGateError').style.display = 'none';
+  if (adminUnlocked){
+    el('adminGateArea').style.display = 'none';
+    el('resultsBody').style.display = 'block';
+    loadAndRenderResults();
+  } else {
+    el('adminGateArea').style.display = 'block';
+    el('resultsBody').style.display = 'none';
+  }
+}
+
+async function loadAndRenderResults(){
   const body = el('resultsBody');
   body.innerHTML = '<div class="results-loading">Loading results&hellip;</div>';
-
   const res = await loadAllResults();
-  const remote = res.remote, items = res.items, error = res.error;
+  cachedResultsItems = res.items || [];
+  renderResultsTable(res.remote, res.error);
+}
+
+function setResultsFilter(f){
+  resultsFilter = f;
+  renderResultsTable(true, false);
+}
+
+function typePillFor(item){
+  if (item.type === 'quiz') return '<span class="type-pill type-quiz">Quiz</span>';
+  if (item.track === 'module1') return '<span class="type-pill type-module1">Module 1</span>';
+  return '<span class="type-pill type-sales">Sales Sim</span>';
+}
+
+function renderResultsTable(remote, error){
+  const body = el('resultsBody');
+  let items = cachedResultsItems;
+  if (resultsFilter === 'sales') items = items.filter(i => i.track !== 'module1' && i.type !== 'quiz');
+  else if (resultsFilter === 'module1') items = items.filter(i => i.track === 'module1' && i.type !== 'quiz');
+  else if (resultsFilter === 'quiz') items = items.filter(i => i.type === 'quiz');
 
   let html = '';
   if (!remote){
@@ -1417,27 +2031,141 @@ async function openResults(){
     html += `<div class="storage-warning">Couldn't load shared results right now \u2014 try again in a moment.</div>`;
   }
 
+  html += `<div class="results-filter">
+    <button class="filter-chip ${resultsFilter==='all'?'active':''}" onclick="setResultsFilter('all')">All</button>
+    <button class="filter-chip ${resultsFilter==='sales'?'active':''}" onclick="setResultsFilter('sales')">Sales Simulations</button>
+    <button class="filter-chip ${resultsFilter==='module1'?'active':''}" onclick="setResultsFilter('module1')">Module 1 Sims</button>
+    <button class="filter-chip ${resultsFilter==='quiz'?'active':''}" onclick="setResultsFilter('quiz')">Module 1 Quiz</button>
+  </div>`;
+
   if (!items || items.length === 0){
-    html += '<div class="results-empty">No completed scenarios yet. Results will appear here as soon as someone finishes one.</div>';
+    html += '<div class="results-empty">No results yet for this filter.</div>';
   } else {
     html += `<table class="results-table"><thead><tr>
-      <th>Name</th><th>Scenario</th><th>Score</th><th>Date</th>
+      <th>Name</th><th>Type</th><th>Scenario</th><th>Score</th><th>Date</th>
     </tr></thead><tbody>`;
     items.forEach(r => {
       const pct = r.total ? Math.round((r.good / r.total) * 100) : 0;
       const pillColor = pct === 100 ? '#1FAA6D' : pct >= 50 ? '#DE9B1F' : '#E23B5C';
       const date = new Date(r.timestamp);
       const dateStr = isNaN(date) ? '\u2014' : date.toLocaleDateString(undefined, { month:'short', day:'numeric', year:'numeric' });
+      const scoreLabel = r.type === 'quiz' ? `${r.good}/${r.total} correct (${pct}%)` : `${r.good}/${r.total} strong (${pct}%)`;
       html += `<tr>
         <td>${r.name || '\u2014'}</td>
+        <td>${typePillFor(r)}</td>
         <td>${r.scenarioTitle || r.scenarioId || '\u2014'}</td>
-        <td><span class="score-pill" style="background:${pillColor}22;color:${pillColor};">${r.good}/${r.total} strong (${pct}%)</span></td>
+        <td><span class="score-pill" style="background:${pillColor}22;color:${pillColor};">${scoreLabel}</span></td>
         <td>${dateStr}</td>
       </tr>`;
     });
     html += '</tbody></table>';
   }
   body.innerHTML = html;
+}
+
+/* ---------- Quiz engine ---------- */
+let quizAnswers = []; // { selectedIndex, correctIndex }
+let quizIndex = 0;
+let quizSelected = null;
+
+function startQuiz(){
+  quizIndex = 0;
+  quizAnswers = [];
+  quizSelected = null;
+  el('landing').style.display = 'none';
+  el('endscreen').style.display = 'none';
+  el('quizendscreen').style.display = 'none';
+  el('resultspanel').style.display = 'none';
+  el('quizscreen').style.display = 'block';
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion(){
+  const q = QUIZ_MODULE1[quizIndex];
+  el('quizProgress').textContent = `Question ${quizIndex + 1} of ${QUIZ_MODULE1.length}`;
+  el('quizQuestionText').textContent = q.q;
+  const area = el('quizOptionsArea');
+  area.innerHTML = '';
+  q.options.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-option';
+    btn.textContent = opt;
+    btn.onclick = () => selectQuizOption(idx, btn);
+    area.appendChild(btn);
+  });
+  quizSelected = (quizAnswers[quizIndex] !== undefined) ? quizAnswers[quizIndex].selectedIndex : null;
+  if (quizSelected !== null){
+    area.children[quizSelected].classList.add('selected');
+  }
+  el('quizAnsweredCount').textContent = `${quizAnswers.filter(a => a !== undefined).length} of ${QUIZ_MODULE1.length} answered`;
+  el('quizNextBtn').disabled = (quizSelected === null);
+  el('quizNextBtn').textContent = (quizIndex === QUIZ_MODULE1.length - 1) ? 'See your score \u2192' : 'Next \u2192';
+}
+
+function selectQuizOption(idx, btn){
+  const area = el('quizOptionsArea');
+  Array.from(area.children).forEach(c => c.classList.remove('selected'));
+  btn.classList.add('selected');
+  quizSelected = idx;
+  const q = QUIZ_MODULE1[quizIndex];
+  quizAnswers[quizIndex] = { selectedIndex: idx, correctIndex: q.correctIndex };
+  el('quizNextBtn').disabled = false;
+}
+
+function quizNext(){
+  if (quizIndex === QUIZ_MODULE1.length - 1){
+    finishQuiz();
+  } else {
+    quizIndex++;
+    renderQuizQuestion();
+  }
+}
+
+async function finishQuiz(){
+  el('quizscreen').style.display = 'none';
+  el('quizendscreen').style.display = 'block';
+
+  const correctCount = quizAnswers.filter(a => a && a.selectedIndex === a.correctIndex).length;
+  const total = QUIZ_MODULE1.length;
+  const badge = el('quizEndBadge');
+  const title = el('quizEndTitle');
+  const sub = el('quizEndSubtitle');
+  const pct = Math.round((correctCount / total) * 100);
+
+  if (pct >= 90){
+    badge.className = 'end-badge badge-elite'; badge.textContent = 'Master Elite Score';
+    title.textContent = `${correctCount}/${total} \u2014 that's Module 1 down cold.`;
+    sub.textContent = "You clearly know how deals start, how the rep relationship works, and how discovery calls should run.";
+  } else if (pct >= 65){
+    badge.className = 'end-badge badge-solid'; badge.textContent = 'Solid Score';
+    title.textContent = `${correctCount}/${total} \u2014 good foundation, a few gaps.`;
+    sub.textContent = "Review the questions you missed below, then revisit the Module 1 deck or replay the quiz.";
+  } else {
+    badge.className = 'end-badge badge-practice'; badge.textContent = 'Needs Review';
+    title.textContent = `${correctCount}/${total} \u2014 worth another pass through Module 1.`;
+    sub.textContent = "This one's dense. Review the recap below against the deck and training call, then retake it.";
+  }
+
+  const recap = el('quizRecapArea');
+  recap.innerHTML = '';
+  QUIZ_MODULE1.forEach((q, idx) => {
+    const a = quizAnswers[idx];
+    const correct = a && a.selectedIndex === a.correctIndex;
+    const item = document.createElement('div');
+    item.className = 'recap-item';
+    const yourAnswer = a ? q.options[a.selectedIndex] : '(no answer)';
+    const rightAnswer = q.options[q.correctIndex];
+    item.innerHTML = `
+      <div><span class="dot ${correct ? 'dot-good' : 'dot-poor'}"></span><span class="step-title">${q.q}</span></div>
+      <div class="step-choice">${correct ? 'Correct: ' + rightAnswer : 'You answered: ' + yourAnswer + ' \u2014 correct answer: ' + rightAnswer}. ${q.explanation}</div>
+    `;
+    recap.appendChild(item);
+  });
+
+  const saved = await saveQuizResult(correctCount, total, quizAnswers);
+  el('quizSaveNote').textContent = saved
+    ? `Result saved for ${traineeName} \u2014 visible in team training results.`
+    : `Result saved locally on this device only (central tracking needs this simulator open as a Claude artifact).`;
 }
 
 /* ---------- Init ---------- */
