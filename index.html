@@ -159,6 +159,7 @@
   .type-pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:10.5px;font-weight:700;}
   .type-sales{background:rgba(74,103,240,0.18);color:#9DB1FF;}
   .type-module1{background:rgba(240,180,41,0.18);color:#F5CB68;}
+  .type-module2{background:rgba(160,120,255,0.20);color:#C8AFFF;}
   .type-quiz{background:rgba(236,18,121,0.18);color:#FF8FC0;}
 
   /* ===== CALL SCREEN ===== */
@@ -301,6 +302,7 @@
     <div class="tabnav">
       <button class="tabbtn active" id="tabBtnSales" onclick="switchTab('sales')">Sales Simulations</button>
       <button class="tabbtn" id="tabBtnModule1" onclick="switchTab('module1')">Module 1</button>
+      <button class="tabbtn" id="tabBtnModule2" onclick="switchTab('module2')">Module 2</button>
     </div>
 
     <!-- SALES SIMULATIONS TAB -->
@@ -324,15 +326,34 @@
           <h3>Module 1 Quiz</h3>
           <p>20 tough multiple-choice questions on deal origination, rep relationships, and discovery calls. One attempt shown at a time &mdash; your score is revealed at the end.</p>
         </div>
-        <button class="qcta" onclick="startQuiz()">Take the quiz &rarr;</button>
+        <button class="qcta" onclick="startQuiz('module1')">Take the quiz &rarr;</button>
       </div>
 
       <div class="cardgrid" id="cardgridModule1"></div>
     </div>
 
+    <!-- MODULE 2 TAB -->
+    <div class="tabpanel" id="tabpanelModule2">
+      <div class="hero">
+        <h1>Module 2: <em>What We Sell &amp; What It Costs</em>.</h1>
+        <p class="sub">Homework for Module 2 &mdash; product knowledge, pricing, discounting rules, and audit delivery. Take the quiz first, then work through these four scenarios.</p>
+      </div>
+
+      <div class="quiz-card">
+        <div class="qtext">
+          <h3>Module 2 Quiz</h3>
+          <p>20 tough multiple-choice questions on Klaviyo suite pricing, commission rules, service fit, and audit methodology. One attempt shown at a time &mdash; your score is revealed at the end.</p>
+        </div>
+        <button class="qcta" onclick="startQuiz('module2')">Take the quiz &rarr;</button>
+      </div>
+
+      <div class="cardgrid" id="cardgridModule2"></div>
+    </div>
+
     <div class="footnote">Built for anyone joining ECD's Sales Team. Every scenario is drawn from real transcripts and real account situations (client names lightly kept for realism). Run all ten before your first live call &mdash; then come back any time you need a refresher on objection handling.</div>
     <button class="results-link" onclick="openResults()">View team training results &rarr;</button>
   </div>
+
 
 
   <!-- CALL SCREEN -->
@@ -384,8 +405,8 @@
       <div class="who">
         <div class="avatar" id="quizAvatar">Q</div>
         <div>
-          <div class="name">Module 1 Quiz</div>
-          <div class="role">20 questions &middot; score shown at the end</div>
+          <div class="name" id="quizScreenTitle">Module 1 Quiz</div>
+          <div class="role" id="quizScreenSubtitle">20 questions &middot; score shown at the end</div>
         </div>
       </div>
       <button class="back-btn" onclick="goLanding()">&larr; All scenarios</button>
@@ -1642,8 +1663,389 @@ const QUIZ_MODULE1 = [
     explanation: "The strongest ongoing-management fit is a Shopify e-commerce brand making $2M+/year with no internal team and no flows \u2014 real revenue plus a real execution gap." }
 ];
 
+/* ============ MODULE 2 SCENARIOS ============
+   Four scenarios grounded in the "ECD Sales Course Training — Module 2" call:
+   price sensitivity & framing a free audit, suite upsell & discount rules,
+   diagnosing pain signals into the right service/tier, and audit delivery tone.
+*/
+const SCENARIOS_MODULE2 = [
+  {
+    id: "m2-pricesensitive",
+    track: "module2",
+    tag: "price", tagLabel: "Price Sensitivity Abroad",
+    client: "Rafael", clientRole: "Brazilian Apparel Brand \u2014 Discovery Call", initials: "R",
+    title: "\u201cWe already have Klaviyo, we just want free guidance\u201d",
+    situation: "A well-known Brazilian brand is already paying for Klaviyo. They want free audit guidance, not paid work \u2014 and the rep who introduced them just found out they're already a paying account.",
+    steps: [
+      {
+        context: "The client opens by making it clear they don't want to pay ECD for anything right now.",
+        dialogue: "\u201cWe're already investing our own resources into Klaviyo. We were really hoping for some free guidance rather than something we'd have to pay for.\u201d",
+        options: [
+          { label: "\u201cTotally understand \u2014 let's do a free audit together. I'll walk through your account live and flag exactly what we're seeing and how it could improve, no cost to you for that part.\u201d",
+            verdict:"good", meter:13,
+            feedback:"Matches the real approach: reframe the free audit as a genuine opportunity you're offering them, not a concession \u2014 keeps the door open for paid work once they see the findings." },
+          { label: "\u201cUnfortunately we don't do anything for free, so we'd need to charge you for any guidance.\u201d",
+            verdict:"poor", meter:-15,
+            feedback:"Free audits to earn trust are a normal, effective part of the motion \u2014 flatly refusing shuts the conversation down before it starts." },
+          { label: "\u201cSure, I'll just tell you everything that's wrong for free and we can go from there.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Giving away the full findings with no framing or forward motion undersells the value of what you're doing \u2014 present it as a real audit, not a casual freebie." },
+          { label: "\u201cWe can do it for free, but only if you commit to a paid package afterward.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"Attaching a hard condition to the free audit before they've even seen the value defeats the purpose \u2014 let the findings do the convincing first." }
+        ]
+      },
+      {
+        context: "The audit reveals only 2 of the core flows are live, heavy reliance on campaigns, and no SMS \u2014 the client mentions they'd rather use WhatsApp.",
+        dialogue: "\u201cWe're not really interested in SMS \u2014 in Brazil, WhatsApp is what everyone actually uses.\u201d",
+        options: [
+          { label: "\u201cThat makes sense \u2014 WhatsApp comes with its own cost and compliance considerations in Klaviyo, so let's set SMS aside and focus on the flows and campaign strategy instead, where the real opportunity is right now.\u201d",
+            verdict:"good", meter:12,
+            feedback:"Respects a clear market-specific preference without arguing, and redirects to the two flows and segmentation gaps that are the actual highest-value findings." },
+          { label: "\u201cSMS really is worth reconsidering, most brands regret skipping it.\u201d",
+            verdict:"poor", meter:-13,
+            feedback:"Pushes back on a clear cultural/market preference the client just explained \u2014 arguing this point risks the whole relationship over a channel that isn't the priority anyway." },
+          { label: "\u201cOkay, well then there's not much else we can offer you.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"Drastically undersells the opportunity \u2014 only 2 flows live and heavy campaign reliance is a strong signal for a Full Implementation, independent of the SMS question." },
+          { label: "\u201cWhatsApp isn't something we support at all, so there's nothing we can do there.\u201d",
+            verdict:"risky", meter:-6,
+            feedback:"Technically true but unnecessarily final \u2014 better to pivot smoothly to where ECD can actually help rather than dwelling on what it can't do." }
+        ]
+      },
+      {
+        context: "The client wants pricing before committing any more time to the conversation.",
+        dialogue: "\u201cI really want to know the cost of all of this before we go further \u2014 I don't want to waste time on something we can't afford.\u201d",
+        options: [
+          { label: "\u201cCompletely fair \u2014 I'll get you pricing today. Given what we're seeing, I'd recommend a Full Implementation plus ongoing management, and I'll make sure the numbers reflect your market realistically.\u201d",
+            verdict:"good", meter:12,
+            feedback:"Sends pricing promptly as requested, and flags that market context (currency, local pricing sensitivity) will be considered \u2014 without personally improvising a discount." },
+          { label: "\u201cLet's just cut the price in half for you since you're in Brazil, don't worry about it.\u201d",
+            verdict:"poor", meter:-16,
+            feedback:"Unilaterally discounting without aligning with Zach or Xiomara is exactly what the training warns against \u2014 pricing flexibility always gets looped through leadership first." },
+          { label: "\u201cI can't really share pricing until we've had a few more calls.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"The client directly asked for pricing to avoid wasting time \u2014 delaying it further risks losing them, especially given their explicit budget concern." },
+          { label: "\u201cPricing is the same everywhere in the world, there's no flexibility at all.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Overstates rigidity \u2014 the training shows real willingness to accommodate different markets, just always through the right approval channel, not as a blanket \u201cno.\u201d" }
+        ]
+      },
+      {
+        context: "After seeing USD pricing, the client pushes back hard, citing currency devaluation in Brazil.",
+        dialogue: "\u201cA thousand US dollars is enormous for us right now given how weak our currency is. This feels impossible.\u201d",
+        options: [
+          { label: "\u201cThat's really important context \u2014 let me raise this with our team about how we can make the numbers work better for the Brazilian market, and I'll come back to you with next steps.\u201d",
+            verdict:"good", meter:13,
+            feedback:"Acknowledges the real, legitimate currency concern and escalates for guidance rather than improvising a discount \u2014 exactly the right move on a market-pricing question." },
+          { label: "\u201cI understand, let's just knock 30% off the price right now to make it work.\u201d",
+            verdict:"poor", meter:-15,
+            feedback:"Improvising a specific discount percentage on the spot, without checking with Zach or Xiomara, is the exact mistake the training explicitly warns against." },
+          { label: "\u201cUnfortunately the pricing is fixed and there's nothing we can do about that.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"Shuts down a legitimate, well-explained concern instead of escalating it \u2014 market-specific pricing accommodation is a real possibility, just not one to decide alone." },
+          { label: "\u201cMaybe you could look into a personal loan to cover it.\u201d",
+            verdict:"poor", meter:-16,
+            feedback:"Wildly inappropriate suggestion that ignores the legitimate market context the client just raised, and could seriously damage trust." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "m2-suiteupsell",
+    track: "module2",
+    tag: "upsell", tagLabel: "Suite Upsell & Discount Rules",
+    client: "Devon", clientRole: "Klaviyo Customer Growth Rep \u2014 Internal Touch-Base", initials: "D",
+    title: "\u201cCan we make this deal a little sweeter?\u201d",
+    situation: "A rep wants help closing an SMS migration and the client is also asking about a discount on the Full Implementation \u2014 testing whether you know the real rules for both.",
+    steps: [
+      {
+        context: "The rep shares numbers on the SMS side of the deal.",
+        dialogue: "\u201cThis client's SMS spend with Klaviyo would land around $8,200 a month if they migrate off Attentive. Anything you can do to sweeten the SMS side for them?\u201d",
+        options: [
+          { label: "\u201cActually, yes \u2014 since that's above our $7,000 SMS MRR threshold, we can offer the SMS implementation completely free. I'll just confirm with Zach before we say it out loud to the client.\u201d",
+            verdict:"good", meter:13,
+            feedback:"Correctly applies the real rule: SMS Klaviyo MRR above $7,000/month qualifies for a free SMS implementation, since the commission covers the cost \u2014 while still confirming before promising it." },
+          { label: "\u201cSure, let's just give them 50% off the SMS implementation to help close it.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Improvises a discount instead of applying the real, existing rule \u2014 at $8,200/month MRR, the correct move is offering it free, not guessing at a percentage." },
+          { label: "\u201cSMS pricing is fixed no matter what, there's nothing we can offer here.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"Misses a real, applicable rule \u2014 this deal clears the $7K/month threshold that makes a free SMS implementation possible." },
+          { label: "\u201cLet's just wait and see if they ask for a discount before offering anything.\u201d",
+            verdict:"risky", meter:-6,
+            feedback:"Passing up a chance to proactively make a strong, rule-based offer that could help close the deal faster." }
+        ]
+      },
+      {
+        context: "Separately, the client asks about a discount on the $6,000 Full Implementation, with no other commitment offered.",
+        dialogue: "\u201cIs there any way to get a better price on the $6,000 implementation?\u201d",
+        options: [
+          { label: "\u201cWe can look at a discount if you're open to committing to at least 4 months of ongoing account management \u2014 let me align with Zach on the exact percentage and get back to you.\u201d",
+            verdict:"good", meter:13,
+            feedback:"Matches the exact rule from the training: discounts on the Full Implementation get tied to a 4-month-minimum ongoing management commitment, aligned with Zach." },
+          { label: "\u201cSure, I can knock off 15% right now, no problem.\u201d",
+            verdict:"poor", meter:-15,
+            feedback:"Offers a specific discount unilaterally and with no commitment attached \u2014 both violate the real rule that discounts are tied to retainer commitment and require alignment first." },
+          { label: "\u201cWe never discount the Full Implementation under any circumstances.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Overstates rigidity \u2014 discounts are genuinely possible on the Full Implementation, just tied to an ongoing management commitment." },
+          { label: "\u201cThe Mini Implementation is already discounted, so let's just switch them to that instead.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Sidesteps the actual question \u2014 switching service tiers isn't the same as answering whether a discount is possible on the one they asked about." }
+        ]
+      },
+      {
+        context: "The client says they want the full Klaviyo suite \u2014 Customer Hub, Agent, and Reviews.",
+        dialogue: "\u201cIf we're doing the full suite, is there any way to bundle some of this in more affordably?\u201d",
+        options: [
+          { label: "\u201cWe can include Customer Hub and a Mini Marketing Analytics setup at no extra cost as part of this package, with the agreement that Agent and Reviews are paid add-ons.\u201d",
+            verdict:"good", meter:12,
+            feedback:"Matches the exact free-add-on pattern from the training: Customer Hub and Mini Marketing Analytics can be offered free, with the rest of the suite paid." },
+          { label: "\u201cWe can make the entire suite free if you commit to a year of ongoing management.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"Overextends the real rule \u2014 only specific products (Customer Hub, Mini Marketing Analytics) are positioned as free add-ons, not the entire suite." },
+          { label: "\u201cNone of our suite products can ever be offered for free.\u201d",
+            verdict:"poor", meter:-13,
+            feedback:"Contradicts the actual, established practice of offering Customer Hub and Mini Marketing Analytics as free value-adds in the right circumstances." },
+          { label: "\u201cLet's make Agent free instead, since that's the one they're most excited about.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Agent isn't one of the products positioned as a free add-on \u2014 offering it free deviates from the established, approved pattern." }
+        ]
+      },
+      {
+        context: "The rep mentions they personally won't earn commission on most of what you're about to recommend.",
+        dialogue: "\u201cHonestly, once they're paying for Klaviyo, most of what you're pitching won't hit my commission anyway. Do whatever you think is right.\u201d",
+        options: [
+          { label: "\u201cAppreciate you saying that \u2014 I'll still push whatever genuinely fits the client, and if any of it lands within your 120-day window, that's a nice bonus for you too.\u201d",
+            verdict:"good", meter:12,
+            feedback:"Matches the training exactly: keep recommending what's genuinely right for the client, and note that some products may still fall within the rep's 120-day commission window." },
+          { label: "\u201cIf you're not getting commission, maybe we should scale back what we're offering them.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"Ties the quality of the client recommendation to the rep's personal commission \u2014 the right call is always what's best for the client, regardless of this rep's payout." },
+          { label: "\u201cOkay, since you don't care, I'll just decide everything without checking with you again.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Slightly overreads \u2018do whatever you want\u2019 as permission to disengage entirely \u2014 different reps have different styles, and it's still worth keeping this one in the loop out of respect." },
+          { label: "\u201cThat's disappointing, I was hoping you'd be more involved.\u201d",
+            verdict:"risky", meter:-6,
+            feedback:"Makes the rep's low personal stake into an emotional issue rather than simply adapting to their stated preference and moving the deal forward." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "m2-diagnosis",
+    track: "module2",
+    tag: "audit", tagLabel: "Reading the Real Signal",
+    client: "Priya", clientRole: "Multi-Brand Retailer \u2014 Discovery Call", initials: "P",
+    title: "\u201cCan't we just turn our old flows back on?\u201d",
+    situation: "A parent company running four brands in Klaviyo is paying $18,000/month with a 40% discount \u2014 and none of the brands have a single flow or signup form live.",
+    steps: [
+      {
+        context: "The client wants to avoid paying for a new build if possible.",
+        dialogue: "\u201cWe actually had some flows built years ago. Can't we just turn those back on instead of building new ones?\u201d",
+        options: [
+          { label: "\u201cHere's the thing \u2014 if you turned away from those flows before, that usually means they weren't working the way they should have. I'd love to run an audit to see exactly what's salvageable versus what needs a fresh build.\u201d",
+            verdict:"good", meter:13,
+            feedback:"Uses the exact non-critical reframe from the training: past abandonment signals the old build wasn't working, and an audit is the natural next step \u2014 without blaming the client." },
+          { label: "\u201cSure, we can just flip those back on, no need to look at them first.\u201d",
+            verdict:"poor", meter:-15,
+            feedback:"Skips the diagnostic step entirely \u2014 old, abandoned flows are very unlikely to just work by being switched on, and this misses an easy audit-to-sale opportunity." },
+          { label: "\u201cHonestly, whatever you built before was probably done poorly.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"Directly criticizes past work in a way the training explicitly warns against \u2014 always reframe non-critically, never blame the client or a prior vendor outright." },
+          { label: "\u201cThat's not really how Klaviyo works, old flows can't be reactivated.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Technically old flows often can be turned back on \u2014 the real point isn't that it's impossible, it's that doing so without auditing first is unlikely to fix the underlying problem." }
+        ]
+      },
+      {
+        context: "You learn the brand only sends campaigns sporadically \u2014 sometimes ten a month, sometimes none.",
+        dialogue: "\u201cWe just send campaigns whenever we have a bit of extra time, honestly.\u201d",
+        options: [
+          { label: "\u201cThat tells me a lot \u2014 if there's no dedicated time for campaign strategy, your flows are almost certainly suffering too. That's usually a sign ongoing account management would help bring consistency across both.\u201d",
+            verdict:"good", meter:13,
+            feedback:"Correctly reads the signal: sporadic, no-strategy campaign sending is a strong indicator that flows are also neglected, and ongoing management is the right recommendation." },
+          { label: "\u201cThat's totally fine, plenty of brands do it that way.\u201d",
+            verdict:"poor", meter:-13,
+            feedback:"Misses the actual diagnostic signal entirely \u2014 inconsistent campaign sending is a clear indicator of a bandwidth or strategy gap worth naming." },
+          { label: "\u201cYou should really be sending way more campaigns, like 20 or 30 a month.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Jumps to a volume prescription without diagnosing the actual root cause (lack of strategy and ownership), which is the real opportunity here." },
+          { label: "\u201cThat's a segmentation problem, you probably need Marketing Analytics.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Marketing Analytics might help eventually, but the immediate signal here points to a bandwidth/strategy gap best solved with ongoing account management first." }
+        ]
+      },
+      {
+        context: "You pull up the full parent-company Klaviyo account: $18,000/month, 40% discount, four brands, zero flows, zero signup forms live anywhere.",
+        dialogue: "Internal note: this is the account you're about to walk through with the client \u2014 what's the right recommendation here?",
+        options: [
+          { label: "A Full Implementation across the brands, paired with ongoing account management \u2014 they clearly have the budget and scale, but literally no one is running the account.",
+            verdict:"good", meter:14,
+            feedback:"Exactly matches the training's own example: real revenue and platform spend with zero foundational setup is one of the strongest possible fits for Full Implementation plus ongoing management." },
+          { label: "Just a Mini Implementation, since a account this messy should start small.",
+            verdict:"risky", meter:-8,
+            feedback:"Underserves a client with this much scale and spend \u2014 with zero flows or forms across four brands, the opportunity calls for a full build, not a light patch." },
+          { label: "A Strategy Partnership, since they clearly need expert guidance.",
+            verdict:"risky", meter:-9,
+            feedback:"Strategy Partnership fits teams with an internal team executing already \u2014 this account has no one running Klaviyo at all, so it needs actual hands-on execution first." },
+          { label: "Nothing beyond the audit \u2014 an account this messy is probably not worth pursuing.",
+            verdict:"poor", meter:-16,
+            feedback:"Completely misreads the opportunity \u2014 an $18,000/month account with zero foundational setup is one of the best possible fits imaginable, not a reason to walk away." }
+        ]
+      },
+      {
+        context: "The client asks how you'd decide which ongoing management tier fits each of their four brands, since performance varies a lot between them.",
+        dialogue: "\u201cOur four brands are pretty different \u2014 how would you figure out the right tier for each?\u201d",
+        options: [
+          { label: "\u201cIt comes down to current volume and performance \u2014 a brand sending 20 underperforming campaigns a month points to Tier 2, one that's never done email or SMS points to Tier 1, and a big-budget brand with real scale points to Tier 3 or 4.\u201d",
+            verdict:"good", meter:13,
+            feedback:"Matches the training's tier-matching logic exactly: current activity level and scale determine the right starting tier, not a one-size-fits-all default." },
+          { label: "\u201cWe'd put all four brands on the same tier to keep it simple.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"Ignores the client's explicit point that the brands perform very differently \u2014 tier fit should match each brand's actual current state, not be uniform for convenience." },
+          { label: "\u201cWe'd just start everyone on Tier 4 since that's the most comprehensive.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"Defaults to the highest tier regardless of fit \u2014 a brand that's never done email or SMS before doesn't need Tier 4's complexity out of the gate." },
+          { label: "\u201cHonestly, tier assignment is pretty arbitrary, it doesn't matter much.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Understates a real, teachable framework \u2014 tier fit is based on genuine signals like send volume, performance, and budget, not a coin flip." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "m2-audittone",
+    track: "module2",
+    tag: "audit", tagLabel: "Delivering the Audit",
+    client: "Marcus", clientRole: "Wellness Brand \u2014 Audit Review Call", initials: "M",
+    title: "\u201cThat flow doesn't work at all\u201d... or does it?",
+    situation: "You're about to walk a client (and their in-house Klaviyo strategist) through nine real findings. How you deliver them matters as much as what they are.",
+    steps: [
+      {
+        context: "You're about to point out that their post-purchase flow is badly underperforming.",
+        dialogue: "You're preparing how to phrase this specific finding on the call.",
+        options: [
+          { label: "\u201cWe think a stronger win-back flow here would help prevent some of the churn we're seeing \u2014 it's a real opportunity to recover revenue that's currently slipping through.\u201d",
+            verdict:"good", meter:13,
+            feedback:"Frames the gap as an opportunity to capture value, not a criticism of what exists \u2014 exactly the non-critical tone the training insists on." },
+          { label: "\u201cThis flow honestly doesn't work at all.\u201d",
+            verdict:"poor", meter:-16,
+            feedback:"Directly contradicts the training's explicit guidance: never say a flow \u201cdoesn't work\u201d \u2014 always frame findings as opportunities to build on, not failures." },
+          { label: "\u201cThis flow is fine, but every account probably has room to improve somewhere.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Too vague and undersells a real, specific, actionable finding \u2014 name the concrete opportunity clearly instead of a generic platitude." },
+          { label: "\u201cWhoever built this clearly didn't think it through.\u201d",
+            verdict:"poor", meter:-15,
+            feedback:"Criticizes the person who built it, which the training is explicit about avoiding \u2014 especially risky if that person is on the call." }
+        ]
+      },
+      {
+        context: "You notice the client's in-house Klaviyo strategist is on the call \u2014 the same person who built the current setup.",
+        dialogue: "The strategist is quiet so far but clearly listening closely to every finding you present.",
+        options: [
+          { label: "Keep every finding framed as additive help rather than critique, and acknowledge early in the call that the account is already generating real results \u2014 these are ways to build on that.",
+            verdict:"good", meter:12,
+            feedback:"Matches the training directly: be extra mindful when the person who did the work is on the call, and always acknowledge that the account is already performing before suggesting improvements." },
+          { label: "Address the findings the same way regardless of who's on the call \u2014 it shouldn't matter who's listening.",
+            verdict:"risky", meter:-8,
+            feedback:"Technically consistent, but misses the training's specific point: being extra mindful and respectful matters more, not less, when the account owner is present." },
+          { label: "Ask the strategist to step off the call so you can speak more freely about the account.",
+            verdict:"poor", meter:-14,
+            feedback:"Actively excluding the person who did the work is disrespectful and unnecessary \u2014 the goal is to be considerate while they're on the call, not to remove them." },
+          { label: "Soften every finding so much that none of the real opportunities come through clearly.",
+            verdict:"risky", meter:-7,
+            feedback:"Overcorrects \u2014 respectful framing doesn't mean vague or watered-down; the findings still need to be clear and specific, just delivered with care." }
+        ]
+      },
+      {
+        context: "Your audit actually surfaced nine distinct revenue opportunities.",
+        dialogue: "You're deciding how many of the nine to actually present live on this call.",
+        options: [
+          { label: "Present the top 5 highest-impact opportunities, and mention the rest are available in the full written audit if they want more detail.",
+            verdict:"good", meter:12,
+            feedback:"Matches the training's explicit cap: never present more than 5 revenue opportunities live, or the call runs too long and the client gets overwhelmed." },
+          { label: "Present all nine so nothing gets left out.",
+            verdict:"poor", meter:-14,
+            feedback:"Directly against the training's guidance \u2014 presenting all nine risks running the call too long and overwhelming the client with more than they can act on." },
+          { label: "Present only the single biggest opportunity to keep things extremely brief.",
+            verdict:"risky", meter:-7,
+            feedback:"Underserves the client relative to the real guidance of about 5 \u2014 too brief loses the chance to build a fuller, more compelling case." },
+          { label: "Let the client decide how many they want to hear about.",
+            verdict:"risky", meter:-6,
+            feedback:"Passes control of a decision you should already know how to make \u2014 the training gives a clear, specific number to aim for." }
+        ]
+      },
+      {
+        context: "The client pushes back on one of your findings mid-call.",
+        dialogue: "\u201cActually, that's not accurate \u2014 we're running that flow differently than what you're showing here.\u201d",
+        options: [
+          { label: "\u201cThank you for catching that \u2014 everything I'm seeing is based purely on what's visible in Klaviyo, so please correct me anytime something doesn't match what's actually happening on your end.\u201d",
+            verdict:"good", meter:13,
+            feedback:"Matches the training's guidance precisely: always invite correction, and be upfront that findings are based only on what's visible in Klaviyo \u2014 never get defensive." },
+          { label: "\u201cThat's strange, the data clearly shows something different.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"Gets defensive about the platform data instead of gracefully inviting correction \u2014 exactly what the training says never to do." },
+          { label: "\u201cOkay, well let's just move on to the next finding then.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Brushes past a legitimate correction without acknowledging it \u2014 misses a chance to build trust by genuinely engaging with the client's clarification." },
+          { label: "\u201cAre you sure? That seems unlikely based on what I'm seeing.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"Subtly questions the client's own knowledge of their business instead of accepting the correction gracefully, as the training recommends." }
+        ]
+      }
+    ]
+  }
+];
 
-let traineeName = "";
+/* ============ MODULE 2 QUIZ ============
+   20 questions grounded in the Module 2 deck + the "ECD Sales Course Training — Module 2" call.
+*/
+const QUIZ_MODULE2 = [
+  { q: "What are the five steps of the discovery call arc, as recapped at the start of Module 2?", options: ["Frame it, map the business, surface the gap, recommend the fit, lock the next step", "Introduce, pitch, negotiate, close, invoice", "Frame it, pitch pricing, handle objections, close, follow up", "Map the business, audit, propose, sign, onboard"], correctIndex: 0,
+    explanation: "The five steps are: frame it, map the business, surface the gap, recommend the fit, and lock the next step \u2014 the same arc from Module 1, revisited for product/pricing depth." },
+  { q: "If a client says they already have some flows built in Klaviyo from years ago and asks to just turn them back on, what's the recommended framing?", options: ["Turn them on immediately with no further discussion", "If they turned away from Klaviyo before, whatever was built likely wasn't working \u2014 recommend an audit first", "Tell them old flows can never be reactivated under any circumstances", "Refuse to help unless they agree to a full rebuild"], correctIndex: 1,
+    explanation: "The training's framing: if the client turned away from Klaviyo before, it implies the prior setup wasn't working \u2014 an audit reveals what's salvageable, framed non-critically." },
+  { q: "A client says they only send campaigns \u201cwhenever they have time,\u201d sometimes ten a month and sometimes none. What's this usually a signal of?", options: ["A strong existing strategy that just needs minor tweaks", "A bandwidth/strategy gap that likely means their flows are suffering too, pointing toward ongoing account management", "A sign they should reduce their sending frequency further", "Nothing significant \u2014 it's a normal sending pattern"], correctIndex: 1,
+    explanation: "Inconsistent, unplanned campaign sending signals no dedicated strategy time \u2014 which usually means flows are also neglected, pointing toward ongoing account management." },
+  { q: "What's the recommended reasoning for prioritizing a clear call-to-action in the first fold of an email?", options: ["It looks more visually appealing", "Client attention span when opening an email is only about 2 seconds", "It's required by Klaviyo's terms of service", "It reduces the total number of emails needed in a flow"], correctIndex: 1,
+    explanation: "The training cites roughly a 2-second attention span on email open \u2014 a clear CTA in the first fold before any scrolling is essential." },
+  { q: "What should you always ask a Klaviyo rep before deciding between a Full or Mini Implementation?", options: ["How long they've worked with the client", "How price sensitive the client is", "Whether the client uses Shopify", "How many employees the client has"], correctIndex: 1,
+    explanation: "Asking about the client's price sensitivity directly informs whether to lead with the Full Implementation ($6,000) or the Mini ($2,500+)." },
+  { q: "Beyond price sensitivity, what's another legitimate reason to recommend a Mini Implementation over a Full one, even for a client who isn't price sensitive?", options: ["The client already has a few flows working well and doesn't need all 7 new ones", "The client's industry doesn't allow full implementations", "Mini Implementations always convert better", "There is no other legitimate reason \u2014 price sensitivity is the only factor"], correctIndex: 0,
+    explanation: "If a client already has some working flows and doesn't need a full 7-flow rebuild, a Mini Implementation can be the genuinely better fit \u2014 client benefit matters, not just commission size." },
+  { q: "If a client upgrades from a Mini to a Full Implementation within the original 30-day window, how is it priced?", options: ["They must purchase a brand-new Full Implementation package from scratch", "They pay just the difference between the two packages", "The upgrade is always free of charge", "They pay per-hour for the entire project retroactively"], correctIndex: 1,
+    explanation: "Within the 30-day window, upgrading from Mini to Full means paying just the price difference between the two packages." },
+  { q: "If a client wants extra flows built after that 30-day upgrade window has already closed, how should the additional work be quoted?", options: ["Always by number of hours only", "By number of emails ($200 each) or hours ($175/hr) \u2014 quoting by emails is preferred", "It cannot be quoted at all after 30 days", "At a flat $1,000 regardless of scope"], correctIndex: 1,
+    explanation: "Extra flows after the window can be quoted by number of emails ($200 each) or hours ($175/hr) \u2014 the training recommends quoting by number of emails." },
+  { q: "What's the rule for offering a free SMS Implementation based on a client's Klaviyo SMS spend?", options: ["It's never free under any circumstances", "If the client's SMS Klaviyo MRR is $7,000/month or higher, the SMS implementation can be offered free", "Only clients under $1,000/month SMS spend qualify for a free implementation", "SMS implementations are always included free with any Full Implementation"], correctIndex: 1,
+    explanation: "When SMS Klaviyo MRR clears $7,000/month, the resulting commission covers the cost of offering the SMS Implementation for free." },
+  { q: "How long is the commission window for a Klaviyo \u201cNewCo\u201d sales rep to earn commission on additional Klaviyo products after a client starts paying for Klaviyo?", options: ["30 days", "60 days", "120 days", "There is no time limit"], correctIndex: 2,
+    explanation: "NewCo sales reps have a 120-day window after the client starts paying for Klaviyo to earn commission on additional Klaviyo product sales." },
+  { q: "Under what condition can a discount be offered on the $6,000 Full Implementation, per the training?", options: ["Any time a client simply asks for one", "If the client commits to at least 4 months of ongoing account management, aligned with Zach", "Only for clients based outside the United States", "Full Implementation discounts are never allowed under any circumstance"], correctIndex: 1,
+    explanation: "Discounts on the Full Implementation are tied to at least a 4-month ongoing account management commitment, and should be aligned with Zach before offering." },
+  { q: "Which two Klaviyo suite products were specifically named as ones that can commonly be offered for free as value-adds?", options: ["Agent and Reviews", "Customer Hub and Mini Marketing Analytics", "Help Desk and K Social", "Full Marketing Analytics and Agent"], correctIndex: 1,
+    explanation: "Customer Hub ($350) and Mini Marketing Analytics ($500) are the two products commonly positioned as free add-ons when bundling a larger deal." },
+  { q: "According to the training, when should you push Klaviyo's Composer product?", options: ["For every client, regardless of situation", "Mainly for Strategy Partnership clients, or if the Klaviyo rep specifically asks for it", "Only for clients on the highest ongoing management tier", "Composer should never be mentioned to any client"], correctIndex: 1,
+    explanation: "Composer is best pushed for Strategy Partnership clients (since their team does the hands-on work) or when a Klaviyo rep specifically requests it \u2014 it can otherwise compete with ECD's own value on implementation/management clients." },
+  { q: "What is a Klaviyo SMS \u201cshort code,\u201d and why does it matter for certain brands?", options: ["A discount code for SMS campaigns", "A specialized, shorter SMS sender number that improves deliverability \u2014 required for brands like alcohol, cigars, or adult products", "A code used only for international SMS regulations", "A backup number used only if the primary number fails"], correctIndex: 1,
+    explanation: "A short code is a specialized SMS number that improves deliverability and is required for certain regulated brand categories; migration takes 6\u20138 weeks and is handled internally by Klaviyo." },
+  { q: "What's the maximum number of revenue opportunities you should present live during an audit call, per the training?", options: ["As many as the audit surfaces, no matter the number", "About 5, to keep the call from running too long", "Exactly 1, to keep it extremely brief", "10, to be thorough"], correctIndex: 1,
+    explanation: "The training caps live revenue opportunities at around 5 \u2014 presenting more risks an overly long, overwhelming call." },
+  { q: "What's the core principle for audit tone, according to the training?", options: ["Be as critical as possible so the client understands the urgency", "Frame every finding as an opportunity, never as a criticism of existing work", "Only point out problems, never acknowledge what's working", "Avoid mentioning any Klaviyo account strategist who may be on the call"], correctIndex: 1,
+    explanation: "Audits should always frame findings as opportunities to build on \u2014 never as criticism of the client's or a prior strategist's work." },
+  { q: "What are the two methods described for actually running an audit?", options: ["Manual spreadsheet review and a phone call with Klaviyo support", "The dedicated audit platform, or using Claude directly with screenshots and a set prompt", "Only the dedicated audit platform \u2014 there is no alternative method", "A Klaviyo-certified third-party auditor"], correctIndex: 1,
+    explanation: "Audits can be run either through the dedicated audit platform or by using Claude directly with account screenshots and a structured prompt \u2014 the training's preferred method for more control." },
+  { q: "What does K Social require to make sense as a recommendation for a client?", options: ["The brand must be big on TikTok specifically", "The brand must be big on Instagram \u2014 it doesn't work with TikTok", "The brand must already be using Klaviyo's SMS product", "K Social works equally well for any brand regardless of social presence"], correctIndex: 1,
+    explanation: "K Social only works with Instagram, not TikTok \u2014 it only makes sense to push for brands with a real, active Instagram presence." },
+  { q: "If a client asks to correct an inaccurate audit finding mid-call, what's the correct response?", options: ["Politely thank them and clarify that findings are based only on what's visible in Klaviyo", "Insist the platform data must be correct", "Move on quickly without acknowledging the correction", "End the call early since the audit's credibility is now in question"], correctIndex: 0,
+    explanation: "The training is explicit: invite correction gracefully, and remind the client everything is based only on what's visible in Klaviyo \u2014 never get defensive." },
+  { q: "ECD is one of how many Klaviyo Master Elite Partners worldwide, out of roughly how many total partner agencies?", options: ["10 out of 10,000", "20 out of 22,000", "50 out of 5,000", "100 out of 100,000"], correctIndex: 1,
+    explanation: "ECD is one of only 20 Klaviyo Master Elite Partners out of roughly 22,000 total partner agencies worldwide." }
+];
+
+
 let currentScenario = null;
 let stepIndex = 0;
 let meterValue = 35;
@@ -1701,10 +2103,10 @@ async function saveQuizResult(correctCount, total, answers){
   const ok = await testStorage();
   const payload = {
     type: "quiz",
-    track: "module1",
+    track: currentQuizModule,
     name: traineeName,
-    scenarioId: "m1-quiz",
-    scenarioTitle: "Module 1 Quiz",
+    scenarioId: currentQuizMeta.id,
+    scenarioTitle: currentQuizMeta.title,
     good: correctCount, risky: 0, poor: (total - correctCount), total: total,
     timestamp: new Date().toISOString()
   };
@@ -1717,7 +2119,7 @@ async function saveQuizResult(correctCount, total, answers){
     return false;
   }
   try {
-    const key = 'quizresult__' + sanitizeKey(traineeName) + '__' + Date.now();
+    const key = 'quizresult__' + sanitizeKey(traineeName) + '__' + sanitizeKey(currentQuizMeta.id) + '__' + Date.now();
     await window.storage.set(key, JSON.stringify(payload), true);
     return true;
   } catch(e){
@@ -1795,6 +2197,7 @@ function renderCardGrid(gridEl, scenarioArray){
 function renderLanding(){
   renderCardGrid(el('cardgrid'), SCENARIOS);
   renderCardGrid(el('cardgridModule1'), SCENARIOS_MODULE1);
+  renderCardGrid(el('cardgridModule2'), SCENARIOS_MODULE2);
 }
 
 let activeTab = 'sales';
@@ -1802,8 +2205,10 @@ function switchTab(tab){
   activeTab = tab;
   el('tabBtnSales').classList.toggle('active', tab === 'sales');
   el('tabBtnModule1').classList.toggle('active', tab === 'module1');
+  el('tabBtnModule2').classList.toggle('active', tab === 'module2');
   el('tabpanelSales').classList.toggle('active', tab === 'sales');
   el('tabpanelModule1').classList.toggle('active', tab === 'module1');
+  el('tabpanelModule2').classList.toggle('active', tab === 'module2');
 }
 
 function goLanding(){
@@ -1817,7 +2222,7 @@ function goLanding(){
 }
 
 function startScenario(id){
-  currentScenario = SCENARIOS.find(s => s.id === id) || SCENARIOS_MODULE1.find(s => s.id === id);
+  currentScenario = SCENARIOS.find(s => s.id === id) || SCENARIOS_MODULE1.find(s => s.id === id) || SCENARIOS_MODULE2.find(s => s.id === id);
   stepIndex = 0;
   meterValue = 35;
   history = [];
@@ -2012,17 +2417,23 @@ function setResultsFilter(f){
 }
 
 function typePillFor(item){
-  if (item.type === 'quiz') return '<span class="type-pill type-quiz">Quiz</span>';
+  if (item.type === 'quiz'){
+    if (item.track === 'module2') return '<span class="type-pill type-quiz">Module 2 Quiz</span>';
+    return '<span class="type-pill type-quiz">Module 1 Quiz</span>';
+  }
   if (item.track === 'module1') return '<span class="type-pill type-module1">Module 1</span>';
+  if (item.track === 'module2') return '<span class="type-pill type-module2">Module 2</span>';
   return '<span class="type-pill type-sales">Sales Sim</span>';
 }
 
 function renderResultsTable(remote, error){
   const body = el('resultsBody');
   let items = cachedResultsItems;
-  if (resultsFilter === 'sales') items = items.filter(i => i.track !== 'module1' && i.type !== 'quiz');
+  if (resultsFilter === 'sales') items = items.filter(i => i.track !== 'module1' && i.track !== 'module2' && i.type !== 'quiz');
   else if (resultsFilter === 'module1') items = items.filter(i => i.track === 'module1' && i.type !== 'quiz');
-  else if (resultsFilter === 'quiz') items = items.filter(i => i.type === 'quiz');
+  else if (resultsFilter === 'module1quiz') items = items.filter(i => i.type === 'quiz' && i.track === 'module1');
+  else if (resultsFilter === 'module2') items = items.filter(i => i.track === 'module2' && i.type !== 'quiz');
+  else if (resultsFilter === 'module2quiz') items = items.filter(i => i.type === 'quiz' && i.track === 'module2');
 
   let html = '';
   if (!remote){
@@ -2035,7 +2446,9 @@ function renderResultsTable(remote, error){
     <button class="filter-chip ${resultsFilter==='all'?'active':''}" onclick="setResultsFilter('all')">All</button>
     <button class="filter-chip ${resultsFilter==='sales'?'active':''}" onclick="setResultsFilter('sales')">Sales Simulations</button>
     <button class="filter-chip ${resultsFilter==='module1'?'active':''}" onclick="setResultsFilter('module1')">Module 1 Sims</button>
-    <button class="filter-chip ${resultsFilter==='quiz'?'active':''}" onclick="setResultsFilter('quiz')">Module 1 Quiz</button>
+    <button class="filter-chip ${resultsFilter==='module1quiz'?'active':''}" onclick="setResultsFilter('module1quiz')">Module 1 Quiz</button>
+    <button class="filter-chip ${resultsFilter==='module2'?'active':''}" onclick="setResultsFilter('module2')">Module 2 Sims</button>
+    <button class="filter-chip ${resultsFilter==='module2quiz'?'active':''}" onclick="setResultsFilter('module2quiz')">Module 2 Quiz</button>
   </div>`;
 
   if (!items || items.length === 0){
@@ -2067,8 +2480,20 @@ function renderResultsTable(remote, error){
 let quizAnswers = []; // { selectedIndex, correctIndex }
 let quizIndex = 0;
 let quizSelected = null;
+let currentQuizModule = 'module1';
+let currentQuizSet = QUIZ_MODULE1;
+let currentQuizMeta = { id: 'm1-quiz', title: 'Module 1 Quiz', label: 'Module 1' };
 
-function startQuiz(){
+const QUIZ_META = {
+  module1: { set: QUIZ_MODULE1, id: 'm1-quiz', title: 'Module 1 Quiz', label: 'Module 1' },
+  module2: { set: QUIZ_MODULE2, id: 'm2-quiz', title: 'Module 2 Quiz', label: 'Module 2' }
+};
+
+function startQuiz(moduleKey){
+  currentQuizModule = moduleKey || 'module1';
+  const meta = QUIZ_META[currentQuizModule];
+  currentQuizSet = meta.set;
+  currentQuizMeta = meta;
   quizIndex = 0;
   quizAnswers = [];
   quizSelected = null;
@@ -2077,12 +2502,14 @@ function startQuiz(){
   el('quizendscreen').style.display = 'none';
   el('resultspanel').style.display = 'none';
   el('quizscreen').style.display = 'block';
+  el('quizScreenTitle').textContent = meta.title;
+  el('quizScreenSubtitle').textContent = `${meta.set.length} questions \u00b7 score shown at the end`;
   renderQuizQuestion();
 }
 
 function renderQuizQuestion(){
-  const q = QUIZ_MODULE1[quizIndex];
-  el('quizProgress').textContent = `Question ${quizIndex + 1} of ${QUIZ_MODULE1.length}`;
+  const q = currentQuizSet[quizIndex];
+  el('quizProgress').textContent = `Question ${quizIndex + 1} of ${currentQuizSet.length}`;
   el('quizQuestionText').textContent = q.q;
   const area = el('quizOptionsArea');
   area.innerHTML = '';
@@ -2097,9 +2524,9 @@ function renderQuizQuestion(){
   if (quizSelected !== null){
     area.children[quizSelected].classList.add('selected');
   }
-  el('quizAnsweredCount').textContent = `${quizAnswers.filter(a => a !== undefined).length} of ${QUIZ_MODULE1.length} answered`;
+  el('quizAnsweredCount').textContent = `${quizAnswers.filter(a => a !== undefined).length} of ${currentQuizSet.length} answered`;
   el('quizNextBtn').disabled = (quizSelected === null);
-  el('quizNextBtn').textContent = (quizIndex === QUIZ_MODULE1.length - 1) ? 'See your score \u2192' : 'Next \u2192';
+  el('quizNextBtn').textContent = (quizIndex === currentQuizSet.length - 1) ? 'See your score \u2192' : 'Next \u2192';
 }
 
 function selectQuizOption(idx, btn){
@@ -2107,13 +2534,13 @@ function selectQuizOption(idx, btn){
   Array.from(area.children).forEach(c => c.classList.remove('selected'));
   btn.classList.add('selected');
   quizSelected = idx;
-  const q = QUIZ_MODULE1[quizIndex];
+  const q = currentQuizSet[quizIndex];
   quizAnswers[quizIndex] = { selectedIndex: idx, correctIndex: q.correctIndex };
   el('quizNextBtn').disabled = false;
 }
 
 function quizNext(){
-  if (quizIndex === QUIZ_MODULE1.length - 1){
+  if (quizIndex === currentQuizSet.length - 1){
     finishQuiz();
   } else {
     quizIndex++;
@@ -2126,29 +2553,30 @@ async function finishQuiz(){
   el('quizendscreen').style.display = 'block';
 
   const correctCount = quizAnswers.filter(a => a && a.selectedIndex === a.correctIndex).length;
-  const total = QUIZ_MODULE1.length;
+  const total = currentQuizSet.length;
   const badge = el('quizEndBadge');
   const title = el('quizEndTitle');
   const sub = el('quizEndSubtitle');
   const pct = Math.round((correctCount / total) * 100);
+  const moduleLabel = currentQuizMeta.label;
 
   if (pct >= 90){
     badge.className = 'end-badge badge-elite'; badge.textContent = 'Master Elite Score';
-    title.textContent = `${correctCount}/${total} \u2014 that's Module 1 down cold.`;
-    sub.textContent = "You clearly know how deals start, how the rep relationship works, and how discovery calls should run.";
+    title.textContent = `${correctCount}/${total} \u2014 that's ${moduleLabel} down cold.`;
+    sub.textContent = `You clearly know this material inside and out.`;
   } else if (pct >= 65){
     badge.className = 'end-badge badge-solid'; badge.textContent = 'Solid Score';
     title.textContent = `${correctCount}/${total} \u2014 good foundation, a few gaps.`;
-    sub.textContent = "Review the questions you missed below, then revisit the Module 1 deck or replay the quiz.";
+    sub.textContent = `Review the questions you missed below, then revisit the ${moduleLabel} deck or replay the quiz.`;
   } else {
     badge.className = 'end-badge badge-practice'; badge.textContent = 'Needs Review';
-    title.textContent = `${correctCount}/${total} \u2014 worth another pass through Module 1.`;
+    title.textContent = `${correctCount}/${total} \u2014 worth another pass through ${moduleLabel}.`;
     sub.textContent = "This one's dense. Review the recap below against the deck and training call, then retake it.";
   }
 
   const recap = el('quizRecapArea');
   recap.innerHTML = '';
-  QUIZ_MODULE1.forEach((q, idx) => {
+  currentQuizSet.forEach((q, idx) => {
     const a = quizAnswers[idx];
     const correct = a && a.selectedIndex === a.correctIndex;
     const item = document.createElement('div');
