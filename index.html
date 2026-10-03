@@ -2712,8 +2712,14 @@ function sanitizeKey(s){
   return String(s).replace(/[\s\/\\'"]+/g, '_').slice(0, 60);
 }
 
+async function postToBackend(payload){
+  try {
+    const r = await fetch('/api/results', { method:'POST', headers:{ 'content-type':'application/json' }, body: JSON.stringify(payload) });
+    return r.ok;
+  } catch(e){ return false; }
+}
+
 async function saveResult(scenario, goodCount, riskyCount, poorCount, total){
-  const ok = await testStorage();
   const payload = {
     type: "sim",
     track: scenario.track || "sales",
@@ -2723,6 +2729,8 @@ async function saveResult(scenario, goodCount, riskyCount, poorCount, total){
     good: goodCount, risky: riskyCount, poor: poorCount, total: total,
     timestamp: new Date().toISOString()
   };
+  if (await postToBackend(payload)) return true;
+  const ok = await testStorage();
   if (!ok){
     try {
       const local = JSON.parse(localStorage.getItem('ecd_sim_results') || '[]');
@@ -2741,7 +2749,6 @@ async function saveResult(scenario, goodCount, riskyCount, poorCount, total){
 }
 
 async function saveQuizResult(correctCount, total, answers){
-  const ok = await testStorage();
   const payload = {
     type: "quiz",
     track: currentQuizModule,
@@ -2751,6 +2758,8 @@ async function saveQuizResult(correctCount, total, answers){
     good: correctCount, risky: 0, poor: (total - correctCount), total: total,
     timestamp: new Date().toISOString()
   };
+  if (await postToBackend(payload)) return true;
+  const ok = await testStorage();
   if (!ok){
     try {
       const local = JSON.parse(localStorage.getItem('ecd_sim_results') || '[]');
@@ -2768,7 +2777,15 @@ async function saveQuizResult(correctCount, total, answers){
   }
 }
 
-async function loadAllResults(){
+async function loadAllResults(passcode){
+  try {
+    const r = await fetch('/api/results', { headers:{ 'x-admin-passcode': passcode || '' }, cache:'no-store' });
+    if (r.status === 401) return { authError:true, items:[] };
+    if (r.ok){
+      const d = await r.json();
+      return { remote:true, items: d.items || [] };
+    }
+  } catch(e){ /* backend unreachable \u2014 fall through to local/artifact storage */ }
   const ok = await testStorage();
   if (!ok){
     try {
@@ -3059,26 +3076,30 @@ async function renderEnd(){
   const saved = await saveResult(currentScenario, goodCount, riskyCount, poorCount, total);
   el('saveNote').textContent = saved
     ? `Result saved for ${traineeName} \u2014 visible in team training results.`
-    : `Result saved locally on this device only (central tracking needs this simulator open as a Claude artifact).`;
+    : `Couldn't reach the shared results service \u2014 your result was saved on this device only. Please let your manager know.`;
 }
 
 /* ---------- Team results panel ---------- */
-const ADMIN_PASSCODE = "ECD-Elite2026";
 let adminUnlocked = false;
 let cachedResultsItems = [];
 let resultsFilter = 'all';
 
-function submitAdminPasscode(){
+let adminPass = '';
+async function submitAdminPasscode(){
   const val = el('adminPasscodeInput').value;
-  if (val === ADMIN_PASSCODE){
-    adminUnlocked = true;
-    el('adminGateArea').style.display = 'none';
-    el('resultsBody').style.display = 'block';
-    el('adminGateError').style.display = 'none';
-    loadAndRenderResults();
-  } else {
+  const res = await loadAllResults(val);
+  const localOk = !res.remote && !res.authError && val === 'ECD-Elite2026'; // only used when the shared results service is unreachable
+  if (res.authError || (!res.remote && !localOk)){
     el('adminGateError').style.display = 'block';
+    return;
   }
+  adminPass = val;
+  adminUnlocked = true;
+  el('adminGateArea').style.display = 'none';
+  el('resultsBody').style.display = 'block';
+  el('adminGateError').style.display = 'none';
+  cachedResultsItems = res.items || [];
+  renderResultsTable(res.remote, res.error);
 }
 
 async function openResults(){
@@ -3099,7 +3120,7 @@ async function openResults(){
 async function loadAndRenderResults(){
   const body = el('resultsBody');
   body.innerHTML = '<div class="results-loading">Loading results&hellip;</div>';
-  const res = await loadAllResults();
+  const res = await loadAllResults(adminPass);
   cachedResultsItems = res.items || [];
   renderResultsTable(res.remote, res.error);
 }
@@ -3121,6 +3142,8 @@ function typePillFor(item){
   return '<span class="type-pill type-sales">Sales Sim</span>';
 }
 
+function escHtml(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
 function renderResultsTable(remote, error){
   const body = el('resultsBody');
   let items = cachedResultsItems;
@@ -3134,7 +3157,7 @@ function renderResultsTable(remote, error){
 
   let html = '';
   if (!remote){
-    html += `<div class="storage-warning">Central storage isn't available in this context, so these results are only from this device/browser. To track results for the whole team automatically, open this simulator as a Claude artifact.</div>`;
+    html += `<div class="storage-warning">Couldn't reach the shared results service, so you're only seeing results saved in this browser. Check that the site is deployed with its results function (see the setup note) and try again.</div>`;
   } else if (error){
     html += `<div class="storage-warning">Couldn't load shared results right now \u2014 try again in a moment.</div>`;
   }
@@ -3163,9 +3186,9 @@ function renderResultsTable(remote, error){
       const dateStr = isNaN(date) ? '\u2014' : date.toLocaleDateString(undefined, { month:'short', day:'numeric', year:'numeric' });
       const scoreLabel = r.type === 'quiz' ? `${r.good}/${r.total} correct (${pct}%)` : `${r.good}/${r.total} strong (${pct}%)`;
       html += `<tr>
-        <td>${r.name || '\u2014'}</td>
+        <td>${escHtml(r.name) || '\u2014'}</td>
         <td>${typePillFor(r)}</td>
-        <td>${r.scenarioTitle || r.scenarioId || '\u2014'}</td>
+        <td>${escHtml(r.scenarioTitle || r.scenarioId) || '\u2014'}</td>
         <td><span class="score-pill" style="background:${pillColor}22;color:${pillColor};">${scoreLabel}</span></td>
         <td>${dateStr}</td>
       </tr>`;
@@ -3293,7 +3316,7 @@ async function finishQuiz(){
   const saved = await saveQuizResult(correctCount, total, quizAnswers);
   el('quizSaveNote').textContent = saved
     ? `Result saved for ${traineeName} \u2014 visible in team training results.`
-    : `Result saved locally on this device only (central tracking needs this simulator open as a Claude artifact).`;
+    : `Couldn't reach the shared results service \u2014 your result was saved on this device only. Please let your manager know.`;
 }
 
 /* ---------- Init ---------- */
