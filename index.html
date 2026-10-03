@@ -160,6 +160,37 @@
   .type-sales{background:rgba(74,103,240,0.18);color:#9DB1FF;}
   .type-module1{background:rgba(240,180,41,0.18);color:#F5CB68;}
   .type-module2{background:rgba(160,120,255,0.20);color:#C8AFFF;}
+
+  /* ===== DECK VIEWER TAB ===== */
+  .deck-viewer{max-width:980px;margin:0 auto;}
+  .deck-stage{
+    position:relative;background:#000;border-radius:14px;overflow:hidden;
+    box-shadow:0 20px 60px rgba(0,0,0,0.45);aspect-ratio:1334/750;
+  }
+  .deck-stage img{width:100%;height:100%;object-fit:contain;display:block;background:#fff;}
+  .deck-nav{display:flex;align-items:center;justify-content:space-between;margin-top:18px;gap:14px;}
+  .deck-nav-btn{
+    background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);color:#fff;
+    font-family:'Inter';font-weight:700;font-size:14px;padding:11px 22px;border-radius:30px;cursor:pointer;
+    display:flex;align-items:center;gap:8px;transition:background .15s ease;
+  }
+  .deck-nav-btn:hover{background:rgba(236,18,121,0.25);border-color:var(--pink);}
+  .deck-nav-btn:disabled{opacity:.35;cursor:default;}
+  .deck-nav-btn:disabled:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.18);}
+  .deck-counter{font-size:13px;color:#C9C6E8;font-weight:600;}
+  .deck-thumbs{display:flex;gap:8px;overflow-x:auto;margin-top:18px;padding-bottom:8px;}
+  .deck-thumb{
+    flex:0 0 auto;width:72px;height:40px;border-radius:6px;overflow:hidden;cursor:pointer;
+    border:2px solid transparent;opacity:.55;transition:opacity .15s ease, border-color .15s ease;
+  }
+  .deck-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  .deck-thumb:hover{opacity:.85;}
+  .deck-thumb.active{opacity:1;border-color:var(--pink);}
+  .deck-jump{display:flex;align-items:center;gap:8px;}
+  .deck-jump input{
+    width:56px;padding:8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.18);
+    background:rgba(255,255,255,0.06);color:#fff;font-family:'Inter';font-size:13px;text-align:center;
+  }
   .type-quiz{background:rgba(236,18,121,0.18);color:#FF8FC0;}
 
   /* ===== CALL SCREEN ===== */
@@ -303,6 +334,8 @@
       <button class="tabbtn active" id="tabBtnSales" onclick="switchTab('sales')">Sales Simulations</button>
       <button class="tabbtn" id="tabBtnModule1" onclick="switchTab('module1')">Module 1</button>
       <button class="tabbtn" id="tabBtnModule2" onclick="switchTab('module2')">Module 2</button>
+      <button class="tabbtn" id="tabBtnModule3" onclick="switchTab('module3')">Module 3</button>
+      <button class="tabbtn" id="tabBtnDeck" onclick="switchTab('deck')">Sales Playbook Deck</button>
     </div>
 
     <!-- SALES SIMULATIONS TAB -->
@@ -348,6 +381,47 @@
       </div>
 
       <div class="cardgrid" id="cardgridModule2"></div>
+    </div>
+
+    <!-- MODULE 3 TAB -->
+    <div class="tabpanel" id="tabpanelModule3">
+      <div class="hero">
+        <h1>Module 3: <em>Objections, Closing &amp; the Full Pipeline</em>.</h1>
+        <p class="sub">Homework for Module 3 &mdash; real objections, when to walk away, the follow-up cadence that closes, and the full pipeline from proposal to handoff. Take the quiz first, then work through these four scenarios.</p>
+      </div>
+
+      <div class="quiz-card">
+        <div class="qtext">
+          <h3>Module 3 Quiz</h3>
+          <p>20 tough multiple-choice questions on objection handling, when to decline a deal, follow-up cadence, and the proposal-to-handoff pipeline. One attempt shown at a time &mdash; your score is revealed at the end.</p>
+        </div>
+        <button class="qcta" onclick="startQuiz('module3')">Take the quiz &rarr;</button>
+      </div>
+
+      <div class="cardgrid" id="cardgridModule3"></div>
+    </div>
+
+    <!-- DECK TAB -->
+    <div class="tabpanel" id="tabpanelDeck">
+      <div class="hero">
+        <h1>The ECD Sales Playbook, <em>in full</em>.</h1>
+        <p class="sub">The complete 58-slide deck, live right here &mdash; click through slide by slide, or jump straight to one from the strip below.</p>
+      </div>
+      <div class="deck-viewer">
+        <div class="deck-stage">
+          <img id="deckSlideImg" src="deck/slide-01.jpg" alt="Deck slide">
+        </div>
+        <div class="deck-nav">
+          <button class="deck-nav-btn" id="deckPrevBtn" onclick="deckPrev()">&larr; Prev</button>
+          <div class="deck-jump">
+            <span class="deck-counter" id="deckCounter">Slide 1 of 58</span>
+            <input type="number" id="deckJumpInput" min="1" max="58" placeholder="#">
+            <button class="deck-nav-btn" onclick="deckJump()">Go</button>
+          </div>
+          <button class="deck-nav-btn" id="deckNextBtn" onclick="deckNext()">Next &rarr;</button>
+        </div>
+        <div class="deck-thumbs" id="deckThumbs"></div>
+      </div>
     </div>
 
     <div class="footnote">Built for anyone joining ECD's Sales Team. Every scenario is drawn from real transcripts and real account situations (client names lightly kept for realism). Run all ten before your first live call &mdash; then come back any time you need a refresher on objection handling.</div>
@@ -714,18 +788,18 @@ const SCENARIOS = [
     tag: "audit", tagLabel: "Audit \u2192 Upsell",
     client: "Zach", clientRole: "VKTRY \u2014 Klaviyo Audit Review", initials: "Z",
     title: "From findings to a signed next step",
-    situation: "You've just walked an athletic-insole brand through their Klaviyo audit: low click rates, underperforming post-purchase flows, and a win-back sequence that opens well but never converts.",
+    situation: "Your Retention Strategist just finished presenting an athletic-insole brand's Klaviyo audit \u2014 low click rates, underperforming post-purchase flows, a win-back sequence that opens well but never converts \u2014 and has handed the call back to you for the sales portion.",
     steps: [
       {
-        context: "You've just explained that campaigns are underperforming benchmark because segmentation is too broad.",
+        context: "Your Retention Strategist just showed that campaigns are underperforming benchmark because segmentation is too broad, and handed the call to you at minute 35.",
         dialogue: "\u201cDo you think tightening our segmentation would actually lead to more revenue?\u201d",
         options: [
           { label: "\u201cYes, 100%. When you send to people who are genuinely engaged with what you're talking about, they convert. Right now flows are outperforming campaigns \u2014 in a healthy account, it should be the other way around.\u201d",
             verdict:"good", meter:12,
-            feedback:"Confident, specific, and ties the recommendation back to a concrete diagnostic you already showed them." },
+            feedback:"Confident, specific, and ties the recommendation back to a concrete diagnostic your Retention Strategist already showed them \u2014 you own the commercial story from here." },
           { label: "\u201cMaybe \u2014 it's hard to say for sure.\u201d",
             verdict:"poor", meter:-14,
-            feedback:"This undercuts your own audit right after presenting it as authoritative. If you're not confident in your findings, why would the client be?" },
+            feedback:"This undercuts your own team's audit right after it was presented as authoritative. If you're not confident in the findings, why would the client be?" },
           { label: "\u201cDefinitely, but that would mean a full site rebuild to make happen.\u201d",
             verdict:"risky", meter:-6,
             feedback:"Overstates the scope and can scare off a client who was just asking a simple, positive question. Segmentation fixes don't require rebuilding the site." },
@@ -735,7 +809,7 @@ const SCENARIOS = [
         ]
       },
       {
-        context: "The client is a little overwhelmed by the number of findings you've covered.",
+        context: "The client is a little overwhelmed by the number of findings the audit covered.",
         dialogue: "\u201cThis is a lot of information \u2014 what would you do first if you could only fix two things?\u201d",
         options: [
           { label: "\u201cI'd rebuild the post-purchase flows for upsell and cross-sell, and consolidate the abandonment flows \u2014 those are your two highest-leverage fixes.\u201d",
@@ -749,7 +823,7 @@ const SCENARIOS = [
             feedback:"Jumping straight to the biggest possible sell without answering the actual question can feel pushy right after a genuine, specific ask." },
           { label: "\u201cProbably the win-back flow and the welcome series \u2014 those tend to matter most for most brands.\u201d",
             verdict:"risky", meter:-9,
-            feedback:"Generic advice not grounded in this account's actual findings undermines the credibility of the audit you just walked them through." }
+            feedback:"Generic advice not grounded in this account's actual findings undermines the credibility of the audit your Retention Strategist just walked them through." }
         ]
       },
       {
@@ -876,10 +950,10 @@ const SCENARIOS = [
     tag: "data", tagLabel: "Attribution & Segmentation",
     client: "Lauren", clientRole: "Outdoor Gear Brand \u2014 Audit Review", initials: "L",
     title: "\u201cWait, our numbers are actually inflated?\u201d",
-    situation: "A mid-size outdoor brand's Klaviyo account looks healthy on the surface, but your audit reveals attribution settings are overstating revenue by nearly a third, and broad campaign sends are burning out their list.",
+    situation: "A mid-size outdoor brand's Klaviyo account looks healthy on the surface, but the audit your Retention Strategist presented reveals attribution settings are overstating revenue by nearly a third, and broad campaign sends are burning out their list. You've taken over for the sales portion.",
     steps: [
       {
-        context: "You've just shown the client that their reported Klaviyo revenue is inflated due to Apple Mail Privacy Protection opens and bot clicks.",
+        context: "Your Retention Strategist just showed that the client's reported Klaviyo revenue is inflated by Apple Mail Privacy Protection opens and bot clicks. The client turns to you.",
         dialogue: "\u201cWait \u2014 are you telling us our numbers have been wrong this whole time?\u201d",
         options: [
           { label: "\u201cNot wrong exactly \u2014 inflated by attribution settings that count opens and clicks that don't reflect real engagement. Once we adjust the settings, you'll see your true baseline, which is what lets us actually improve it.\u201d",
@@ -960,7 +1034,7 @@ const SCENARIOS = [
     situation: "An eyewear brand runs SMS through a separate platform from Klaviyo, which means revenue and engagement data live in two disconnected systems \u2014 and nobody can say for sure what's actually working.",
     steps: [
       {
-        context: "You've just shown that Klaviyo is only credited with 17% of total store revenue \u2014 unusually low.",
+        context: "Your Retention Strategist just showed that Klaviyo is only credited with 17% of total store revenue \u2014 unusually low. The client turns to you to make sense of it.",
         dialogue: "\u201cThat attribution number seems really low. Is Klaviyo just not working well for us?\u201d",
         options: [
           { label: "\u201cActually the opposite \u2014 that number is low largely because your SMS revenue lives entirely in a separate platform, so Klaviyo can't see or credit it. Once everything's in one place, you'll get a true, unified picture.\u201d",
@@ -1221,7 +1295,7 @@ const SCENARIOS = [
         ]
       },
       {
-        context: "You've found that their SMS flows and email flows are firing on overlapping triggers, confusing customers.",
+        context: "Your Retention Strategist found that their SMS flows and email flows are firing on overlapping triggers, confusing customers \u2014 and the client asks you how it happened.",
         dialogue: "\u201cWe had no idea SMS and email were stepping on each other. How did that even happen?\u201d",
         options: [
           { label: "\u201cIt's a really common gap when SMS and email get built at different times or by different people \u2014 the fix is straightforward: we merge the overlapping triggers into one coordinated flow so a customer gets one clear message, not two competing ones.\u201d",
@@ -1878,8 +1952,8 @@ const SCENARIOS_MODULE2 = [
         ]
       },
       {
-        context: "You pull up the full parent-company Klaviyo account: $18,000/month, 40% discount, four brands, zero flows, zero signup forms live anywhere.",
-        dialogue: "Internal note: this is the account you're about to walk through with the client \u2014 what's the right recommendation here?",
+        context: "Admin access is confirmed and the Retention Strategist's read of the full parent-company account is in: $18,000/month, 40% discount, four brands, zero flows, zero signup forms live anywhere.",
+        dialogue: "Internal note: you're reviewing this before the audit call \u2014 what's the right commercial recommendation to bring to the client?",
         options: [
           { label: "A Full Implementation across the brands, paired with ongoing account management \u2014 they clearly have the budget and scale, but literally no one is running the account.",
             verdict:"good", meter:14,
@@ -1921,76 +1995,76 @@ const SCENARIOS_MODULE2 = [
     tag: "audit", tagLabel: "Delivering the Audit",
     client: "Marcus", clientRole: "Wellness Brand \u2014 Audit Review Call", initials: "M",
     title: "\u201cThat flow doesn't work at all\u201d... or does it?",
-    situation: "You're about to walk a client (and their in-house Klaviyo strategist) through nine real findings. How you deliver them matters as much as what they are.",
+    situation: "Two days before the call, you're reviewing your Retention Strategist's draft audit \u2014 nine real findings, with the client's in-house Klaviyo strategist set to attend. How the findings are framed matters as much as what they are, and you set the tone.",
     steps: [
       {
-        context: "You're about to point out that their post-purchase flow is badly underperforming.",
-        dialogue: "You're preparing how to phrase this specific finding on the call.",
+        context: "In the draft deck, one slide says the client's post-purchase flow \u201cdoesn't work at all.\u201d You're leaving your review comments inside the deck.",
+        dialogue: "What comment do you leave on that slide?",
         options: [
-          { label: "\u201cWe think a stronger win-back flow here would help prevent some of the churn we're seeing \u2014 it's a real opportunity to recover revenue that's currently slipping through.\u201d",
+          { label: "Comment: reframe it as an opportunity \u2014 \u201cWe think a stronger win-back flow here would help prevent some of the churn we're seeing; it's a real opportunity to recover revenue that's currently slipping through.\u201d",
             verdict:"good", meter:13,
             feedback:"Frames the gap as an opportunity to capture value, not a criticism of what exists \u2014 exactly the non-critical tone the training insists on." },
-          { label: "\u201cThis flow honestly doesn't work at all.\u201d",
+          { label: "Leave the slide as is \u2014 it's accurate, and the client should hear it straight.",
             verdict:"poor", meter:-16,
             feedback:"Directly contradicts the training's explicit guidance: never say a flow \u201cdoesn't work\u201d \u2014 always frame findings as opportunities to build on, not failures." },
-          { label: "\u201cThis flow is fine, but every account probably has room to improve somewhere.\u201d",
+          { label: "Comment: soften it into a generic line \u2014 \u201cthis flow is fine, but every account has room to improve somewhere.\u201d",
             verdict:"risky", meter:-8,
             feedback:"Too vague and undersells a real, specific, actionable finding \u2014 name the concrete opportunity clearly instead of a generic platitude." },
-          { label: "\u201cWhoever built this clearly didn't think it through.\u201d",
+          { label: "Comment: add \u201cwhoever built this clearly didn't think it through\u201d so the severity lands.",
             verdict:"poor", meter:-15,
             feedback:"Criticizes the person who built it, which the training is explicit about avoiding \u2014 especially risky if that person is on the call." }
         ]
       },
       {
-        context: "You notice the client's in-house Klaviyo strategist is on the call \u2014 the same person who built the current setup.",
-        dialogue: "The strategist is quiet so far but clearly listening closely to every finding you present.",
+        context: "You notice the client's in-house Klaviyo strategist is on the call \u2014 the same person who built the current setup. You're about to open the call and introduce your Retention Strategist.",
+        dialogue: "The strategist is quiet so far but clearly listening closely to everything said in your opening.",
         options: [
-          { label: "Keep every finding framed as additive help rather than critique, and acknowledge early in the call that the account is already generating real results \u2014 these are ways to build on that.",
+          { label: "In your opening, acknowledge that the account is already generating real results and frame the audit as ways to build on that \u2014 then introduce your Retention Strategist.",
             verdict:"good", meter:12,
             feedback:"Matches the training directly: be extra mindful when the person who did the work is on the call, and always acknowledge that the account is already performing before suggesting improvements." },
-          { label: "Address the findings the same way regardless of who's on the call \u2014 it shouldn't matter who's listening.",
+          { label: "Open the same way regardless of who's on the call \u2014 it shouldn't matter who's listening.",
             verdict:"risky", meter:-8,
             feedback:"Technically consistent, but misses the training's specific point: being extra mindful and respectful matters more, not less, when the account owner is present." },
-          { label: "Ask the strategist to step off the call so you can speak more freely about the account.",
+          { label: "Ask the strategist to step off the call so the findings can be discussed more freely.",
             verdict:"poor", meter:-14,
             feedback:"Actively excluding the person who did the work is disrespectful and unnecessary \u2014 the goal is to be considerate while they're on the call, not to remove them." },
-          { label: "Soften every finding so much that none of the real opportunities come through clearly.",
+          { label: "Ask your Retention Strategist to soften every finding so much that none of the real opportunities come through clearly.",
             verdict:"risky", meter:-7,
             feedback:"Overcorrects \u2014 respectful framing doesn't mean vague or watered-down; the findings still need to be clear and specific, just delivered with care." }
         ]
       },
       {
-        context: "Your audit actually surfaced nine distinct revenue opportunities.",
-        dialogue: "You're deciding how many of the nine to actually present live on this call.",
+        context: "The draft audit surfaced nine distinct revenue opportunities.",
+        dialogue: "You're telling your Retention Strategist how many of the nine to present live on this call.",
         options: [
-          { label: "Present the top 5 highest-impact opportunities, and mention the rest are available in the full written audit if they want more detail.",
+          { label: "Ask for the top 5 highest-impact opportunities live, with the rest available in the written audit if they want more detail.",
             verdict:"good", meter:12,
             feedback:"Matches the training's explicit cap: never present more than 5 revenue opportunities live, or the call runs too long and the client gets overwhelmed." },
-          { label: "Present all nine so nothing gets left out.",
+          { label: "Ask them to present all nine so nothing gets left out.",
             verdict:"poor", meter:-14,
             feedback:"Directly against the training's guidance \u2014 presenting all nine risks running the call too long and overwhelming the client with more than they can act on." },
-          { label: "Present only the single biggest opportunity to keep things extremely brief.",
+          { label: "Ask them to present only the single biggest opportunity to keep things extremely brief.",
             verdict:"risky", meter:-7,
             feedback:"Underserves the client relative to the real guidance of about 5 \u2014 too brief loses the chance to build a fuller, more compelling case." },
-          { label: "Let the client decide how many they want to hear about.",
+          { label: "Leave it to the Retention Strategist to decide on the day.",
             verdict:"risky", meter:-6,
-            feedback:"Passes control of a decision you should already know how to make \u2014 the training gives a clear, specific number to aim for." }
+            feedback:"Leaves a known guideline unset \u2014 you review the deck and set expectations up front, and the training gives a clear number to aim for." }
         ]
       },
       {
-        context: "The client pushes back on one of your findings mid-call.",
+        context: "On the call, the client pushes back on one of the Retention Strategist's findings mid-presentation.",
         dialogue: "\u201cActually, that's not accurate \u2014 we're running that flow differently than what you're showing here.\u201d",
         options: [
-          { label: "\u201cThank you for catching that \u2014 everything I'm seeing is based purely on what's visible in Klaviyo, so please correct me anytime something doesn't match what's actually happening on your end.\u201d",
+          { label: "Step in warmly: \u201cThank you for catching that \u2014 everything we're seeing is based purely on what's visible in Klaviyo, so please correct us anytime something doesn't match what's actually happening on your end.\u201d",
             verdict:"good", meter:13,
             feedback:"Matches the training's guidance precisely: always invite correction, and be upfront that findings are based only on what's visible in Klaviyo \u2014 never get defensive." },
-          { label: "\u201cThat's strange, the data clearly shows something different.\u201d",
+          { label: "Back up the specialist: \u201cThat's strange, the data clearly shows something different.\u201d",
             verdict:"poor", meter:-14,
             feedback:"Gets defensive about the platform data instead of gracefully inviting correction \u2014 exactly what the training says never to do." },
-          { label: "\u201cOkay, well let's just move on to the next finding then.\u201d",
+          { label: "Say nothing and let the presentation move on to the next finding.",
             verdict:"risky", meter:-8,
             feedback:"Brushes past a legitimate correction without acknowledging it \u2014 misses a chance to build trust by genuinely engaging with the client's clarification." },
-          { label: "\u201cAre you sure? That seems unlikely based on what I'm seeing.\u201d",
+          { label: "Ask: \u201cAre you sure? That seems unlikely based on what we're seeing.\u201d",
             verdict:"risky", meter:-9,
             feedback:"Subtly questions the client's own knowledge of their business instead of accepting the correction gracefully, as the training recommends." }
         ]
@@ -2035,8 +2109,8 @@ const QUIZ_MODULE2 = [
     explanation: "The training caps live revenue opportunities at around 5 \u2014 presenting more risks an overly long, overwhelming call." },
   { q: "What's the core principle for audit tone, according to the training?", options: ["Be as critical as possible so the client understands the urgency", "Frame every finding as an opportunity, never as a criticism of existing work", "Only point out problems, never acknowledge what's working", "Avoid mentioning any Klaviyo account strategist who may be on the call"], correctIndex: 1,
     explanation: "Audits should always frame findings as opportunities to build on \u2014 never as criticism of the client's or a prior strategist's work." },
-  { q: "What are the two methods described for actually running an audit?", options: ["Manual spreadsheet review and a phone call with Klaviyo support", "The dedicated audit platform, or using Claude directly with screenshots and a set prompt", "Only the dedicated audit platform \u2014 there is no alternative method", "A Klaviyo-certified third-party auditor"], correctIndex: 1,
-    explanation: "Audits can be run either through the dedicated audit platform or by using Claude directly with account screenshots and a structured prompt \u2014 the training's preferred method for more control." },
+  { q: "Under the current audit process, who builds and presents the technical audit findings on the call?", options: ["The account executive, personally, using Claude", "A Retention Strategist assigned by Jono \u2014 the AE opens the call, introduces them, then takes over for services, pricing, and next steps", "The Klaviyo rep who requested the audit", "The client's own in-house Klaviyo strategist"], correctIndex: 1,
+    explanation: "Audits moved to Retention: you run discovery and request Admin access, announce the audit in #sales-audits, and Jono assigns a Retention Strategist who builds (AI-driven, then personally verified) and presents the findings. You open the call and take over at minute 35 for the commercial portion." },
   { q: "What does K Social require to make sense as a recommendation for a client?", options: ["The brand must be big on TikTok specifically", "The brand must be big on Instagram \u2014 it doesn't work with TikTok", "The brand must already be using Klaviyo's SMS product", "K Social works equally well for any brand regardless of social presence"], correctIndex: 1,
     explanation: "K Social only works with Instagram, not TikTok \u2014 it only makes sense to push for brands with a real, active Instagram presence." },
   { q: "If a client asks to correct an inaccurate audit finding mid-call, what's the correct response?", options: ["Politely thank them and clarify that findings are based only on what's visible in Klaviyo", "Insist the platform data must be correct", "Move on quickly without acknowledging the correction", "End the call early since the audit's credibility is now in question"], correctIndex: 0,
@@ -2045,6 +2119,387 @@ const QUIZ_MODULE2 = [
     explanation: "ECD is one of only 20 Klaviyo Master Elite Partners out of roughly 22,000 total partner agencies worldwide." }
 ];
 
+/* ============ MODULE 3 SCENARIOS ============
+   Four scenarios grounded in the "ECD Sales Course Training — Module 3" call:
+   handling a client who diminishes the team's work, declining an audit on a
+   hard no, reopening dormant pipeline, and the full proposal-to-handoff flow.
+*/
+const SCENARIOS_MODULE3 = [
+  {
+    id: "m3-jerkclient",
+    track: "module3",
+    tag: "compliance", tagLabel: "Difficult Client",
+    client: "Rhett", clientRole: "Home Decor Brand \u2014 Discovery Call", initials: "R",
+    title: "\u201cThis is super easy, right?\u201d",
+    situation: "A prospect keeps minimizing the scope of the work and pushing for an unrealistic timeline, with a tone that's starting to cross from tough negotiation into disrespect.",
+    steps: [
+      {
+        context: "The client wants the Full Implementation done far faster than the real timeline.",
+        dialogue: "\u201cWe need the whole thing done in like a day. It's super easy, right? Just a bunch of emails \u2014 can't be that hard.\u201d",
+        options: [
+          { label: "\u201cI hear you wanting to move fast \u2014 a Full Implementation genuinely takes about 4 weeks to do well: 7 flows, 20+ emails, segmentation, and a proper list warm-up. I don't want to rush that and hand you something that underperforms.\u201d",
+            verdict:"good", meter:12,
+            feedback:"Holds the real timeline firmly and explains why, without matching the client's dismissive tone \u2014 still professional, still confident." },
+          { label: "\u201cYou're right, we could probably knock it out faster than usual for you.\u201d",
+            verdict:"poor", meter:-15,
+            feedback:"Caving to an unrealistic timeline just because the client pushed sets up a doomed project and signals the real timeline was never firm to begin with." },
+          { label: "\u201cHonestly it's not that easy, you clearly don't understand what goes into this.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"Matches their dismissiveness with your own \u2014 even when a client is being difficult, staying professional protects you, not them." },
+          { label: "\u201cWe could maybe do a stripped-down version in a day if that's what you need.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Inventing a rushed, lesser version on the spot to satisfy an unreasonable timeline risks a bad outcome and sets a precedent for scope-cutting under pressure." }
+        ]
+      },
+      {
+        context: "The client's tone keeps getting more dismissive of the team's expertise.",
+        dialogue: "\u201cI mean, come on, it's just copy-pasting some templates, right? Not rocket science.\u201d",
+        options: [
+          { label: "Stay even, professional, and brief \u2014 answer only what's necessary, without engaging the dismissive framing at all.",
+            verdict:"good", meter:11,
+            feedback:"The real pattern: once a client starts diminishing the team's work, a calm, neutral, minimal-engagement tone protects you without escalating." },
+          { label: "\u201cActually, it takes a lot more skill than you're giving us credit for.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Understandable impulse, but defending your expertise to someone being dismissive rarely changes their mind \u2014 neutral and brief serves you better." },
+          { label: "\u201cYeah, pretty much, don't worry about it.\u201d",
+            verdict:"poor", meter:-13,
+            feedback:"Agreeing that the work is trivial undercuts your own value and the price you're about to quote \u2014 never confirm a client's dismissive framing." },
+          { label: "\u201cWow, that's a pretty rude thing to say.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"Calling out the client directly this early still escalates a tense moment \u2014 the better move is a poker face and minimal engagement, saving a clean exit for later if it continues." }
+        ]
+      },
+      {
+        context: "The tone doesn't improve, and you're now deciding whether this is worth continuing.",
+        dialogue: "Internal read: is this just tough negotiating, or has it crossed into something you shouldn't tolerate?",
+        options: [
+          { label: "Recognize that repeated diminishing of the team's work plus a dismissive tone \u2014 not just hard negotiating \u2014 is the real line, and decide whether to keep going or exit gracefully.",
+            verdict:"good", meter:12,
+            feedback:"Matches the real distinction: price pushback or tough questions are normal; consistently diminishing the team's expertise and disrespectful tone is different, and is a real reason to walk away." },
+          { label: "Decide to end the deal immediately because the client disagreed with the timeline once.",
+            verdict:"risky", meter:-8,
+            feedback:"Too sensitive a bar \u2014 a single disagreement on timeline isn't itself disrespect. The real threshold is sustained diminishing or rude tone, not ordinary pushback." },
+          { label: "Decide to keep pushing forward no matter what, since every client is worth closing.",
+            verdict:"poor", meter:-13,
+            feedback:"Not every client is worth closing \u2014 protecting the team from clients who are genuinely disrespectful is part of the job, not a failure to close." },
+          { label: "Ask a teammate to take over the call instead of deciding yourself.",
+            verdict:"risky", meter:-6,
+            feedback:"You're empowered to make this call yourself in real time \u2014 handing it off doesn't address the actual decision in front of you." }
+        ]
+      },
+      {
+        context: "You've decided the relationship isn't worth continuing. A Klaviyo rep originally introduced this client.",
+        dialogue: "You're ending the call and need to handle the Klaviyo rep relationship correctly.",
+        options: [
+          { label: "End the call politely and briefly (\u201cso nice meeting you, I have another call to prep for\u201d) with no recap email afterward, then message the rep: \u201clet me know what you need to close your deal \u2014 we're just not going to be working with this client.\u201d",
+            verdict:"good", meter:13,
+            feedback:"Exits cleanly without burning the moment, skips the recap (no further relationship to maintain), and keeps full support for the rep's own deal intact." },
+          { label: "Send a detailed recap email explaining exactly why the client was too difficult to work with.",
+            verdict:"poor", meter:-14,
+            feedback:"A written record criticizing the client serves no purpose and could resurface badly \u2014 once you've decided not to continue, simply don't send a recap at all." },
+          { label: "Tell the Klaviyo rep you're dropping the client and leave it there, without offering further help.",
+            verdict:"risky", meter:-8,
+            feedback:"Misses the real principle \u2014 you can decline to work with the client while still actively offering to help the rep close whatever they need." },
+          { label: "Keep the call going a while longer in case the client's tone improves.",
+            verdict:"risky", meter:-6,
+            feedback:"Once you've genuinely concluded this isn't worth continuing, prolonging it rarely changes the outcome and just extends an unpleasant call." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "m3-declineaudit",
+    track: "module3",
+    tag: "price", tagLabel: "Knowing When to Decline",
+    client: "Priya", clientRole: "Outdoor Gear Brand \u2014 Discovery Call", initials: "P",
+    title: "\u201cWe just want to learn, not hire anyone\u201d",
+    situation: "A prospect has a capable internal marketing team and is clear they only want Klaviyo guidance, not an implementation partner \u2014 testing whether you know when to stop pushing.",
+    steps: [
+      {
+        context: "The client explains their situation plainly.",
+        dialogue: "\u201cWe actually have our own person handling Klaviyo. We're just trying to learn more about the platform, not looking to hire an agency.\u201d",
+        options: [
+          { label: "\u201cThat makes sense \u2014 happy to answer questions where I can. If your team ever wants a second set of eyes or runs into something specific, we're here.\u201d",
+            verdict:"good", meter:11,
+            feedback:"Respects the stated boundary immediately, stays helpful without pushing, and leaves the door open rather than forcing a pitch." },
+          { label: "\u201cWe could still do a free audit just to get into your account and show you what we'd do.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"Using a free audit purely as a foot-in-the-door tactic after the client has said they don't want an agency wastes a real resource on a dead-end lead." },
+          { label: "\u201cHonestly, most teams like yours still need an agency eventually, you'll see.\u201d",
+            verdict:"poor", meter:-13,
+            feedback:"Dismisses what the client just told you about their own situation \u2014 presumptuous and likely to damage the relationship." },
+          { label: "\u201cLet's schedule a full audit call anyway so you can see what you're missing.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Pushes past a clearly stated lack of interest in implementation help \u2014 exactly the scenario where the real guidance is to not force an audit." }
+        ]
+      },
+      {
+        context: "You try one more angle to see if there's any opening.",
+        dialogue: "\u201cWe're pretty set on handling this ourselves for now, honestly.\u201d",
+        options: [
+          { label: "\u201cTotally understand \u2014 I'll leave it here for now. If anything changes down the line, feel free to reach out.\u201d",
+            verdict:"good", meter:12,
+            feedback:"A second, clear no is the real signal to stop \u2014 accepting it gracefully preserves the relationship for a future re-engagement." },
+          { label: "\u201cAre you sure? A lot of teams think that until they see what they're missing.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"Directly contradicts a client who has now said no twice \u2014 this is the exact persistence the training says to drop." },
+          { label: "\u201cOkay, well let me just send over our pricing anyway in case you change your mind.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"Still pushing collateral after a clear, repeated no \u2014 better to simply accept it and leave the door open verbally instead." },
+          { label: "\u201cWe can offer a steep discount if that would change things.\u201d",
+            verdict:"poor", meter:-13,
+            feedback:"The objection was never about price \u2014 it's about not wanting an agency at all. A discount doesn't address the actual stated reason." }
+        ]
+      },
+      {
+        context: "You're deciding what to do with this opportunity in the pipeline.",
+        dialogue: "Internal note: how should this lead be marked, and what's the right next move?",
+        options: [
+          { label: "Mark it close-lost now rather than leaving it open indefinitely, and set a note to check back in 3\u20134 months.",
+            verdict:"good", meter:12,
+            feedback:"Matches the real guidance exactly: a genuine hard no gets marked close-lost, with a dated future follow-up \u2014 not an audit chase today." },
+          { label: "Leave the deal open and keep it on your active call list for next week.",
+            verdict:"risky", meter:-7,
+            feedback:"Keeping a clearly declined lead active wastes attention that could go to warmer opportunities \u2014 close it out and revisit later instead." },
+          { label: "Delete the lead entirely since it's not going to close.",
+            verdict:"risky", meter:-6,
+            feedback:"Losing the context entirely means starting from zero if they do come back \u2014 marking it close-lost with a follow-up note preserves the history." },
+          { label: "Escalate to a manager to see if there's any way to still close this client.",
+            verdict:"poor", meter:-11,
+            feedback:"This wasn't a pricing or scope problem needing escalation \u2014 it's a clear, reasonable no that calls for graceful acceptance, not an escalation." }
+        ]
+      },
+      {
+        context: "Three months later, you're deciding how to re-approach.",
+        dialogue: "You're drafting the check-in email to send now that time has passed.",
+        options: [
+          { label: "\u201cJust wanted to check in \u2014 Klaviyo attributed revenue should ideally be at a minimum of 25%. If you're not meeting that, I'm happy to do an audit and give you some actionable items to get there.\u201d",
+            verdict:"good", meter:13,
+            feedback:"Uses the exact real re-engagement template: concrete benchmark, low-pressure offer, easy for them to say yes or ignore." },
+          { label: "\u201cHey, following up again to see if you've changed your mind about hiring an agency.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Reopens the exact framing they already declined twice \u2014 better to lead with a concrete, benchmark-based reason to re-engage instead." },
+          { label: "Don't reach out at all, since they already said no twice before.",
+            verdict:"risky", meter:-7,
+            feedback:"A respectful, well-timed check-in after a few months is exactly the real cadence used for reopening dormant pipeline \u2014 staying silent forever leaves value on the table." },
+          { label: "\u201cWe're running a big discount right now, want to reconsider?\u201d",
+            verdict:"poor", meter:-12,
+            feedback:"Leads with a discount again on an objection that was never about price \u2014 misses the real, benchmark-based way back into the conversation." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "m3-reopenpipeline",
+    track: "module3",
+    tag: "upsell", tagLabel: "Reopening Pipeline",
+    client: "Darnell", clientRole: "Outdoor Furniture Brand \u2014 Past One-Time Client", initials: "D",
+    title: "It's a slow month \u2014 time to look backward",
+    situation: "New leads have dried up this month. Rather than wait, you're going back through past one-time-project clients to see who might be worth a second conversation.",
+    steps: [
+      {
+        context: "You pull up a client who did a Full Implementation six months ago but never signed on for ongoing management.",
+        dialogue: "Internal note: where do you start when deciding who in the dormant list is worth reopening?",
+        options: [
+          { label: "Go into their live Klaviyo account and check send frequency, Klaviyo-attributed revenue, and deliverability \u2014 let the data tell you if there's a real opportunity before reaching out.",
+            verdict:"good", meter:12,
+            feedback:"Matches the real approach: check the account first (the Bad Boy Mower Parts example) so any outreach is grounded in a specific, credible finding." },
+          { label: "Email everyone on the dormant list the same generic \u201cchecking in\u201d message.",
+            verdict:"poor", meter:-13,
+            feedback:"A generic blast with no specific finding is far less effective than a targeted note based on what's actually happening in their account." },
+          { label: "Only reach out to the clients who paid the most for their original project.",
+            verdict:"risky", meter:-7,
+            feedback:"Original deal size isn't the signal that matters here \u2014 current account health and gap size are what make a reopened conversation compelling." },
+          { label: "Wait until a Klaviyo rep brings you a reason to reach out to this client again.",
+            verdict:"risky", meter:-6,
+            feedback:"Reopening pipeline on a slow month is something you can and should do proactively yourself, not something to wait on a rep for." }
+        ]
+      },
+      {
+        context: "You check the account: no campaigns sent in two months, and almost no Klaviyo-attributed revenue beyond the flows ECD originally built.",
+        dialogue: "You're deciding how to frame this finding in an outreach email.",
+        options: [
+          { label: "\u201cHi [Name] \u2014 I took a quick look at your Klaviyo account and noticed it's been a couple months since your last campaign, and revenue is mostly coming from the original flows we built. Happy to talk through how we could help bring that back up.\u201d",
+            verdict:"good", meter:13,
+            feedback:"Specific, factual, and low-pressure \u2014 names exactly what you found without being alarmist, and offers help rather than demanding a call." },
+          { label: "\u201cYour Klaviyo account is a mess right now, you really need to let us manage it.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"Harsh and presumptuous framing for a client you haven't spoken to in months \u2014 the real approach stays light and factual, never alarmist." },
+          { label: "\u201cJust checking in, how's everything going?\u201d with no specific findings mentioned.",
+            verdict:"risky", meter:-8,
+            feedback:"Too vague to be compelling \u2014 the whole value of reopening pipeline this way is citing a specific, real finding from their account." },
+          { label: "Build a full slide deck summarizing the account's performance before reaching out.",
+            verdict:"risky", meter:-6,
+            feedback:"Overbuilt for this stage \u2014 the real pattern is a short, specific email first; save the deck for if they actually want to go deeper." }
+        ]
+      },
+      {
+        context: "The client replies, interested but asking what ongoing management would actually look like for an account this size.",
+        dialogue: "\u201cThat's helpful to know. What would working with you guys on an ongoing basis actually involve?\u201d",
+        options: [
+          { label: "\u201cGiven where your account is today, I'd recommend starting with our Tier 1 or Tier 2 \u2014 let's hop on a quick call so I can see your current volume and recommend the right fit.\u201d",
+            verdict:"good", meter:12,
+            feedback:"Gives a grounded, right-sized answer and moves toward a scheduled call rather than guessing at a tier over email." },
+          { label: "\u201cYou'd definitely want our top tier, it's the most comprehensive.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Recommending the most expensive tier without any current data on their volume or needs skips the actual tier-matching logic." },
+          { label: "\u201cHonestly any tier works the same, just pick whichever price feels right.\u201d",
+            verdict:"poor", meter:-13,
+            feedback:"The tiers are genuinely different in scope \u2014 treating them as interchangeable undersells the real differences and your own expertise." },
+          { label: "\u201cLet me just send you a generic proposal and we can go from there.\u201d",
+            verdict:"risky", meter:-6,
+            feedback:"Skips gathering current information about their account before proposing a specific tier \u2014 better to get on a quick call first." }
+        ]
+      },
+      {
+        context: "The call goes well and the client is ready to move forward with ongoing management.",
+        dialogue: "You're wrapping up and need to get this moving correctly.",
+        options: [
+          { label: "Build the proposal in the proposal platform using the Fireflies recording and the account findings, send it same-day, and move the HubSpot deal stage forward.",
+            verdict:"good", meter:13,
+            feedback:"Matches the real, current closing process \u2014 proposal platform (not Asana), fast turnaround, and HubSpot kept current so the deal visibly moves." },
+          { label: "Build the proposal manually from scratch without using the Fireflies recording or platform.",
+            verdict:"risky", meter:-7,
+            feedback:"Skips the tool that's specifically designed to pull in call context automatically \u2014 slower and more error-prone than it needs to be." },
+          { label: "Wait a few days to build the proposal since there's no rush now that they're interested.",
+            verdict:"poor", meter:-12,
+            feedback:"Momentum from a reopened, warm conversation is exactly when to move fastest \u2014 delaying risks losing the renewed interest." },
+          { label: "Send the proposal but don't bother updating the HubSpot deal stage yet.",
+            verdict:"risky", meter:-7,
+            feedback:"A deal that isn't moving in HubSpot isn't moving in real life either \u2014 keeping the pipeline tool current is part of closing the loop." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "m3-fullpipeline",
+    track: "module3",
+    tag: "technical", tagLabel: "Proposal to Handoff",
+    client: "Simone", clientRole: "Skincare Brand \u2014 Just Signed", initials: "S",
+    title: "They said yes \u2014 now what?",
+    situation: "A client just verbally agreed to a Full Implementation plus Tier 2 on a call. Running the handoff correctly from here is its own skill.",
+    steps: [
+      {
+        context: "The client just said yes on the call.",
+        dialogue: "\u201cOkay, let's do it \u2014 send me whatever you need to get started.\u201d",
+        options: [
+          { label: "\u201cGreat! I'll build the proposal today using our call recording so it reflects everything we discussed, and get it to you by end of day.\u201d",
+            verdict:"good", meter:12,
+            feedback:"Commits to a same-day proposal built from the actual call context \u2014 exactly the fast, accurate turnaround the current process is built for." },
+          { label: "\u201cGreat, I'll get to it whenever I have a free moment this week.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"A verbal yes is a warm, perishable moment \u2014 delaying the proposal risks the enthusiasm cooling before they've even seen paperwork." },
+          { label: "\u201cI'll just use our standard template without pulling in anything specific from this call.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"A generic template misses the chance to reflect their specific goals and context, which the proposal platform is built to do automatically from the call." },
+          { label: "\u201cLet's wait until next week's call to actually put together the proposal.\u201d",
+            verdict:"poor", meter:-13,
+            feedback:"Unnecessarily delays a proposal you could send the same day \u2014 momentum matters right after a verbal yes." }
+        ]
+      },
+      {
+        context: "The client signs the proposal quickly.",
+        dialogue: "You've just gotten the signed proposal back.",
+        options: [
+          { label: "Request the invoice from Maria on the same proposal, then send the invoice together with the W-9 and Client Onboarding Form in one email, CC'ing accounts receivable.",
+            verdict:"good", meter:13,
+            feedback:"Matches the exact real process: one request to Maria, all documents bundled together, AR looped in from the first dollar." },
+          { label: "Send the invoice first, then follow up separately later with the W-9 and onboarding form.",
+            verdict:"risky", meter:-8,
+            feedback:"Splitting these into multiple emails creates extra back-and-forth \u2014 the real process bundles the invoice, W-9, and onboarding form together." },
+          { label: "Skip CC'ing accounts receivable since the invoice hasn't been paid yet.",
+            verdict:"poor", meter:-12,
+            feedback:"AR should be looped in from the very first invoice email, not after payment \u2014 staying in the loop early avoids delays later." },
+          { label: "Wait for the client to ask for the invoice before sending anything.",
+            verdict:"risky", meter:-7,
+            feedback:"Being proactive about invoicing keeps momentum \u2014 waiting on the client to request it slows down a deal that just closed." }
+        ]
+      },
+      {
+        context: "You're ready to announce the new client internally.",
+        dialogue: "You're drafting the Slack announcement.",
+        options: [
+          { label: "Post in the Implementations channel with client name, contact, website, services, launch call date, and links to all four documents (SOW, Client Folder, Intake Form, Sales \u2192 Delivery Notes) \u2014 plus any notes on sensitivities or deadlines.",
+            verdict:"good", meter:13,
+            feedback:"Matches the real template exactly \u2014 complete enough that the delivery team never has to ask where something lives." },
+          { label: "Post a one-line announcement and share the documents separately as people ask for them.",
+            verdict:"poor", meter:-14,
+            feedback:"Forces the delivery team to chase down information piecemeal \u2014 the whole point of the template is having everything linked in one place up front." },
+          { label: "Wait until the launch call is scheduled before announcing the client at all.",
+            verdict:"risky", meter:-8,
+            feedback:"Unnecessarily delays getting the team visibility \u2014 the announcement can go out with \u201cTBD\u201d on the launch date if it's not locked yet." },
+          { label: "Skip the Slack announcement since the internal Sales \u2192 Delivery call will cover the same information.",
+            verdict:"risky", meter:-7,
+            feedback:"The Slack post and the internal call serve different purposes \u2014 the post is the durable, searchable record everyone can reference later." }
+        ]
+      },
+      {
+        context: "You're scheduling the client launch call and need to involve the right people.",
+        dialogue: "You're about to pick a date and time for the launch call.",
+        options: [
+          { label: "Check teammates' calendars first \u2014 including Isa's \u2014 before proposing a time to the client, and flag it if the slot overlaps a block you're unsure about.",
+            verdict:"good", meter:12,
+            feedback:"Matches the real guidance: always check calendars before proposing a time, since double-booking a teammate causes real problems later." },
+          { label: "Pick whatever time works best for the client and adjust the internal team afterward.",
+            verdict:"poor", meter:-13,
+            feedback:"Proposing a time to the client before checking your own team's availability risks having to walk it back \u2014 always check calendars first." },
+          { label: "Schedule it without including Isa, since she's not required on every call.",
+            verdict:"risky", meter:-8,
+            feedback:"Isa joins launch calls specifically to introduce her role and meet the client \u2014 leaving her out skips a real part of the current handoff process." },
+          { label: "Let the account strategist pick the time without any input from you.",
+            verdict:"risky", meter:-6,
+            feedback:"You're still the one who should be proposing the launch call time as part of closing the loop on the deal \u2014 don't hand off scheduling you own." }
+        ]
+      }
+    ]
+  }
+];
+
+/* ============ MODULE 3 QUIZ ============
+   20 questions grounded in the Module 3 deck sections + the "ECD Sales Course Training — Module 3" call.
+*/
+const QUIZ_MODULE3 = [
+  { q: "When a client's POS or website doesn't cleanly integrate with Klaviyo, what's the correct approach?", options: ["Refuse the project entirely", "Explain that non-Shopify integrations require dev work quoted separately, and offer a guide if they want to do it themselves", "Tell them it's not possible and move on", "Always build the integration for free regardless of platform"], correctIndex: 1,
+    explanation: "ECD only does integrations natively for Shopify; other platforms need dev work quoted separately, or the client can be given a guide to do it themselves \u2014 never let a technical gap kill the deal." },
+  { q: "According to the training, what should you always tell a price-sensitive client about the implementation and the retainer?", options: ["They must be purchased together", "They are not tied together \u2014 a client can do a one-time implementation now and add a retainer later", "The retainer is mandatory after any implementation", "Retainers can only be added within 7 days of signing"], correctIndex: 1,
+    explanation: "Implementation and ongoing management are never tied together \u2014 always push for the retainer, but let the client say yes to the smaller, obvious win first if needed." },
+  { q: "Why does the training recommend always pushing for the Full Implementation and retainers specifically?", options: ["They take less time to build", "They generate the most commission and the most recurring revenue for ECD", "Clients prefer them", "They are easier to explain"], correctIndex: 1,
+    explanation: "Higher-ticket services and retainers generate more commission per deal and recurring revenue \u2014 always try to sell the highest-ticket items that genuinely fit the client." },
+  { q: "If a client states a hard legal or compliance objection (e.g. \u201cour lawyers won't sign off\u201d), what's the correct response?", options: ["Push back and explain why their lawyers are wrong", "Drop that line item immediately without arguing, and look for what else can still be sold", "End the call entirely", "Offer a legal indemnification to override the objection"], correctIndex: 1,
+    explanation: "Once a client states a real boundary, don't push past it \u2014 drop the item and keep the relationship, while still looking for other ways to help." },
+  { q: "What's the real distinction the training draws between a tough negotiator and a client worth dropping?", options: ["Any price pushback at all", "Sustained diminishing of the team's work or a genuinely disrespectful tone \u2014 not just hard questions or negotiation", "Any client who asks for a faster timeline", "Clients who ask for a discount"], correctIndex: 1,
+    explanation: "Ordinary pushback and negotiation are normal; what justifies dropping a deal is sustained diminishing of the team's work or real disrespect, not tough questions alone." },
+  { q: "When you decide to stop pursuing a genuinely disrespectful client, what's the correct way to end it?", options: ["Send a detailed recap explaining why they were difficult", "End the call politely and briefly, and simply don't send a follow-up recap", "Block all further communication immediately mid-call", "Escalate to the whole team before ending the call"], correctIndex: 1,
+    explanation: "End the call politely and briefly \u2014 no need for a recap email once you've decided not to continue the relationship." },
+  { q: "If a Klaviyo rep introduced a client you're choosing not to work with, what should you do?", options: ["Say nothing further to the rep", "Tell the rep you're not working with the client, but still offer to help them close their own deal in whatever way you can", "Ask the rep to pressure the client on your behalf", "Avoid the rep until the situation is forgotten"], correctIndex: 1,
+    explanation: "Dropping a client doesn't mean dropping the rep relationship \u2014 you can decline the account while still actively helping the rep close whatever they need." },
+  { q: "If a client has a capable internal team and clearly states they don't want to hire an agency, what's the recommended move after they say so a second time?", options: ["Offer a steep discount to change their mind", "Accept it, mark the deal close-lost, and plan a dated follow-up in 3\u20134 months", "Push for a free audit anyway to get account access", "Keep the deal open indefinitely on your active call list"], correctIndex: 1,
+    explanation: "A genuine, repeated hard no should be accepted gracefully, marked close-lost, and revisited later \u2014 not chased with a free audit or discount." },
+  { q: "What does the training suggest NOT doing when a client has clearly said no to hiring an agency?", options: ["Reaching out again in a few months with a specific reason", "Leaving the relationship open for the future", "Offering a free audit purely as a way to get account access despite the stated no", "Accepting the no gracefully"], correctIndex: 2,
+    explanation: "Using a free audit as a foot-in-the-door tactic after a clear no wastes a real resource \u2014 the correct move is to accept the no and follow up later instead." },
+  { q: "What's the recommended template for re-engaging a client who said no months ago?", options: ["A generic \u201cjust checking in\u201d message with no specifics", "A message citing the 25% Klaviyo-attributed revenue benchmark and offering a specific, low-pressure audit", "Leading with a discount offer", "Asking again if they've changed their mind about hiring an agency"], correctIndex: 1,
+    explanation: "The real re-engagement template cites the 25% benchmark and offers something concrete and low-pressure \u2014 not a generic check-in or a repeat of the same pitch." },
+  { q: "When reopening dormant pipeline on a slow month, what should you check first before reaching out?", options: ["Which past clients paid the most for their original project", "The client's live Klaviyo account \u2014 send frequency, attributed revenue, deliverability", "Whether a Klaviyo rep has mentioned them recently", "Nothing \u2014 send the same generic message to everyone on the list"], correctIndex: 1,
+    explanation: "Check the account first so any outreach is grounded in a real, specific finding \u2014 exactly how the real Bad Boy Mower Parts example led to a closed deal." },
+  { q: "What's the correct tone for an email flagging a declining metric in a dormant client's account?", options: ["Alarmist and urgent, to create pressure", "Light and factual, naming the specific finding without being harsh", "Vague, with no specific numbers mentioned", "Critical of how the client has been running their own account"], correctIndex: 1,
+    explanation: "The real approach stays light, factual, and specific \u2014 never alarmist or critical of the client's own management of the account." },
+  { q: "How quickly should a recap email be sent after a sales call, per the current cadence?", options: ["Within 10\u201315 minutes", "Within 24 hours", "The next business day", "Within a week"], correctIndex: 0,
+    explanation: "Recap emails should go out within 10\u201315 minutes of the call \u2014 while you're still fresh in the client's mind." },
+  { q: "What is the maximum number of follow-up emails in the real follow-up cadence before stepping back?", options: ["2", "4", "6", "There is no limit"], correctIndex: 1,
+    explanation: "The cadence caps at 4 follow-ups total \u2014 after that, a graceful final touch leaves the door open without continuing to chase." },
+  { q: "Where are proposals built in the current process?", options: ["In Asana", "In the dedicated proposal platform, which can pull context from the Fireflies recording", "In a shared Google Doc template", "Directly inside HubSpot"], correctIndex: 1,
+    explanation: "Proposals are now built in the proposal platform, which can pull in call context automatically from the linked Fireflies recording \u2014 not in Asana." },
+  { q: "What two documents must always be sent together with the invoice after a client signs?", options: ["The Statement of Work and the Client Folder link", "The W-9 form and the Client Onboarding Form", "The audit deck and the recap email", "The proposal PDF and a payment link"], correctIndex: 1,
+    explanation: "The invoice always goes out together with the W-9 form and the Client Onboarding Form in the same email, with accounts receivable CC'd." },
+  { q: "What four documents should be linked in a new-client Slack announcement?", options: ["Invoice, W-9, Onboarding Form, and Proposal", "Statement of Work, Client Folder, Client Intake Form, and Sales \u2192 Delivery Notes", "Audit deck, Recap email, Contract, and NDA", "HubSpot deal link, Calendar invite, Fireflies link, and Pricing sheet"], correctIndex: 1,
+    explanation: "The real Slack template links all four: Statement of Work, Client Folder, Client Intake Form, and Sales \u2192 Delivery Notes, so the delivery team never has to ask where something lives." },
+  { q: "Before proposing a launch call time to a client, what should you always do first?", options: ["Ask the client for three time options", "Check your teammates' calendars, including Isa's, before proposing a time", "Schedule it immediately to avoid delay", "Wait for the client to suggest a time"], correctIndex: 1,
+    explanation: "Always check calendars \u2014 including Isa's \u2014 before proposing a launch call time, since double-booking a teammate causes real downstream problems." },
+  { q: "Who should always stay looped in on deals, per the training, even after a client is handed off internally?", options: ["No one \u2014 sales is fully done once the deal is signed", "Xiomara \u2014 she stays available for strategy support at any stage, pre-call planning through proposal review", "Only the account strategist", "Only Zak"], correctIndex: 1,
+    explanation: "Xiomara stays looped in on everything \u2014 upselling, cross-selling, new clients \u2014 and remains available for strategy support at any stage of a deal." },
+  { q: "What's the one hard rule about offering a discount to close a deal?", options: ["Any rep can offer up to 10% without approval", "Discount decisions always go through Xiomara and Zak together \u2014 never freelanced by a rep alone", "Discounts are never allowed under any circumstance", "Only Zak can approve discounts, without Xiomara"], correctIndex: 1,
+    explanation: "Reps never freelance a discount \u2014 any discount needed to close goes through both Xiomara and Zak together." }
+];
 
 let currentScenario = null;
 let stepIndex = 0;
@@ -2198,6 +2653,7 @@ function renderLanding(){
   renderCardGrid(el('cardgrid'), SCENARIOS);
   renderCardGrid(el('cardgridModule1'), SCENARIOS_MODULE1);
   renderCardGrid(el('cardgridModule2'), SCENARIOS_MODULE2);
+  renderCardGrid(el('cardgridModule3'), SCENARIOS_MODULE3);
 }
 
 let activeTab = 'sales';
@@ -2206,9 +2662,14 @@ function switchTab(tab){
   el('tabBtnSales').classList.toggle('active', tab === 'sales');
   el('tabBtnModule1').classList.toggle('active', tab === 'module1');
   el('tabBtnModule2').classList.toggle('active', tab === 'module2');
+  el('tabBtnModule3').classList.toggle('active', tab === 'module3');
+  el('tabBtnDeck').classList.toggle('active', tab === 'deck');
   el('tabpanelSales').classList.toggle('active', tab === 'sales');
   el('tabpanelModule1').classList.toggle('active', tab === 'module1');
   el('tabpanelModule2').classList.toggle('active', tab === 'module2');
+  el('tabpanelModule3').classList.toggle('active', tab === 'module3');
+  el('tabpanelDeck').classList.toggle('active', tab === 'deck');
+  if (tab === 'deck' && !deckInitialized) initDeckViewer();
 }
 
 function goLanding(){
@@ -2221,8 +2682,54 @@ function goLanding(){
   el('quizendscreen').style.display = 'none';
 }
 
+/* ---------- Deck viewer ---------- */
+const DECK_TOTAL_SLIDES = 58;
+let deckCurrentSlide = 1;
+let deckInitialized = false;
+
+function slideFile(n){
+  return 'deck/slide-' + String(n).padStart(2, '0') + '.jpg';
+}
+
+function initDeckViewer(){
+  deckInitialized = true;
+  const thumbs = el('deckThumbs');
+  thumbs.innerHTML = '';
+  for (let i = 1; i <= DECK_TOTAL_SLIDES; i++){
+    const t = document.createElement('div');
+    t.className = 'deck-thumb' + (i === 1 ? ' active' : '');
+    t.id = 'deckThumb' + i;
+    t.onclick = () => deckGoTo(i);
+    t.innerHTML = `<img src="${slideFile(i)}" alt="Slide ${i}" loading="lazy">`;
+    thumbs.appendChild(t);
+  }
+  deckGoTo(1);
+}
+
+function deckGoTo(n){
+  deckCurrentSlide = Math.max(1, Math.min(DECK_TOTAL_SLIDES, n));
+  el('deckSlideImg').src = slideFile(deckCurrentSlide);
+  el('deckCounter').textContent = `Slide ${deckCurrentSlide} of ${DECK_TOTAL_SLIDES}`;
+  el('deckPrevBtn').disabled = (deckCurrentSlide === 1);
+  el('deckNextBtn').disabled = (deckCurrentSlide === DECK_TOTAL_SLIDES);
+  document.querySelectorAll('.deck-thumb').forEach(el2 => el2.classList.remove('active'));
+  const activeThumb = el('deckThumb' + deckCurrentSlide);
+  if (activeThumb){
+    activeThumb.classList.add('active');
+    activeThumb.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  }
+}
+
+function deckPrev(){ deckGoTo(deckCurrentSlide - 1); }
+function deckNext(){ deckGoTo(deckCurrentSlide + 1); }
+function deckJump(){
+  const val = parseInt(el('deckJumpInput').value, 10);
+  if (!isNaN(val)) deckGoTo(val);
+  el('deckJumpInput').value = '';
+}
+
 function startScenario(id){
-  currentScenario = SCENARIOS.find(s => s.id === id) || SCENARIOS_MODULE1.find(s => s.id === id) || SCENARIOS_MODULE2.find(s => s.id === id);
+  currentScenario = SCENARIOS.find(s => s.id === id) || SCENARIOS_MODULE1.find(s => s.id === id) || SCENARIOS_MODULE2.find(s => s.id === id) || SCENARIOS_MODULE3.find(s => s.id === id);
   stepIndex = 0;
   meterValue = 35;
   history = [];
@@ -2419,21 +2926,25 @@ function setResultsFilter(f){
 function typePillFor(item){
   if (item.type === 'quiz'){
     if (item.track === 'module2') return '<span class="type-pill type-quiz">Module 2 Quiz</span>';
+    if (item.track === 'module3') return '<span class="type-pill type-quiz">Module 3 Quiz</span>';
     return '<span class="type-pill type-quiz">Module 1 Quiz</span>';
   }
   if (item.track === 'module1') return '<span class="type-pill type-module1">Module 1</span>';
   if (item.track === 'module2') return '<span class="type-pill type-module2">Module 2</span>';
+  if (item.track === 'module3') return '<span class="type-pill type-module2">Module 3</span>';
   return '<span class="type-pill type-sales">Sales Sim</span>';
 }
 
 function renderResultsTable(remote, error){
   const body = el('resultsBody');
   let items = cachedResultsItems;
-  if (resultsFilter === 'sales') items = items.filter(i => i.track !== 'module1' && i.track !== 'module2' && i.type !== 'quiz');
+  if (resultsFilter === 'sales') items = items.filter(i => i.track !== 'module1' && i.track !== 'module2' && i.track !== 'module3' && i.type !== 'quiz');
   else if (resultsFilter === 'module1') items = items.filter(i => i.track === 'module1' && i.type !== 'quiz');
   else if (resultsFilter === 'module1quiz') items = items.filter(i => i.type === 'quiz' && i.track === 'module1');
   else if (resultsFilter === 'module2') items = items.filter(i => i.track === 'module2' && i.type !== 'quiz');
   else if (resultsFilter === 'module2quiz') items = items.filter(i => i.type === 'quiz' && i.track === 'module2');
+  else if (resultsFilter === 'module3') items = items.filter(i => i.track === 'module3' && i.type !== 'quiz');
+  else if (resultsFilter === 'module3quiz') items = items.filter(i => i.type === 'quiz' && i.track === 'module3');
 
   let html = '';
   if (!remote){
@@ -2449,6 +2960,8 @@ function renderResultsTable(remote, error){
     <button class="filter-chip ${resultsFilter==='module1quiz'?'active':''}" onclick="setResultsFilter('module1quiz')">Module 1 Quiz</button>
     <button class="filter-chip ${resultsFilter==='module2'?'active':''}" onclick="setResultsFilter('module2')">Module 2 Sims</button>
     <button class="filter-chip ${resultsFilter==='module2quiz'?'active':''}" onclick="setResultsFilter('module2quiz')">Module 2 Quiz</button>
+    <button class="filter-chip ${resultsFilter==='module3'?'active':''}" onclick="setResultsFilter('module3')">Module 3 Sims</button>
+    <button class="filter-chip ${resultsFilter==='module3quiz'?'active':''}" onclick="setResultsFilter('module3quiz')">Module 3 Quiz</button>
   </div>`;
 
   if (!items || items.length === 0){
@@ -2486,7 +2999,8 @@ let currentQuizMeta = { id: 'm1-quiz', title: 'Module 1 Quiz', label: 'Module 1'
 
 const QUIZ_META = {
   module1: { set: QUIZ_MODULE1, id: 'm1-quiz', title: 'Module 1 Quiz', label: 'Module 1' },
-  module2: { set: QUIZ_MODULE2, id: 'm2-quiz', title: 'Module 2 Quiz', label: 'Module 2' }
+  module2: { set: QUIZ_MODULE2, id: 'm2-quiz', title: 'Module 2 Quiz', label: 'Module 2' },
+  module3: { set: QUIZ_MODULE3, id: 'm3-quiz', title: 'Module 3 Quiz', label: 'Module 3' }
 };
 
 function startQuiz(moduleKey){
