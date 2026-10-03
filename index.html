@@ -2821,11 +2821,23 @@ async function loadAllResults(passcode){
 
 /* ---------- Name gate ---------- */
 const TEAM_MEMBERS = [
-  "Sergio Sanchez",
-  "Mariana Casta\u00f1eda",
+  "Belle Salinas",
   "Camila Santos",
-  "L\u00e9a Walhin"
-];
+  "Denisse Araneda",
+  "Emil",
+  "Florencia",
+  "Hugo",
+  "Isa Ure\u00f1a",
+  "Jo Ascanio",
+  "Jono Roger",
+  "L\u00e9a Walhin",
+  "Maria Sanchez",
+  "Mariana Casta\u00f1eda",
+  "Mauricio Carias",
+  "Sergio Sanchez",
+  "Xiomara Angulo",
+  "Zak Cassady-Dorion"
+].sort((x, y) => x.localeCompare(y));
 
 function populateTeamSelect(){
   const sel = el('traineeSelect');
