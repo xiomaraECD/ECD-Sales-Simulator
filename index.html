@@ -44,6 +44,12 @@
   #namegate{max-width:520px;margin:80px auto;text-align:center;display:none;}
   #namegate h1{font-size:32px;font-weight:700;color:#fff;line-height:1.2;}
   #namegate p{color:#C9C6E8;font-size:15px;margin-top:14px;line-height:1.6;}
+  #namegate select{
+    width:100%;margin-top:28px;padding:16px 18px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.18);
+    background:rgba(255,255,255,0.06);color:#fff;font-family:'Inter';font-size:15px;outline:none;appearance:auto;
+  }
+  #namegate select:focus{border-color:var(--pink);}
+  #namegate select option{color:#1C1836;background:#fff;}
   #namegate input{
     width:100%;margin-top:28px;padding:16px 18px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.18);
     background:rgba(255,255,255,0.06);color:#fff;font-family:'Inter';font-size:15px;outline:none;
@@ -318,7 +324,8 @@
     <div class="eyebrow" style="justify-content:center;">ECD Sales Training</div>
     <h1>Before you run a real call, run this one.</h1>
     <p>Ten scenarios pulled from real ECD discovery calls, audits, and internal Klaviyo-partner touch-bases. Enter your name so your results can be tracked as part of onboarding.</p>
-    <input type="text" id="traineeNameInput" placeholder="Your full name" autocomplete="off">
+    <select id="traineeSelect" onchange="onTraineeSelectChange()"></select>
+    <input type="text" id="traineeNameInput" placeholder="Type your full name" autocomplete="off" style="display:none;">
     <button class="gate-btn" onclick="submitName()">Start training &rarr;</button>
     <div class="gate-note">Your name and scenario scores are saved so ECD leadership can review onboarding progress.</div>
   </div>
@@ -2813,9 +2820,33 @@ async function loadAllResults(passcode){
 }
 
 /* ---------- Name gate ---------- */
+const TEAM_MEMBERS = [
+  "Sergio Sanchez",
+  "Mariana Casta\u00f1eda",
+  "Camila Santos",
+  "L\u00e9a Walhin"
+];
+
+function populateTeamSelect(){
+  const sel = el('traineeSelect');
+  sel.innerHTML = '<option value="">Select your name\u2026</option>' +
+    TEAM_MEMBERS.map(n => `<option value="${n}">${n}</option>`).join('') +
+    '<option value="__other">Someone else (type my name)</option>';
+}
+
+function onTraineeSelectChange(){
+  const other = el('traineeSelect').value === '__other';
+  el('traineeNameInput').style.display = other ? 'block' : 'none';
+  if (other) el('traineeNameInput').focus();
+}
+
 function submitName(){
-  const val = el('traineeNameInput').value.trim();
-  if (!val){ el('traineeNameInput').focus(); return; }
+  const sel = el('traineeSelect').value;
+  const val = (sel === '__other' ? el('traineeNameInput').value : sel).trim();
+  if (!val){
+    (sel === '__other' ? el('traineeNameInput') : el('traineeSelect')).focus();
+    return;
+  }
   traineeName = val;
   try { localStorage.setItem('ecd_sim_name', val); } catch(e){}
   el('welcomeName').textContent = traineeName;
@@ -2823,11 +2854,12 @@ function submitName(){
   el('landing').style.display = 'block';
   renderLanding();
 }
-
 function switchUser(){
   traineeName = "";
   try { localStorage.removeItem('ecd_sim_name'); } catch(e){}
   el('traineeNameInput').value = '';
+  el('traineeSelect').value = '';
+  onTraineeSelectChange();
   el('landing').style.display = 'none';
   el('namegate').style.display = 'block';
 }
@@ -3334,6 +3366,7 @@ async function syncLocalResults(){
 /* ---------- Init ---------- */
 (function init(){
   syncLocalResults();
+  populateTeamSelect();
   let savedName = '';
   try { savedName = localStorage.getItem('ecd_sim_name') || ''; } catch(e){}
   if (savedName){
