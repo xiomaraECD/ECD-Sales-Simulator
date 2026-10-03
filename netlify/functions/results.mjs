@@ -16,6 +16,13 @@ const num = (v) => {
   return Number.isFinite(n) ? Math.max(0, Math.min(1000, Math.round(n))) : 0;
 };
 
+function validTime(v) {
+  const t = new Date(v).getTime();
+  const now = Date.now();
+  if (Number.isFinite(t) && t >= Date.parse("2026-01-01") && t <= now + 60000) return new Date(t).toISOString();
+  return new Date(now).toISOString();
+}
+
 export function cleanPayload(body) {
   if (!body || typeof body !== "object") return null;
   const name = str(body.name, 80);
@@ -34,7 +41,7 @@ export function cleanPayload(body) {
     risky: num(body.risky),
     poor: num(body.poor),
     total,
-    timestamp: new Date().toISOString(),
+    timestamp: validTime(body.timestamp),
   };
 }
 

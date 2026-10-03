@@ -3319,8 +3319,21 @@ async function finishQuiz(){
     : `Couldn't reach the shared results service \u2014 your result was saved on this device only. Please let your manager know.`;
 }
 
+async function syncLocalResults(){
+  try {
+    const saved = JSON.parse(localStorage.getItem('ecd_sim_results') || '[]');
+    if (!Array.isArray(saved) || !saved.length) return;
+    const remaining = [];
+    for (const item of saved){
+      if (!(await postToBackend(item))) remaining.push(item);
+    }
+    localStorage.setItem('ecd_sim_results', JSON.stringify(remaining));
+  } catch(e){}
+}
+
 /* ---------- Init ---------- */
 (function init(){
+  syncLocalResults();
   let savedName = '';
   try { savedName = localStorage.getItem('ecd_sim_name') || ''; } catch(e){}
   if (savedName){
