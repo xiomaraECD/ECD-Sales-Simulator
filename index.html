@@ -369,13 +369,13 @@
     <div class="tabpanel" id="tabpanelModule2">
       <div class="hero">
         <h1>Module 2: <em>What We Sell &amp; What It Costs</em>.</h1>
-        <p class="sub">Homework for Module 2 &mdash; product knowledge, pricing, discounting rules, and audit delivery. Take the quiz first, then work through these four scenarios.</p>
+        <p class="sub">Homework for Module 2 &mdash; product knowledge, pricing, discounting rules, and the audit process. Take the quiz first, then work through these five scenarios.</p>
       </div>
 
       <div class="quiz-card">
         <div class="qtext">
           <h3>Module 2 Quiz</h3>
-          <p>20 tough multiple-choice questions on Klaviyo suite pricing, commission rules, service fit, and audit methodology. One attempt shown at a time &mdash; your score is revealed at the end.</p>
+          <p>22 tough multiple-choice questions on Klaviyo suite pricing, commission rules, service fit (including the flow retainers), and the Retention-led audit process. One attempt shown at a time &mdash; your score is revealed at the end.</p>
         </div>
         <button class="qcta" onclick="startQuiz('module2')">Take the quiz &rarr;</button>
       </div>
@@ -405,7 +405,7 @@
     <div class="tabpanel" id="tabpanelDeck">
       <div class="hero">
         <h1>The ECD Sales Playbook, <em>in full</em>.</h1>
-        <p class="sub">The complete 58-slide deck, live right here &mdash; click through slide by slide, or jump straight to one from the strip below.</p>
+        <p class="sub">The complete 61-slide deck, live right here &mdash; click through slide by slide, or jump straight to one from the strip below.</p>
       </div>
       <div class="deck-viewer">
         <div class="deck-stage">
@@ -414,8 +414,8 @@
         <div class="deck-nav">
           <button class="deck-nav-btn" id="deckPrevBtn" onclick="deckPrev()">&larr; Prev</button>
           <div class="deck-jump">
-            <span class="deck-counter" id="deckCounter">Slide 1 of 58</span>
-            <input type="number" id="deckJumpInput" min="1" max="58" placeholder="#">
+            <span class="deck-counter" id="deckCounter">Slide 1 of 61</span>
+            <input type="number" id="deckJumpInput" min="1" max="61" placeholder="#">
             <button class="deck-nav-btn" onclick="deckJump()">Go</button>
           </div>
           <button class="deck-nav-btn" id="deckNextBtn" onclick="deckNext()">Next &rarr;</button>
@@ -480,7 +480,7 @@
         <div class="avatar" id="quizAvatar">Q</div>
         <div>
           <div class="name" id="quizScreenTitle">Module 1 Quiz</div>
-          <div class="role" id="quizScreenSubtitle">20 questions &middot; score shown at the end</div>
+          <div class="role" id="quizScreenSubtitle">Questions &middot; score shown at the end</div>
         </div>
       </div>
       <button class="back-btn" onclick="goLanding()">&larr; All scenarios</button>
@@ -2070,6 +2070,88 @@ const SCENARIOS_MODULE2 = [
         ]
       }
     ]
+  },
+  {
+    id: "m2-flowretainer",
+    track: "module2",
+    tag: "upsell", tagLabel: "Flow Retainer Fit",
+    client: "Tessa", clientRole: "Pet Wellness Brand \u2014 Post-Implementation Check-In", initials: "T",
+    title: "\u201cOur flows are live \u2014 now what?\u201d",
+    situation: "A brand finished a Klaviyo implementation three months ago. Their flows are live, but nobody has touched them since, and they have no one in-house to run Klaviyo.",
+    steps: [
+      {
+        context: "On a check-in, the client says the flows are running but she has no idea whether they're any good.",
+        dialogue: "\u201cThe flows are live and bringing in something, but nobody's looked at them since launch. Honestly I don't have time to dig in.\u201d",
+        options: [
+          { label: "\u201cThat's exactly what our Flow Growth Retainer is for \u2014 we start with an audit of your existing flows, then own optimization, testing, and new builds every month, fully done-for-you.\u201d",
+            verdict:"good", meter:13,
+            feedback:"Existing flows that haven't been optimized, plus a client with no time, is the textbook Flow Growth Retainer fit \u2014 audit first, then done-for-you ownership." },
+          { label: "\u201cWe'd recommend a Strategy Partnership so you can keep control of the flows.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"Strategy Partnership fits teams that execute themselves. This client has no time and nobody in-house \u2014 she needs the work done for her." },
+          { label: "\u201cYou should just do another Full Implementation to refresh everything.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"The foundation is already built \u2014 a second $6,000 build isn't the fit. Ongoing optimization of what exists is." },
+          { label: "\u201cFlows run themselves once they're built \u2014 you're fine for now.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"The opposite of the truth, and the exact problem the retainer solves: without consistent optimization and testing, flows stop growing." }
+        ]
+      },
+      {
+        context: "She asks what she'd actually get each month.",
+        dialogue: "\u201cOkay, but what does that look like month to month? I don't want another thing to manage.\u201d",
+        options: [
+          { label: "\u201cSix flow emails a month \u2014 new builds or revamps, we propose and you approve \u2014 plus A/B testing, full flow management, a one-hour monthly strategy call with a performance report, and a quarterly deep-dive audit. $3,500 a month.\u201d",
+            verdict:"good", meter:13,
+            feedback:"Specific, accurate, and it makes the done-for-you point concrete: you approve, ECD executes." },
+          { label: "\u201cWe'll basically just keep an eye on things and let you know if anything comes up.\u201d",
+            verdict:"poor", meter:-12,
+            feedback:"Vague and undersells a defined deliverable set \u2014 the clarity of what's included is what makes the retainer easy to say yes to." },
+          { label: "\u201cTwelve emails a month, biweekly calls, and SMS flows too \u2014 $6,000 a month.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"That's Pro. She hasn't mentioned SMS or needing twice the volume \u2014 lead with what fits, and let her upgrade when the need shows up." },
+          { label: "\u201cIt depends on how many hours we end up using \u2014 we bill $175 an hour.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"The hourly rate is for additional execution beyond scope \u2014 the retainer itself is a defined monthly package, which is easier for her to evaluate." }
+        ]
+      },
+      {
+        context: "She mentions SMS and that her popup has been converting poorly.",
+        dialogue: "\u201cWe just launched SMS, and honestly our signup popup isn't growing the list much. Could you help with that too?\u201d",
+        options: [
+          { label: "\u201cThat's where Flow Growth Retainer Pro fits \u2014 it manages both email and SMS flows, doubles the monthly pool to 12 flow emails, adds biweekly calls, and includes signup form and popup optimization. It's $6,000 a month.\u201d",
+            verdict:"good", meter:13,
+            feedback:"New signals (SMS flows plus a weak popup) move the right answer from the base retainer to Pro \u2014 you matched the service to what she just told you." },
+          { label: "\u201cWe can squeeze that into the $3,500 plan \u2014 no extra cost.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"SMS flow management and popup optimization are Pro inclusions, not part of the base retainer \u2014 and promising extras without alignment is exactly what to avoid." },
+          { label: "\u201cWe can't help with popups.\u201d",
+            verdict:"poor", meter:-12,
+            feedback:"Popup and signup form optimization is included in Pro \u2014 saying no here misses a direct match." },
+          { label: "\u201cLet me quote the SMS and popup work separately at $175 an hour on top of the $3,500.\u201d",
+            verdict:"risky", meter:-7,
+            feedback:"That would work, but Pro already bundles all of it at a better fit \u2014 offer the package that matches the need first." }
+        ]
+      },
+      {
+        context: "She's interested but wants to keep the option to stop.",
+        dialogue: "\u201cWhat if it isn't working for us? I don't want to be locked into a long contract.\u201d",
+        options: [
+          { label: "\u201cTotally fair \u2014 there's a 30-day cancellation notice. And we start with an onboarding flow audit so the first month is about the biggest revenue opportunities. Want to grab Thursday at 11 to walk through it?\u201d",
+            verdict:"good", meter:12,
+            feedback:"Answers the risk honestly with the real term (30-day notice), reinforces the audit-first value, and locks a specific next step." },
+          { label: "\u201cIt's a 12-month commitment, but the results make it worth it.\u201d",
+            verdict:"poor", meter:-14,
+            feedback:"That's wrong \u2014 the retainer carries a 30-day cancellation notice. Never state terms you haven't verified." },
+          { label: "\u201cI'll check on the contract terms and get back to you sometime.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"The term is known, and 'sometime' has no date \u2014 answer now and book the next call before you hang up." },
+          { label: "\u201cDon't worry about it, nobody ever cancels.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"Dismisses a legitimate concern without information \u2014 give the real term instead." }
+        ]
+      }
+    ]
   }
 ];
 
@@ -2116,7 +2198,11 @@ const QUIZ_MODULE2 = [
   { q: "If a client asks to correct an inaccurate audit finding mid-call, what's the correct response?", options: ["Politely thank them and clarify that findings are based only on what's visible in Klaviyo", "Insist the platform data must be correct", "Move on quickly without acknowledging the correction", "End the call early since the audit's credibility is now in question"], correctIndex: 0,
     explanation: "The training is explicit: invite correction gracefully, and remind the client everything is based only on what's visible in Klaviyo \u2014 never get defensive." },
   { q: "ECD is one of how many Klaviyo Master Elite Partners worldwide, out of roughly how many total partner agencies?", options: ["10 out of 10,000", "20 out of 22,000", "50 out of 5,000", "100 out of 100,000"], correctIndex: 1,
-    explanation: "ECD is one of only 20 Klaviyo Master Elite Partners out of roughly 22,000 total partner agencies worldwide." }
+    explanation: "ECD is one of only 20 Klaviyo Master Elite Partners out of roughly 22,000 total partner agencies worldwide." },
+  { q: "A brand has flows live but they haven't been optimized or tested since they were built, and the team wants zero execution lift. What fits best?", options: ["Strategy Partnership \u2014 $2,500/mo", "Flow Growth Retainer \u2014 $3,500/mo, fully done-for-you", "SMS Implementation \u2014 $2,000", "A Full Implementation \u2014 $6,000"], correctIndex: 1,
+    explanation: "The Flow Growth Retainer is for existing flows that need serious ongoing optimization \u2014 and it's 100% done-for-you. Strategy Partnership fits teams that execute themselves; a Full Implementation is for building the foundation from scratch." },
+  { q: "What does Flow Growth Retainer Pro ($6,000/mo) add on top of the $3,500 Flow Growth Retainer?", options: ["Paid media management and website development", "12 flow emails per month across email and SMS, biweekly calls, and signup form & popup optimization", "A dedicated Slack channel and predictive analytics only", "Unlimited campaigns each month"], correctIndex: 1,
+    explanation: "Pro doubles the monthly pool to 12 flow emails across email and SMS flows, moves to biweekly strategy calls, adds email + SMS flow management, and adds signup form & popup optimization." }
 ];
 
 /* ============ MODULE 3 SCENARIOS ============
@@ -2399,38 +2485,38 @@ const SCENARIOS_MODULE3 = [
       },
       {
         context: "The client signs the proposal quickly.",
-        dialogue: "You've just gotten the signed proposal back.",
+        dialogue: "You've just gotten the signed proposal back. What goes out next?",
         options: [
-          { label: "Request the invoice from Maria on the same proposal, then send the invoice together with the W-9 and Client Onboarding Form in one email, CC'ing accounts receivable.",
+          { label: "Request the first invoice from Maria on the same proposal, then send the invoice together with the W-9, the Client Intake Form, and the Client Onboarding Form in one email \u2014 CC'ing accounts receivable.",
             verdict:"good", meter:13,
-            feedback:"Matches the exact real process: one request to Maria, all documents bundled together, AR looped in from the first dollar." },
-          { label: "Send the invoice first, then follow up separately later with the W-9 and onboarding form.",
+            feedback:"Matches the real process: one request to Maria, the whole package bundled in one email, AR looped in from the first dollar. Commission only lands once the client pays, so make it fast and smooth." },
+          { label: "Send the invoice first, then follow up separately later with the W-9, intake form, and onboarding form.",
             verdict:"risky", meter:-8,
-            feedback:"Splitting these into multiple emails creates extra back-and-forth \u2014 the real process bundles the invoice, W-9, and onboarding form together." },
-          { label: "Skip CC'ing accounts receivable since the invoice hasn't been paid yet.",
-            verdict:"poor", meter:-12,
-            feedback:"AR should be looped in from the very first invoice email, not after payment \u2014 staying in the loop early avoids delays later." },
+            feedback:"Splitting the package creates extra back-and-forth and slows payment \u2014 the invoice, W-9, intake form, and onboarding form go together." },
+          { label: "Send the full package but skip the intake form until the launch call, since you'll cover it live anyway.",
+            verdict:"risky", meter:-8,
+            feedback:"The intake form still goes out with the package \u2014 launch calls shouldn't be spent re-collecting what the client could have filled in beforehand (and if it's late, the launch call covers the gaps, not the other way around)." },
           { label: "Wait for the client to ask for the invoice before sending anything.",
-            verdict:"risky", meter:-7,
-            feedback:"Being proactive about invoicing keeps momentum \u2014 waiting on the client to request it slows down a deal that just closed." }
+            verdict:"poor", meter:-12,
+            feedback:"Being proactive keeps momentum on a deal that just closed \u2014 waiting on the client delays both payment and the project start." }
         ]
       },
       {
-        context: "You're ready to announce the new client internally.",
-        dialogue: "You're drafting the Slack announcement.",
+        context: "The invoice package is out. You're thinking about the internal handoff and the announcement to the team.",
+        dialogue: "Do you need to write up the handoff doc and post the new-client announcement yourself?",
         options: [
-          { label: "Post in the Implementations channel with client name, contact, website, services, launch call date, and links to all four documents (SOW, Client Folder, Intake Form, Sales \u2192 Delivery Notes) \u2014 plus any notes on sensitivities or deadlines.",
+          { label: "No \u2014 the client tracker creates the Sales \u2192 Delivery doc and posts the announcement in #implementations and the client's channel automatically, so I spend my time on the launch call and keeping Xiomara looped in.",
             verdict:"good", meter:13,
-            feedback:"Matches the real template exactly \u2014 complete enough that the delivery team never has to ask where something lives." },
-          { label: "Post a one-line announcement and share the documents separately as people ask for them.",
-            verdict:"poor", meter:-14,
-            feedback:"Forces the delivery team to chase down information piecemeal \u2014 the whole point of the template is having everything linked in one place up front." },
-          { label: "Wait until the launch call is scheduled before announcing the client at all.",
+            feedback:"Right: the client tracker generates the Sales \u2192 Delivery doc and announces the new client in both #implementations and the client's own channel, so nothing is posted by hand." },
+          { label: "Yes \u2014 write the Slack announcement and build the handoff docs by hand, to be safe.",
             verdict:"risky", meter:-8,
-            feedback:"Unnecessarily delays getting the team visibility \u2014 the announcement can go out with \u201cTBD\u201d on the launch date if it's not locked yet." },
-          { label: "Skip the Slack announcement since the internal Sales \u2192 Delivery call will cover the same information.",
-            verdict:"risky", meter:-7,
-            feedback:"The Slack post and the internal call serve different purposes \u2014 the post is the durable, searchable record everyone can reference later." }
+            feedback:"That was the old process. Doing it manually now creates duplicate, conflicting records alongside what the tracker already generated." },
+          { label: "Assume the tracker covers everything, including the invoice package and the launch call.",
+            verdict:"risky", meter:-9,
+            feedback:"The tracker handles the Sales \u2192 Delivery doc and the announcements \u2014 the first invoice package and the launch call are still yours." },
+          { label: "Skip the internal handoff entirely and let delivery reach out to you if they have questions.",
+            verdict:"poor", meter:-13,
+            feedback:"The handoff doc is automated, but the team still needs the context only you have \u2014 tone, deadlines, promises made \u2014 passed along on the internal Sales \u2192 Delivery call." }
         ]
       },
       {
@@ -2489,10 +2575,10 @@ const QUIZ_MODULE3 = [
     explanation: "The cadence caps at 4 follow-ups total \u2014 after that, a graceful final touch leaves the door open without continuing to chase." },
   { q: "Where are proposals built in the current process?", options: ["In Asana", "In the dedicated proposal platform, which can pull context from the Fireflies recording", "In a shared Google Doc template", "Directly inside HubSpot"], correctIndex: 1,
     explanation: "Proposals are now built in the proposal platform, which can pull in call context automatically from the linked Fireflies recording \u2014 not in Asana." },
-  { q: "What two documents must always be sent together with the invoice after a client signs?", options: ["The Statement of Work and the Client Folder link", "The W-9 form and the Client Onboarding Form", "The audit deck and the recap email", "The proposal PDF and a payment link"], correctIndex: 1,
-    explanation: "The invoice always goes out together with the W-9 form and the Client Onboarding Form in the same email, with accounts receivable CC'd." },
-  { q: "What four documents should be linked in a new-client Slack announcement?", options: ["Invoice, W-9, Onboarding Form, and Proposal", "Statement of Work, Client Folder, Client Intake Form, and Sales \u2192 Delivery Notes", "Audit deck, Recap email, Contract, and NDA", "HubSpot deal link, Calendar invite, Fireflies link, and Pricing sheet"], correctIndex: 1,
-    explanation: "The real Slack template links all four: Statement of Work, Client Folder, Client Intake Form, and Sales \u2192 Delivery Notes, so the delivery team never has to ask where something lives." },
+  { q: "After a proposal is signed, what goes out together to the client, and what do you set?", options: ["The first invoice, W-9, Client Intake Form, and Client Onboarding Form \u2014 then you set the launch call", "Only the invoice, with the other forms sent after the launch call", "The Statement of Work and a Slack invite, with Maria setting the launch call", "The audit deck and a recap email, with the launch call set by the account strategist"], correctIndex: 0,
+    explanation: "Request the first invoice from Maria, then send it with the W-9, Client Intake Form, and Client Onboarding Form in one email (CC accounts receivable) \u2014 and set the launch call yourself after checking calendars." },
+  { q: "Who creates the Sales \u2192 Delivery doc and posts the new-client announcement in #implementations and the client's channel?", options: ["The AE, by hand, using the four-document template", "The account strategist, once the launch call is held", "The client tracker \u2014 automatically", "Maria, when she sends the invoice"], correctIndex: 2,
+    explanation: "The client tracker creates the Sales \u2192 Delivery doc and sends the announcement in #implementations and in each client's channel automatically \u2014 nothing to post manually." },
   { q: "Before proposing a launch call time to a client, what should you always do first?", options: ["Ask the client for three time options", "Check your teammates' calendars, including Isa's, before proposing a time", "Schedule it immediately to avoid delay", "Wait for the client to suggest a time"], correctIndex: 1,
     explanation: "Always check calendars \u2014 including Isa's \u2014 before proposing a launch call time, since double-booking a teammate causes real downstream problems." },
   { q: "Who should always stay looped in on deals, per the training, even after a client is handed off internally?", options: ["No one \u2014 sales is fully done once the deal is signed", "Xiomara \u2014 she stays available for strategy support at any stage, pre-call planning through proposal review", "Only the account strategist", "Only Zak"], correctIndex: 1,
@@ -2683,7 +2769,7 @@ function goLanding(){
 }
 
 /* ---------- Deck viewer ---------- */
-const DECK_TOTAL_SLIDES = 58;
+const DECK_TOTAL_SLIDES = 61;
 let deckCurrentSlide = 1;
 let deckInitialized = false;
 
