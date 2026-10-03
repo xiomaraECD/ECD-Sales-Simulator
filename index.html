@@ -375,7 +375,7 @@
       <div class="quiz-card">
         <div class="qtext">
           <h3>Module 2 Quiz</h3>
-          <p>22 tough multiple-choice questions on Klaviyo suite pricing, commission rules, service fit (including the flow retainers), and the Retention-led audit process. One attempt shown at a time &mdash; your score is revealed at the end.</p>
+          <p>26 tough multiple-choice questions on Klaviyo suite pricing, commission rules, service fit (including the flow retainers), and the Retention-led audit process. One attempt shown at a time &mdash; your score is revealed at the end.</p>
         </div>
         <button class="qcta" onclick="startQuiz('module2')">Take the quiz &rarr;</button>
       </div>
@@ -387,13 +387,13 @@
     <div class="tabpanel" id="tabpanelModule3">
       <div class="hero">
         <h1>Module 3: <em>Objections, Closing &amp; the Full Pipeline</em>.</h1>
-        <p class="sub">Homework for Module 3 &mdash; real objections, when to walk away, the follow-up cadence that closes, and the full pipeline from proposal to handoff. Take the quiz first, then work through these four scenarios.</p>
+        <p class="sub">Homework for Module 3 &mdash; real objections, when to walk away, the follow-up cadence that closes, and the full pipeline from proposal to handoff. Take the quiz first, then work through these five scenarios.</p>
       </div>
 
       <div class="quiz-card">
         <div class="qtext">
           <h3>Module 3 Quiz</h3>
-          <p>20 tough multiple-choice questions on objection handling, when to decline a deal, follow-up cadence, and the proposal-to-handoff pipeline. One attempt shown at a time &mdash; your score is revealed at the end.</p>
+          <p>25 tough multiple-choice questions on objection handling, when to decline a deal, follow-up cadence, and the proposal-to-handoff pipeline. One attempt shown at a time &mdash; your score is revealed at the end.</p>
         </div>
         <button class="qcta" onclick="startQuiz('module3')">Take the quiz &rarr;</button>
       </div>
@@ -405,7 +405,7 @@
     <div class="tabpanel" id="tabpanelDeck">
       <div class="hero">
         <h1>The ECD Sales Playbook, <em>in full</em>.</h1>
-        <p class="sub">The complete 61-slide deck, live right here &mdash; click through slide by slide, or jump straight to one from the strip below.</p>
+        <p class="sub">The complete 63-slide deck, live right here &mdash; click through slide by slide, or jump straight to one from the strip below.</p>
       </div>
       <div class="deck-viewer">
         <div class="deck-stage">
@@ -414,8 +414,8 @@
         <div class="deck-nav">
           <button class="deck-nav-btn" id="deckPrevBtn" onclick="deckPrev()">&larr; Prev</button>
           <div class="deck-jump">
-            <span class="deck-counter" id="deckCounter">Slide 1 of 61</span>
-            <input type="number" id="deckJumpInput" min="1" max="61" placeholder="#">
+            <span class="deck-counter" id="deckCounter">Slide 1 of 63</span>
+            <input type="number" id="deckJumpInput" min="1" max="63" placeholder="#">
             <button class="deck-nav-btn" onclick="deckJump()">Go</button>
           </div>
           <button class="deck-nav-btn" id="deckNextBtn" onclick="deckNext()">Next &rarr;</button>
@@ -1796,7 +1796,7 @@ const SCENARIOS_MODULE2 = [
             feedback:"Sends pricing promptly as requested, and flags that market context (currency, local pricing sensitivity) will be considered \u2014 without personally improvising a discount." },
           { label: "\u201cLet's just cut the price in half for you since you're in Brazil, don't worry about it.\u201d",
             verdict:"poor", meter:-16,
-            feedback:"Unilaterally discounting without aligning with Zach or Xiomara is exactly what the training warns against \u2014 pricing flexibility always gets looped through leadership first." },
+            feedback:"Unilaterally discounting without aligning with Xiomara or Zak is exactly what the training warns against \u2014 pricing flexibility always gets looped through leadership first." },
           { label: "\u201cI can't really share pricing until we've had a few more calls.\u201d",
             verdict:"risky", meter:-9,
             feedback:"The client directly asked for pricing to avoid wasting time \u2014 delaying it further risks losing them, especially given their explicit budget concern." },
@@ -1814,7 +1814,7 @@ const SCENARIOS_MODULE2 = [
             feedback:"Acknowledges the real, legitimate currency concern and escalates for guidance rather than improvising a discount \u2014 exactly the right move on a market-pricing question." },
           { label: "\u201cI understand, let's just knock 30% off the price right now to make it work.\u201d",
             verdict:"poor", meter:-15,
-            feedback:"Improvising a specific discount percentage on the spot, without checking with Zach or Xiomara, is the exact mistake the training explicitly warns against." },
+            feedback:"Improvising a specific discount percentage on the spot, without checking with Xiomara or Zak, is the exact mistake the training explicitly warns against." },
           { label: "\u201cUnfortunately the pricing is fixed and there's nothing we can do about that.\u201d",
             verdict:"risky", meter:-9,
             feedback:"Shuts down a legitimate, well-explained concern instead of escalating it \u2014 market-specific pricing accommodation is a real possibility, just not one to decide alone." },
@@ -1837,30 +1837,30 @@ const SCENARIOS_MODULE2 = [
         context: "The rep shares numbers on the SMS side of the deal.",
         dialogue: "\u201cThis client's SMS spend with Klaviyo would land around $8,200 a month if they migrate off Attentive. Anything you can do to sweeten the SMS side for them?\u201d",
         options: [
-          { label: "\u201cActually, yes \u2014 since that's above our $7,000 SMS MRR threshold, we can offer the SMS implementation completely free. I'll just confirm with Zach before we say it out loud to the client.\u201d",
+          { label: "\u201cThat clears the $5,000 minimum we need for any free implementation \u2014 but it only works when Klaviyo is running those offers. Let me align with Xiomara and Zak on whether we can make the SMS implementation free for this one.\u201d",
             verdict:"good", meter:13,
-            feedback:"Correctly applies the real rule: SMS Klaviyo MRR above $7,000/month qualifies for a free SMS implementation, since the commission covers the cost \u2014 while still confirming before promising it." },
-          { label: "\u201cSure, let's just give them 50% off the SMS implementation to help close it.\u201d",
-            verdict:"risky", meter:-8,
-            feedback:"Improvises a discount instead of applying the real, existing rule \u2014 at $8,200/month MRR, the correct move is offering it free, not guessing at a percentage." },
+            feedback:"Right: the Klaviyo deal MRR always has to be above $5,000, and free implementations only happen while those offers are running \u2014 so you check internally before promising anything." },
+          { label: "\u201cSure \u2014 anything over $7,000 is automatically free, so we're good.\u201d",
+            verdict:"risky", meter:-9,
+            feedback:"That's the old rule. Free implementations are tied to running offers, need Klaviyo deal MRR above $5,000, and are confirmed internally first." },
           { label: "\u201cSMS pricing is fixed no matter what, there's nothing we can offer here.\u201d",
-            verdict:"poor", meter:-14,
-            feedback:"Misses a real, applicable rule \u2014 this deal clears the $7K/month threshold that makes a free SMS implementation possible." },
-          { label: "\u201cLet's just wait and see if they ask for a discount before offering anything.\u201d",
-            verdict:"risky", meter:-6,
-            feedback:"Passing up a chance to proactively make a strong, rule-based offer that could help close the deal faster." }
+            verdict:"poor", meter:-13,
+            feedback:"Misses a real option \u2014 on a deal this size, when an offer is running, a free SMS implementation may be possible once you align internally." },
+          { label: "\u201cLet's just give them 50% off the SMS implementation to help close it.\u201d",
+            verdict:"risky", meter:-8,
+            feedback:"Improvises a discount no one approved. The lever is a free implementation under a running offer, confirmed with Xiomara and/or Zak." }
         ]
       },
       {
         context: "Separately, the client asks about a discount on the $6,000 Full Implementation, with no other commitment offered.",
         dialogue: "\u201cIs there any way to get a better price on the $6,000 implementation?\u201d",
         options: [
-          { label: "\u201cWe can look at a discount if you're open to committing to at least 4 months of ongoing account management \u2014 let me align with Zach on the exact percentage and get back to you.\u201d",
+          { label: "\u201cWe can look at a discount if you're open to committing to 4 months of ongoing account management \u2014 anywhere from 15% up to 25% off \u2014 let me align with Xiomara and Zak on the exact number and get back to you.\u201d",
             verdict:"good", meter:13,
-            feedback:"Matches the exact rule from the training: discounts on the Full Implementation get tied to a 4-month-minimum ongoing management commitment, aligned with Zach." },
+            feedback:"Matches the rule: a Full Implementation discount is tied to 4 months of ongoing management (15% up to a max of 25%), and you align with Xiomara and/or Zak before offering." },
           { label: "\u201cSure, I can knock off 15% right now, no problem.\u201d",
             verdict:"poor", meter:-15,
-            feedback:"Offers a specific discount unilaterally and with no commitment attached \u2014 both violate the real rule that discounts are tied to retainer commitment and require alignment first." },
+            feedback:"Offers a specific discount unilaterally and with no commitment attached \u2014 both break the rule that discounts are tied to 4 months of ongoing management and need internal alignment first." },
           { label: "\u201cWe never discount the Full Implementation under any circumstances.\u201d",
             verdict:"risky", meter:-8,
             feedback:"Overstates rigidity \u2014 discounts are genuinely possible on the Full Implementation, just tied to an ongoing management commitment." },
@@ -2165,22 +2165,20 @@ const QUIZ_MODULE2 = [
     explanation: "The training's framing: if the client turned away from Klaviyo before, it implies the prior setup wasn't working \u2014 an audit reveals what's salvageable, framed non-critically." },
   { q: "A client says they only send campaigns \u201cwhenever they have time,\u201d sometimes ten a month and sometimes none. What's this usually a signal of?", options: ["A strong existing strategy that just needs minor tweaks", "A bandwidth/strategy gap that likely means their flows are suffering too, pointing toward ongoing account management", "A sign they should reduce their sending frequency further", "Nothing significant \u2014 it's a normal sending pattern"], correctIndex: 1,
     explanation: "Inconsistent, unplanned campaign sending signals no dedicated strategy time \u2014 which usually means flows are also neglected, pointing toward ongoing account management." },
-  { q: "What's the recommended reasoning for prioritizing a clear call-to-action in the first fold of an email?", options: ["It looks more visually appealing", "Client attention span when opening an email is only about 2 seconds", "It's required by Klaviyo's terms of service", "It reduces the total number of emails needed in a flow"], correctIndex: 1,
-    explanation: "The training cites roughly a 2-second attention span on email open \u2014 a clear CTA in the first fold before any scrolling is essential." },
-  { q: "What should you always ask a Klaviyo rep before deciding between a Full or Mini Implementation?", options: ["How long they've worked with the client", "How price sensitive the client is", "Whether the client uses Shopify", "How many employees the client has"], correctIndex: 1,
+    { q: "What should you always ask a Klaviyo rep before deciding between a Full or Mini Implementation?", options: ["How long they've worked with the client", "How price sensitive the client is", "Whether the client uses Shopify", "How many employees the client has"], correctIndex: 1,
     explanation: "Asking about the client's price sensitivity directly informs whether to lead with the Full Implementation ($6,000) or the Mini ($2,500+)." },
   { q: "Beyond price sensitivity, what's another legitimate reason to recommend a Mini Implementation over a Full one, even for a client who isn't price sensitive?", options: ["The client already has a few flows working well and doesn't need all 7 new ones", "The client's industry doesn't allow full implementations", "Mini Implementations always convert better", "There is no other legitimate reason \u2014 price sensitivity is the only factor"], correctIndex: 0,
     explanation: "If a client already has some working flows and doesn't need a full 7-flow rebuild, a Mini Implementation can be the genuinely better fit \u2014 client benefit matters, not just commission size." },
   { q: "If a client upgrades from a Mini to a Full Implementation within the original 30-day window, how is it priced?", options: ["They must purchase a brand-new Full Implementation package from scratch", "They pay just the difference between the two packages", "The upgrade is always free of charge", "They pay per-hour for the entire project retroactively"], correctIndex: 1,
     explanation: "Within the 30-day window, upgrading from Mini to Full means paying just the price difference between the two packages." },
-  { q: "If a client wants extra flows built after that 30-day upgrade window has already closed, how should the additional work be quoted?", options: ["Always by number of hours only", "By number of emails ($200 each) or hours ($175/hr) \u2014 quoting by emails is preferred", "It cannot be quoted at all after 30 days", "At a flat $1,000 regardless of scope"], correctIndex: 1,
-    explanation: "Extra flows after the window can be quoted by number of emails ($200 each) or hours ($175/hr) \u2014 the training recommends quoting by number of emails." },
-  { q: "What's the rule for offering a free SMS Implementation based on a client's Klaviyo SMS spend?", options: ["It's never free under any circumstances", "If the client's SMS Klaviyo MRR is $7,000/month or higher, the SMS implementation can be offered free", "Only clients under $1,000/month SMS spend qualify for a free implementation", "SMS implementations are always included free with any Full Implementation"], correctIndex: 1,
-    explanation: "When SMS Klaviyo MRR clears $7,000/month, the resulting commission covers the cost of offering the SMS Implementation for free." },
+  { q: "If a client wants extra flows built after that 30-day upgrade window has already closed, how are the additional flows quoted?", options: ["By number of emails \u2014 $400 per email", "A flat $200 per email", "A flat $1,000 per flow", "They can't be quoted after 30 days"], correctIndex: 0,
+    explanation: "Inside the first 30 days a Mini client can upgrade to Full by paying just the difference; after that, extra flows are quoted by number of emails at $400 per email." },
+  { q: "When can an SMS Implementation be offered for free?", options: ["Any time the client's Klaviyo SMS MRR is above $7,000", "Only while Klaviyo is running those offers \u2014 not every month \u2014 and the Klaviyo deal MRR must be above $5,000; align internally first", "Whenever the client is already on a Full Implementation", "Never \u2014 it's always $2,000"], correctIndex: 1,
+    explanation: "Free implementations only work when Klaviyo's offers are running, and the Klaviyo deal MRR always has to be above $5,000 for any implementation to be free. Check with Xiomara and/or Zak before you say it out loud." },
   { q: "How long is the commission window for a Klaviyo \u201cNewCo\u201d sales rep to earn commission on additional Klaviyo products after a client starts paying for Klaviyo?", options: ["30 days", "60 days", "120 days", "There is no time limit"], correctIndex: 2,
     explanation: "NewCo sales reps have a 120-day window after the client starts paying for Klaviyo to earn commission on additional Klaviyo product sales." },
-  { q: "Under what condition can a discount be offered on the $6,000 Full Implementation, per the training?", options: ["Any time a client simply asks for one", "If the client commits to at least 4 months of ongoing account management, aligned with Zach", "Only for clients based outside the United States", "Full Implementation discounts are never allowed under any circumstance"], correctIndex: 1,
-    explanation: "Discounts on the Full Implementation are tied to at least a 4-month ongoing account management commitment, and should be aligned with Zach before offering." },
+  { q: "A client asks for a discount on the $6,000 Full Implementation. What's the right move?", options: ["Offer 10% on the spot to keep momentum", "Tie it to 4 months of ongoing management (15% up to a max of 25% off); if it can't be tied, align internally with Xiomara and/or Zak first", "Tell them discounts are never possible", "Offer up to 25% with no commitment if they sign this week"], correctIndex: 1,
+    explanation: "A Full Implementation discount is tied to 4 months of ongoing management \u2014 between 15% and a max of 25% off. If it can't be tied to a retainer, you align internally with Xiomara and/or Zak before offering anything." },
   { q: "Which two Klaviyo suite products were specifically named as ones that can commonly be offered for free as value-adds?", options: ["Agent and Reviews", "Customer Hub and Mini Marketing Analytics", "Help Desk and K Social", "Full Marketing Analytics and Agent"], correctIndex: 1,
     explanation: "Customer Hub ($350) and Mini Marketing Analytics ($500) are the two products commonly positioned as free add-ons when bundling a larger deal." },
   { q: "According to the training, when should you push Klaviyo's Composer product?", options: ["For every client, regardless of situation", "Mainly for Strategy Partnership clients, or if the Klaviyo rep specifically asks for it", "Only for clients on the highest ongoing management tier", "Composer should never be mentioned to any client"], correctIndex: 1,
@@ -2202,7 +2200,17 @@ const QUIZ_MODULE2 = [
   { q: "A brand has flows live but they haven't been optimized or tested since they were built, and the team wants zero execution lift. What fits best?", options: ["Strategy Partnership \u2014 $2,500/mo", "Flow Growth Retainer \u2014 $3,500/mo, fully done-for-you", "SMS Implementation \u2014 $2,000", "A Full Implementation \u2014 $6,000"], correctIndex: 1,
     explanation: "The Flow Growth Retainer is for existing flows that need serious ongoing optimization \u2014 and it's 100% done-for-you. Strategy Partnership fits teams that execute themselves; a Full Implementation is for building the foundation from scratch." },
   { q: "What does Flow Growth Retainer Pro ($6,000/mo) add on top of the $3,500 Flow Growth Retainer?", options: ["Paid media management and website development", "12 flow emails per month across email and SMS, biweekly calls, and signup form & popup optimization", "A dedicated Slack channel and predictive analytics only", "Unlimited campaigns each month"], correctIndex: 1,
-    explanation: "Pro doubles the monthly pool to 12 flow emails across email and SMS flows, moves to biweekly strategy calls, adds email + SMS flow management, and adds signup form & popup optimization." }
+    explanation: "Pro doubles the monthly pool to 12 flow emails across email and SMS flows, moves to biweekly strategy calls, adds email + SMS flow management, and adds signup form & popup optimization." },
+  { q: "When requesting access for an audit, what do we ask for \u2014 and what do we never ask for?", options: ["Manager access for the AE only; passwords are fine if the client prefers", "Admin access for xiomara@ and jono@ \u2014 never passwords; Manager is only a fallback when a client won't budge, and Xiomara pushes for Admin first", "Read-only access for the whole Retention team", "A shared login the client creates for ECD"], correctIndex: 1,
+    explanation: "The rule stated up front to clients and reps is: Admin access or no audit. Admin goes to xiomara@ and jono@, never passwords, and Manager is accepted only when a client won't budge." },
+  { q: "After discovery, where does an audit get announced, and who gets tagged to assign the Retention Strategist?", options: ["#implementations, tagging Isa", "#sales-audits, tagging Jono", "The Klaviyo\u2013ECD channel, tagging the rep", "A HubSpot task assigned to Maria"], correctIndex: 1,
+    explanation: "Each audit gets one announcement in #sales-audits with Jono tagged for assignment \u2014 and everything about that audit (access, comments, reschedules) stays in that one thread." },
+  { q: "When does the Retention Strategist's build clock start, and how long do they have?", options: ["When discovery ends \u2014 5 business days", "When the specialist has the access needed to audit \u2014 3 business days", "When the proposal is signed \u2014 10 business days", "When Xiomara posts the brief \u2014 1 business day"], correctIndex: 1,
+    explanation: "No access, no clock. Once Admin access is confirmed the specialist has 3 business days to build, and Klaviyo audits are delivered at least 2 business days before the call so Xiomara can review." },
+  { q: "On a 45\u201360 minute audit call, how is the time split \u2014 and what do specialists never do?", options: ["The specialist runs the full call and also quotes pricing", "The AE opens (0\u20135), the Retention Strategist presents findings and opportunities (5\u201335), then the AE covers services, pricing, objections and next steps (35\u201360); specialists never quote prices, scope, timelines, discounts, or free work", "The AE presents findings for 35 minutes, then the specialist sells", "The Klaviyo rep leads, ECD only answers questions"], correctIndex: 1,
+    explanation: "You open and introduce the specialist; they present account status and opportunities; you take over at minute 35. Specialists defer anything commercial: \u201cGreat question, Xiomara will walk you through that.\u201d" },
+  { q: "What's the difference between a lighter audit and an in-depth audit?", options: ["Lighter is for existing clients; in-depth is for small leads", "Lighter is strategy only \u2014 the what and why, top 3\u20135 findings, no step-by-step builds; in-depth is a full diagnostic with sizing per lever, still without build instructions", "Lighter skips deliverability; in-depth includes it", "They are the same but the lighter one is free"], correctIndex: 1,
+    explanation: "Lighter audits protect tactics for smaller or uncertain leads. In-depth audits are for high-potential, multi-service deals and existing clients \u2014 enough to show mastery, but never build instructions. Xiomara decides which in the brief." }
 ];
 
 /* ============ MODULE 3 SCENARIOS ============
@@ -2538,6 +2546,88 @@ const SCENARIOS_MODULE3 = [
         ]
       }
     ]
+  },
+  {
+    id: "m3-isajourney",
+    track: "module3",
+    tag: "partner", tagLabel: "The Relationship Journey",
+    client: "Marisol", clientRole: "Skincare Brand \u2014 Just Signed", initials: "M",
+    title: "\u201cWho do I talk to if something's off?\u201d",
+    situation: "A client signed this morning. From signature through handoff and beyond, Isa runs the relationship touchpoints \u2014 and you hand her the context, own the commercial side, and keep opportunities from slipping.",
+    steps: [
+      {
+        context: "The agreement was signed this morning and the launch call isn't scheduled yet.",
+        dialogue: "Internal: what do you do to set Isa up before launch?",
+        options: [
+          { label: "Notify Isa right away and share the client contacts, purchased services, goals, sensitivities, and launch details so she can send a warm welcome email before launch.",
+            verdict:"good", meter:13,
+            feedback:"Matches the live process: Isa, Director of Delivery, sends a warm welcome after signature \u2014 and your handoff of context means the client never has to start over." },
+          { label: "Wait until the launch call so Isa can introduce herself fresh in person.",
+            verdict:"risky", meter:-8,
+            feedback:"The welcome email goes out before launch \u2014 the client should know Isa before they ever need to raise a concern." },
+          { label: "Forward Isa just the proposal PDF and let her figure out the rest.",
+            verdict:"risky", meter:-8,
+            feedback:"A proposal alone misses what makes her welcome feel personal: goals, sensitivities, promises made, and launch details." },
+          { label: "Skip it \u2014 relationship touchpoints are the account owner's job, not Isa's.",
+            verdict:"poor", meter:-13,
+            feedback:"Isa owns the overall partnership experience and the client-facing touchpoints; the account owner coordinates day to day." }
+        ]
+      },
+      {
+        context: "On the launch call, with Isa on, the client asks about the team.",
+        dialogue: "\u201cWho do I go to for what? I don't want to bounce between people.\u201d",
+        options: [
+          { label: "Walk through the team: the client owner for day-to-day coordination and requests, the service specialist for strategy questions, Isa for feedback and any broader concern or escalation, and you for proposals, pricing, and new services.",
+            verdict:"good", meter:13,
+            feedback:"A clear 'who owns what' is exactly why the launch call introduces the team \u2014 and you hold commercial questions and expansion." },
+          { label: "Tell the client to email whoever they've spoken to most recently.",
+            verdict:"poor", meter:-12,
+            feedback:"That's the bouncing-between-people experience she's afraid of. Name the owner for each kind of question." },
+          { label: "Say Isa handles everything, including pricing questions.",
+            verdict:"risky", meter:-9,
+            feedback:"Isa owns alignment and the partnership experience, but commercial questions and new services come to you." },
+          { label: "Skip the introductions \u2014 she'll figure it out as the project moves.",
+            verdict:"risky", meter:-8,
+            feedback:"Introducing the team at launch (and sending the client team table afterward) prevents confusion later." }
+        ]
+      },
+      {
+        context: "Midway through delivery, the client owner tells you the client brought up paid media on the mid-project call.",
+        dialogue: "\u201cShe said they've been thinking about paid media. Thought you'd want to know.\u201d",
+        options: [
+          { label: "Ask for the client's exact wording and timing, accept the warm introduction, and follow up commercially with a dated next step \u2014 you own the commercial follow-up.",
+            verdict:"good", meter:13,
+            feedback:"Opportunities go to you promptly with the evidence and a warm intro, and nothing is left sitting only in a recording or an email." },
+          { label: "Tell the owner to quote paid media to the client directly.",
+            verdict:"poor", meter:-13,
+            feedback:"Delivery doesn't promise scope, pricing, discounts, or free work \u2014 commercial follow-up is yours." },
+          { label: "Save it for the handoff call so it doesn't distract from the project.",
+            verdict:"risky", meter:-8,
+            feedback:"Waiting lets a warm moment cool. Follow up now, in a way that doesn't disrupt delivery." },
+          { label: "Email the client a paid media proposal straight away, without the warm intro.",
+            verdict:"risky", meter:-7,
+            feedback:"Skipping the intro and the conversation about what she actually wants makes the proposal feel unprompted and generic." }
+        ]
+      },
+      {
+        context: "Near handoff, the client says a question she asked weeks ago got lost between two people.",
+        dialogue: "\u201cI asked about our SMS timing a few weeks ago and nobody ever came back to me.\u201d",
+        options: [
+          { label: "Apologize, make an explicit handoff to a named owner who accepts it, and flag it to Isa, who follows broader concerns through to closure.",
+            verdict:"good", meter:13,
+            feedback:"If a question reaches the wrong person, they acknowledge it, hand it off explicitly, and make sure a named owner accepts \u2014 and Isa follows through on wider concerns." },
+          { label: "Tell her you'll look into it and leave it as a verbal promise.",
+            verdict:"risky", meter:-9,
+            feedback:"Every actionable concern should become a task with one owner and a due date, not a promise that can get lost again." },
+          { label: "Explain that it's the account owner's responsibility, not yours.",
+            verdict:"poor", meter:-13,
+            feedback:"Whoever receives it acknowledges it and hands it off properly \u2014 pointing fingers repeats what went wrong." },
+          { label: "Say it's probably already resolved and move on with the handoff.",
+            verdict:"poor", meter:-12,
+            feedback:"Brushing past a legitimate concern damages trust right before the handoff." }
+        ]
+      }
+    ]
   }
 ];
 
@@ -2584,7 +2674,17 @@ const QUIZ_MODULE3 = [
   { q: "Who should always stay looped in on deals, per the training, even after a client is handed off internally?", options: ["No one \u2014 sales is fully done once the deal is signed", "Xiomara \u2014 she stays available for strategy support at any stage, pre-call planning through proposal review", "Only the account strategist", "Only Zak"], correctIndex: 1,
     explanation: "Xiomara stays looped in on everything \u2014 upselling, cross-selling, new clients \u2014 and remains available for strategy support at any stage of a deal." },
   { q: "What's the one hard rule about offering a discount to close a deal?", options: ["Any rep can offer up to 10% without approval", "Discount decisions always go through Xiomara and Zak together \u2014 never freelanced by a rep alone", "Discounts are never allowed under any circumstance", "Only Zak can approve discounts, without Xiomara"], correctIndex: 1,
-    explanation: "Reps never freelance a discount \u2014 any discount needed to close goes through both Xiomara and Zak together." }
+    explanation: "Reps never freelance a discount \u2014 any discount needed to close goes through both Xiomara and Zak together." },
+  { q: "A client signs. What happens with Isa, and when?", options: ["Nothing until the mid-project call", "Xiomara notifies Isa with the client contacts, services, goals, sensitivities and launch details, and Isa sends a warm welcome email before launch", "Isa takes over the invoice and onboarding forms", "Isa joins only if the client asks for her"], correctIndex: 1,
+    explanation: "Isa Ure\u00f1a, Director of Delivery, sends a warm ECD-branded welcome after signature \u2014 she introduces her role and previews the launch call. Xiomara gives her the context so the client never has to start over." },
+  { q: "What does Isa do before the mid-project call?", options: ["Presents the project results", "Sends a brief personal check-in asking how the experience feels, whether communication and support are working, and what ECD could improve", "Quotes the next phase", "Nothing \u2014 the account owner handles it"], correctIndex: 1,
+    explanation: "The client owner gives Isa advance notice and context; she sends a personal check-in and shares any actionable feedback with the owner before the discussion." },
+  { q: "How often does Isa check in with clients who are on an ongoing engagement?", options: ["Weekly", "Monthly or every two months, agreed at transition and recorded on the client board", "Only when a client complains", "Once a year"], correctIndex: 1,
+    explanation: "For ongoing clients Isa runs a monthly or every-two-months relationship check-in, covering satisfaction, confidence in the team, communication, and changing priorities." },
+  { q: "During a check-in, a client mentions interest in paid media. Where does that opportunity go?", options: ["Delivery quotes it directly", "To Xiomara, with the client's wording and timing and a warm introduction \u2014 she owns the commercial follow-up", "It's saved for the next handoff call", "Isa sends a proposal"], correctIndex: 1,
+    explanation: "Delivery and Isa never promise scope, pricing, discounts or free work. Opportunities go to Xiomara promptly with evidence so they don't sit only in a recording or an email." },
+  { q: "A client asks for a discount on a Full Implementation but won't commit to ongoing management. What do you do?", options: ["Offer 15% since it's the minimum", "Align internally with Xiomara and/or Zak before offering anything", "Offer the discount only if they sign the same day", "Say no and end the conversation"], correctIndex: 1,
+    explanation: "Discounts of 15% up to 25% are tied to 4 months of ongoing management. If it can't be tied, you align with Xiomara and/or Zak first \u2014 reps never freelance a discount." }
 ];
 
 let currentScenario = null;
@@ -2769,7 +2869,7 @@ function goLanding(){
 }
 
 /* ---------- Deck viewer ---------- */
-const DECK_TOTAL_SLIDES = 61;
+const DECK_TOTAL_SLIDES = 63;
 let deckCurrentSlide = 1;
 let deckInitialized = false;
 
